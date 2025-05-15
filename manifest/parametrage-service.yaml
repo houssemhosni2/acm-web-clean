@@ -11,4 +11,4 @@ spec:
     - protocol: TCP
       port: 8091           # Port interne au cluster
       targetPort: 8091     # Port exposé par le container
-      nodePort: 30091      # Port accessible depuis l’extérieur (entre 30000 et 32767)
+      nodePort: 30091      
