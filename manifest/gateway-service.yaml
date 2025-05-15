@@ -4,6 +4,7 @@ metadata:
   name: gateway-service
   labels:
     app: gateway
+  namespace: default
 spec:
   selector:
     app: gateway
