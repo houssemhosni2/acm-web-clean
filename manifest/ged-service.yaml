@@ -4,6 +4,7 @@ metadata:
   name: ged-service
   labels:
     app: ged
+  namespace: default
 spec:
   type: NodePort
   selector:
