@@ -4,6 +4,7 @@ metadata:
   name: crm-service
   labels:
     app: crm
+  namespace: default
 spec:
   type: NodePort
   selector:
