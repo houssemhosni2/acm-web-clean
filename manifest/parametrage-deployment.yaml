@@ -4,6 +4,7 @@ metadata:
   name: parametrage
   labels:
     app: parametrage
+  namespace: default 
 spec:
   replicas: 1
   selector:
