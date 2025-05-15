@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: houssemhosni/acm-web:gateway-service
+        ports:
+        - containerPort: 8080  # Mis à jour pour correspondre au port Spring Boot
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "dev"
+        - name: SPRING_CLOUD_CONSUL_HOST
+          value: "consul-consul-server.consul.svc.cluster.local"
+        - name: SPRING_CLOUD_CONSUL_PORT
+          value: "8500"
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+      imagePullSecrets:
+      - name: my-registry-secret

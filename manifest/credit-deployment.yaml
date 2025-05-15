@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit
+  labels:
+    app: credit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credit
+  template:
+    metadata:
+      labels:
+        app: credit
+    spec:
+      containers:
+        - name: credit
+          image: houssemhosni/acm-web-credit-service:v2
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+            - name: SPRING_CLOUD_CONSUL_HOST
+              value: "consul-consul-server.consul.svc.cluster.local"
+            - name: SPRING_CLOUD_CONSUL_PORT
+              value: "8500"
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+      imagePullSecrets:
+        - name: my-registry-secret

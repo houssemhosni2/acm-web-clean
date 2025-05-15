@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ged
+  labels:
+    app: ged
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ged
+  template:
+    metadata:
+      labels:
+        app: ged
+    spec:
+      containers:
+      - name: ged
+        image: houssemhosni/acm-web-ged-service:v2
+        ports:
+        - containerPort: 8095
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "dev"
+        - name: SPRING_CLOUD_CONSUL_HOST
+          value: "consul-consul-server.consul.svc.cluster.local"
+        - name: SPRING_CLOUD_CONSUL_PORT
+          value: "8500"
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+      imagePullSecrets:
+      - name: my-registry-secret

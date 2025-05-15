@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acm-web-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acm-web
+  template:
+    metadata:
+      labels:
+        app: acm-web
+    spec:
+      containers:
+      - name: acm-web
+        image: houssemhosni/acm-web:latest
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+        - name: my-registry-secret

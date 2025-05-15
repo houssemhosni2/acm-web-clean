@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crm
+  labels:
+    app: crm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crm
+  template:
+    metadata:
+      labels:
+        app: crm
+    spec:
+      containers:
+        - name: crm
+          image:  houssemhosni/acm-web:crm-service
+          ports:
+            - containerPort: 8094
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+            - name: SPRING_CLOUD_CONSUL_HOST
+              value: "consul-consul-server.consul.svc.cluster.local"
+            - name: SPRING_CLOUD_CONSUL_PORT
+              value: "8500"
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+      imagePullSecrets:
+        - name: my-registry-secret
