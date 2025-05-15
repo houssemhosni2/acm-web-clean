@@ -4,6 +4,7 @@ metadata:
   name: aml-service
   labels:
     app: aml
+  namespace: default
 spec:
   type: NodePort
   selector:
