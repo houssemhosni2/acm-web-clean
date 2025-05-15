@@ -4,6 +4,7 @@ metadata:
   name: crm
   labels:
     app: crm
+  namespace: default 
 spec:
   replicas: 1
   selector:
