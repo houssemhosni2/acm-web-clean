@@ -4,6 +4,7 @@ metadata:
   name: credit
   labels:
     app: credit
+  namespace: default 
 spec:
   replicas: 1
   selector:
