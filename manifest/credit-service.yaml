@@ -4,6 +4,7 @@ metadata:
   name: credit-service
   labels:
     app: credit
+  namespace: default
 spec:
   type: NodePort
   selector:
