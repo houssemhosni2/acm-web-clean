@@ -1,0 +1,72 @@
+<app-page-title [heading]="'supplier-360.supplier_360_hearder' | translate" [icon]="'lnr-user'" [account]="''" [status]="-1"></app-page-title>
+<div class="col-md-12 col-xl-12 px-0">
+
+  <!-- List Tabs -->
+  <div class="container tabs-animated tabs-animated-shadow tabs-rounded-lg col-xl-12">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': informationTab}" (click)="changeTab(1)">
+          <span>{{'supplier-360.supplier_information' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link"  [ngClass]="{'active': articlesList}" (click)="changeTab(2)">
+          <span>{{'supplier-360.supplier_assets' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': conventions}" (click)="changeTab(3)">
+          <span>{{'supplier-360.supplier_conventions' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': cooptations}" (click)="changeTab(4)">
+          <span>{{'supplier-360.supplier_cooptations' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': contributions}" (click)="changeTab(5)">
+          <!-- Business -->
+          <span>{{'supplier-360.supplier_contributions' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': communications}" (click)="changeTab(6)">
+          <span>{{'customer-360.communications' | translate}} </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': history}" (click)="changeTab(7)">
+          <span>{{'supplier-360.supplier_refund' | translate}}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- List Tabs -->
+
+  <div *ngIf="informationTab">
+    <app-supplier-information #childComponent [supplier360]="true" [expanded]="true" [sumSupplierBalance]="sumSupplierBalance" [percentage]="percentage"></app-supplier-information>
+  </div>
+
+  <div *ngIf="articlesList">
+    <app-list-asset #childComponent [fromSupplier360]="true"></app-list-asset>
+  </div>
+
+  <div *ngIf="conventions">
+    <app-list-conventions #childComponent></app-list-conventions>
+  </div>
+
+  <div *ngIf="cooptations">
+    <app-customer-list [fromSupplier360]="true"></app-customer-list>
+  </div>
+
+  <div *ngIf="contributions">
+   <app-supplier-business-contribution #childComponent [loansBySupplier]="loansBySupplier"></app-supplier-business-contribution>
+  </div>
+
+  <div *ngIf="communications">
+    <app-customer-message [Type]="'supplier'"></app-customer-message>
+  </div>
+
+  <div *ngIf="history">
+  </div>

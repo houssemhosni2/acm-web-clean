@@ -1,0 +1,27 @@
+<div id="aml-profile-details-pdf-version" style="padding:4rem !important; width: 100% !important;">
+
+    <app-aml-profile-informtion [gender]="amlDetails?.mapRecord?.Gender" [type]="amlDetails?.mapRecord?.recordType"
+        [nameDetails]="amlDetails?.mapRecord?.NameDetails" [descriptions]="amlDetails?.mapRecord?.Descriptions"
+        [dateDetails]="amlDetails?.mapRecord?.DateDetails" [images]="amlDetails?.mapRecord?.Images"
+        [isdPdf]="true"></app-aml-profile-informtion>
+
+    <app-aml-profile-details [descriptions]="amlDetails?.mapRecord?.Descriptions" [expanded]="true"
+        [isdPdf]="true"></app-aml-profile-details>
+
+    <app-aml-profile-sanctions-references [sanctionsReferences]="amlDetails?.mapRecord?.SanctionsReferences"
+        [expanded]="true" [isdPdf]="true"></app-aml-profile-sanctions-references>
+
+    <app-aml-profile-identity [iDNumberTypes]="amlDetails?.mapRecord?.IDNumberTypes" [expanded]="true"
+        [isdPdf]="true"></app-aml-profile-identity>
+
+    <app-aml-profile-function [roleDetail]="amlDetails?.mapRecord?.RoleDetail" [expanded]="true"
+        [isdPdf]="true"></app-aml-profile-function>
+
+    <app-aml-profile-note [profileNotes]="amlDetails?.mapRecord?.ProfileNotes" [expanded]="true"
+        [isdPdf]="true"></app-aml-profile-note>
+
+    <app-aml-profile-sources [sourceDescription]="amlDetails?.mapRecord?.SourceDescription" [expanded]="true"
+        [isdPdf]="true"></app-aml-profile-sources>
+
+    <app-aml-workflow-details [acmAmlChecksDTOs]="acmAmlChecksDTOs" [isdPdf]="true"></app-aml-workflow-details>
+</div>

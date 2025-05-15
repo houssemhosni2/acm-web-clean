@@ -1,0 +1,16 @@
+<div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseProfileDetails"
+  aria-expanded="true" aria-controls="collapseProfileDetails" (click)="toggleCollapse()">
+  <div> {{ 'aml_profile_details.sources' | translate }} </div>
+  <div *ngIf="!isdPdf">
+    <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+  </div>
+</div>
+<div id="collapseProfileDetails" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+  <div class="row m-1 pb-0">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" *ngFor="let item of sourceDescriptionList">
+        {{item?.name}}
+      </li>
+    </ul>
+  </div>
+</div>

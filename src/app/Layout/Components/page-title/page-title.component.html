@@ -1,0 +1,510 @@
+<div [ngClass]="status===0?'app-page-title pb-0':'app-page-title'">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon ACM-page-title-icon-{{translate.currentLang}}">
+        <i class="icon {{icon}}"></i>
+      </div>
+      <div>
+        <div class="row no-gutters" *ngIf="status > 0 || status === -2 || status== -3; else other_content">
+          {{heading + ' : '}}
+          <div dir="ltr">{{account}}</div>
+        </div>
+        <ng-template #other_content>
+          {{heading}}
+          <div class="page-title-subheading" *ngIf="status === -1">
+            {{ datepipe.transform(date, 'dd/MM/yyyy') }}
+          </div>
+          <div class="page-title-subheading" *ngIf="status === 0">
+            {{ datepipe.transform(date, 'dd/MM/yyyy') }}
+          </div>
+          <div class="page-title-subheading" *ngIf="syncCreditLineAccounts === 0">
+            {{ datepipe.transform(date, 'dd/MM/yyyy') }}
+          </div>
+        </ng-template>
+        <div class="page-title-subheading" *ngIf="status > 23">
+          <div class="badge bg-warning">{{loan.stepName}}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status ==-3">
+          <div class="badge bg-warning">{{workflowStepName}}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 1 ">
+          <div class="badge bg-warning">{{'process.initial_check'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 2">
+          <div class="badge bg-warning">{{'process.field_visit'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 3">
+          <div class="badge bg-warning">{{'process.guarantor'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 4">
+          <div class="badge bg-warning">{{'process.collateral'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 5">
+          <div class="badge bg-warning">{{'process.add_documents'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 6">
+          <div class="badge bg-warning">{{'process.financial_analysis'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 7">
+          <div class="badge bg-warning">{{'process.approval_L1'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 8">
+          <div class="badge bg-warning">{{'process.approval_L2'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 9">
+          <div class="badge bg-warning">{{'process.approval_L3'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 10">
+          <div class="badge bg-warning">{{'process.approval_L4'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 11">
+          <div class="badge bg-warning">{{'process.customer_decision'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 12">
+          <div class="badge bg-warning">{{'process.upload_Agreements'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 13">
+          <div class="badge bg-warning">{{'process.Disbursement'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 14">
+          <div class="badge bg-warning">{{'process.Rejected'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 15">
+          <div class="badge bg-warning">{{'process.Cancelled'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 16">
+          <div class="badge bg-warning">{{'process.Review'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 17">
+          <div class="badge bg-warning">{{'process.Decline'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 18">
+          <div class="badge bg-warning">{{'process.Screening'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 19">
+          <div class="badge bg-warning">{{'process.Audit'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 20">
+          <div class="badge bg-warning">{{'process.Risk'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 21">
+          <div class="badge bg-warning">{{'process.Complete_Loan_Data'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 22">
+          <div class="badge bg-warning">{{'process.issued'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="status === 23">
+          <div class="badge bg-warning">{{'process.central_revision'| translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="collectionStatut === 0">
+          <div class="badge bg-warning">{{'collections.collection-dashboard.active' | translate}}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="collectionStatut === -1">
+          <div class="badge bg-warning">{{'collections.collection-dashboard.closed' | translate}}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="collectionStatut === 1">
+          <div class="badge bg-warning">{{'collections.collection-dashboard.completed' | translate}}</div>
+        </div>
+
+        <div class="page-title-subheading" *ngIf="claimStatut !== undefined">
+          <div class="badge bg-warning">{{claimStatut | translate}}</div>
+        </div>
+
+
+        <div class="page-title-subheading" *ngIf="supplierStatus === 'POTENTIEL'">
+          <div class="badge bg-warning">{{ 'supplier.supplier_status_potentiel' | translate }}</div>
+        </div>
+
+        <div class="page-title-subheading" *ngIf="supplierStatus === 'REJECTED'">
+          <div class="badge bg-danger">{{ 'supplier.supplier_status_rejected' | translate }}</div>
+        </div>
+
+        <div class="page-title-subheading" *ngIf="supplierStatus === 'APPROVED'">
+          <div class="badge bg-success">{{ 'supplier.supplier_status_approved' | translate }}</div>
+        </div>
+        <div class="page-title-subheading" *ngIf="supplierStatus === 'NON CONTRACTED'">
+          <div class="badge bg-success">{{ 'supplier.supplier_status_non_contracted' | translate }}</div>
+        </div>
+
+        <div class="page-title-subheading mx-2" *ngIf="loanApplicationStatus === 'TOPUP'">
+          <div class="badge badge-warning">{{ 'loan_management.topup_refinance.topup' | translate }}</div>
+        </div>
+        <div class="page-title-subheading mx-2" *ngIf="loanApplicationStatus === 'REFINANCE'">
+          <div class="badge badge-warning">{{ 'loan_management.topup_refinance.refinance' | translate }}</div>
+        </div>
+
+      </div>
+    </div>
+    <div
+      *ngIf="actionsHabilitation && status !== 0 && status !== -1 && status !== -2 && status !== -3 && (collectionStatut!==undefined|| collectionStatut!==null )&& syncCreditLineAccounts!==0"
+      class="mx-4 ACM-page-title-actions-{{translate.currentLang}}">
+      <div class="d-inline-block" ngbDropdown>
+        <button type="button" ngbDropdownToggle class="mb-2 mr-2 btn-icon btn btn-primary"><i
+            class="pe-7s-config btn-icon-wrapper"></i>{{'actions.actions'| translate }}</button>
+        <div ngbDropdownMenu class="dropdown-menu-hover-primary">
+          <button *ngIf="loan?.parentId === 0 && !sharedService.habilitationButton('ACTIVITY_STREAM','')"
+            class="dropdown-item" (click)="openLarge(content6)">{{'activity-stream.activity-stream'| translate
+            }}</button>
+          <button *ngIf="(status < 13 || status > 17 || status === 16)
+              && !sharedService.habilitationButton('ASSIGN_APPLICATION','')" class="dropdown-item"
+            (click)="openReassign(content7)">{{'REASSIGN.reassign_app'| translate }}</button>
+          <button *ngIf="!sharedService.habilitationButton('CONTACT_CUSTOMER','')" class="dropdown-item"
+            (click)="openContactCustomer(content8)">{{'actions.contact_customer'| translate }}</button>
+          <button
+            *ngIf="(status < 13 || status > 17 || status === 16) && !loan.assignCustomer
+               && assignCustomer === '1' && showInternetBanking ==='1' && !sharedService.habilitationButton('ASSIGN_TO_CUSTOMER','')"
+            class="dropdown-item" (click)="openAssignToCustomer(content9)">{{'actions.assign_customer'| translate
+            }}</button>
+          <button
+            *ngIf="(status < 13 || status > 17 || status === 16) &&  loan.assignCustomer
+               && assignCustomer === '1' && showInternetBanking ==='1' && !sharedService.habilitationButton('CANCEL_ASSIGN_TO_CUSTOMER','')"
+            class="dropdown-item" (click)="openAssignToCustomer(content9)">{{'actions.cancel_assign_customer'| translate
+            }}</button>
+          <button *ngIf="(status < 14 || status > 17 || status === 16)
+              && !sharedService.habilitationButton('CANCEL_LOAN','')" class="dropdown-item"
+            (click)="declineModel(content1)">{{'actions.cancel_loan'| translate }}</button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item text-danger">{{'button.cancel'| translate }}</button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="addClaims === 1" class="mx-4 ACM-page-title-actions-{{translate.currentLang}}">
+        <button   class="mb-2 mr-2 btn-icon btn btn-primary" (click)="ClaimsModel(content2)">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>  {{'setting.setting_claim.add'| translate }}</button>
+    </div>
+    <div
+      *ngIf="syncCreditLineAccounts===0 && !sharedService.habilitationButton('SYNCHRONIZE_ACCOUNTS',credit_line_accounts_path)"
+      class="mx-4 ACM-page-title-actions-{{translate.currentLang}}">
+      <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="syncCreditLineAccount()">
+        {{ 'button.synchronize-account' | translate }}
+        <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!--popup Activity Stream-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <i class="lnr-history text-secondary pr-2"></i>
+        {{'activity-stream.activity-stream'| translate }}
+      </div>
+      <div class="card-body">
+        <div class="scroll-area-sm">
+          <div class="scrollbar-container">
+            <perfect-scrollbar [autoPropagation]="true">
+              <div
+                class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column mx-5 ACM-activity-stream-vertical-{{translate.currentLang}}"
+                *ngFor="let loanHistorique of loanHistoriques">
+                <div class="vertical-timeline-item vertical-timeline-element">
+                  <div><span class="vertical-timeline-element-icon bounce-in"></span>
+                    <div
+                      class="vertical-timeline-element-content bounce-in ACM-activity-stream-{{translate.currentLang}}">
+                      <h4 *ngIf="loanHistorique.action === 'DYNAMIC_WF_ACTION'" class="timeline-title text-secondary">
+                        {{loanHistorique.description}}</h4>
+                      <p *ngIf="loanHistorique.action === 'DYNAMIC_WF_ACTION'">
+                        -- {{loanHistorique.description}}{{'activity-stream.dynamic_WF_description'| translate }}
+                        {{'activity-stream.by'| translate }}
+                        <i class="text-primary">{{loanHistorique.updatedBy}}</i>
+
+                      </p>
+                      <h4 *ngIf="loanHistorique.action !== 'DYNAMIC_WF_ACTION'" class="timeline-title text-secondary">
+                        {{'activity-stream.' + loanHistorique.action + '.title'| translate }}</h4>
+                      <p *ngIf="loanHistorique.action === 'SAVE_REPORT_VISIT'">
+                        {{'activity-stream.' + loanHistorique.action + '.description'| translate }}
+                        {{'activity-stream.by'| translate }}
+                        <i class="text-primary">{{loanHistorique.updatedBy}}</i><br>
+                        <i> {{'activity-stream.' + loanHistorique.action + '.sub_description' | translate}}</i>
+                        {{dateVisited}}
+                      </p>
+                      <p *ngIf="loanHistorique.action === 'REASSIGN_LOAN'">
+                        {{'activity-stream.' + loanHistorique.action + '.description'| translate }}
+                        {{'activity-stream.by'| translate }}
+                        <i class="text-primary">{{loanHistorique.updatedBy}}</i> {{'activity-stream.to' | translate}}
+                        <i class="text-primary"> {{loanHistorique.assignedTo}}</i>
+                      </p>
+                      <p
+                        *ngIf="loanHistorique.action !== 'SAVE_REPORT_VISIT' && loanHistorique.action !== 'REASSIGN_LOAN' && loanHistorique.action !== 'DYNAMIC_WF_ACTION'">
+                        {{'activity-stream.' + loanHistorique.action + '.description'| translate }}
+                        {{'activity-stream.by'| translate }}
+                        <i class="text-primary">{{loanHistorique.updatedBy}}</i>
+                      </p>
+
+                      <span
+                        class="vertical-timeline-element-date ACM-activity-stream-date-{{translate.currentLang}} font-weight-bold">
+                        {{loanHistorique.dateUpdate | date : "dd/MM/yyyy hh:mm a"}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </perfect-scrollbar>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-2 mr-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--popup Reassign application-->
+<ng-template #content7 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="reassignForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'REASSIGN.reassign_app'| translate }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label>{{'REASSIGN.list_user'| translate }}</label>
+          <ngx-select-dropdown tabindex="0" formControlName="participants" [multiple]="false"
+            [(ngModel)]="participantSelected" [options]="users" [config]="configParticipants"></ngx-select-dropdown>
+        </div>
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label> {{'reject.note'| translate }} </label>
+          <div class="input-group">
+            <textarea class="form-control" formControlName="note"></textarea>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="custom-control-input" id="exampleCustomCheckbox" type="checkbox" formControlName="confirm"
+                (change)="changeChecbox($event)">
+              <label class="custom-control-label ms-2" for="exampleCustomCheckbox">{{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.cancel' |
+          translate}}</button>
+        <button type="submit" class="btn btn-success">{{'button.ok' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!--popup Contact Customer-->
+<ng-template #content8 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="contactCustomerForm" (ngSubmit)="d(send())">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'contact_customer.contact_customer'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label>{{'contact_customer.object'| translate }}</label>
+          <div class="input-group">
+            <input id="subject" type="text" formControlName="subject" name="subject" class="form-control">
+          </div>
+        </div>
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label> {{'contact_customer.message'| translate }} </label>
+          <div class="input-group">
+            <textarea id="message" type="text" formControlName="message" name="message" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.cancel' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="contactCustomerForm.invalid">{{'button.send' |
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!--popup Assign To Customer-->
+<ng-template #content9 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="assignToCustomerForm"
+      (ngSubmit)="d(updateAssignCustomer())">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'assign_customer.assign_customer'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label>{{'assign_customer.reason'| translate }}</label>
+          <div class="input-group">
+            <select class="form-control" formControlName="reason">
+              <option disabled selected value>{{'assign_customer.default_select'| translate }}</option>
+              <option>{{'assign_customer.update_application_data'| translate }}</option>
+              <option>{{'assign_customer.complete_application'| translate }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label> {{'assign_customer.note'| translate }} </label>
+          <div class="input-group">
+            <textarea id="noet" type="text" formControlName="note" name="note" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.cancel' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="assignToCustomerForm.invalid">{{'button.save' |
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #content1 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmitDecline()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'cancel.cancel_loan'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'cancel.cancel_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifDeclineEntity of settingMotifDeclineEntitys"
+              [ngValue]="settingMotifDeclineEntity">
+              {{settingMotifDeclineEntity.libelle}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <div class="col-xl-12">
+          <div class="row no-gutters center-elem">
+            <div class="col-xl-10 d-flex align-items-center">
+              <div class="position-relative form-group">
+                <div>
+                  <div class="form-group form-check">
+                    <input class="form-check-input" id="exampleCustomCheckboxDecline" type="checkbox"
+                      formControlName="confirm" (change)="changeChecboxDecline($event)">
+                    <label class="form-check-label" for="exampleCustomCheckboxDecline">{{'button.confirm_checkbox' |
+                      translate}}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 d-flex justify-content-end">
+              <div class="px-1">
+                <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+                  translate}}</button>
+              </div>
+              <div class="px-1">
+                <button type="submit" class="btn btn-danger">{{'button.ok' | translate}}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalFormClaims" (ngSubmit)="onSubmitClaims()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'setting.setting_claim.new'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="onClose()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'setting.setting_users.category'| translate }}</label>
+          <select class="form-control" (change)="onCategoryChange($event.target.value)">
+            <option selected disabled value> </option>
+            <option *ngFor="let categoryClaims of CategoryClaims" [ngValue]="categoryClaims">
+              {{ categoryClaims }}
+            </option>
+          </select>
+          <span *ngIf="formError" class="text-danger">{{ 'alert.enter_required_data' | translate }}</span>
+        </div>
+        <div *ngIf="selectedCategory" class="position-relative col-xl-12 col-md-12">
+        <div>
+          <label>{{'setting.setting_claim.subject'| translate }}</label>
+          <span class="text-danger">*</span>
+          <select class="form-control"  formControlName="subject"  >
+            <option selected disabled value> </option>
+            <option *ngFor="let settingClaims of SettingClaims"  [ngValue]="settingClaims.id">
+              {{ settingClaims.subject }}
+            </option>
+          </select>
+        </div>
+        <div >
+          <label> {{'name'| translate }}</label>
+          <span class="text-danger">*</span>
+          <p-autoComplete  [suggestions]="customerPaginationEntity.resultsCustomers"
+          (completeMethod)="filterCustomerName($event)"  formControlName="name"  
+          placeholder="{{'name' | translate}}" field="customerNameNoPipe" 
+          id="user-autocomplete" [size]="30" [minLength]="1" [forceSelection]="true"
+          [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+          <ng-template let-filteredCustomer pTemplate="item">
+            {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+          </ng-template>
+        </p-autoComplete>
+        </div> 
+      </div>
+        
+      
+          <div *ngIf="selectedCategory === 'Prospect'" class="position-relative col-xl-12 col-md-12">
+          <div>
+            <label>{{ 'telephone' | translate }}</label>
+            <span class="text-danger">*</span>
+            <input type="number" class="form-control" formControlName="phone" >
+          </div>
+          <div>
+            <label>{{ 'email' | translate }} </label>
+            <span class="text-danger">*</span>
+            <input type="email" class="form-control" formControlName="email">
+          </div>
+          
+        </div>
+        <div *ngIf="selectedCategory" class="position-relative col-xl-12 col-md-12">
+        <div>
+          <label>{{ 'description' | translate }}  </label>
+          <span class="text-danger">*</span>
+          <textarea class="form-control" formControlName="body"></textarea>
+        </div>
+      </div>
+      </div>
+      <div class="modal-footer py-1">
+        <div class="col-xl-12">
+          <div class="row no-gutters center-elem">
+            
+            <div class="col-xl-12 d-flex justify-content-end">
+              <div class="px-1">
+                <button type="button" class="btn btn-outline-danger" (click)="onClose()">{{'button.close' |
+                  translate}}</button>
+              </div>
+              <div class="px-1">
+                <button type="submit" class="btn btn-primary">{{'button.save' | translate}}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

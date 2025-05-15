@@ -1,0 +1,144 @@
+<app-page-title [heading]=" 'sidebar.expenses'| translate " [icon]="'pe-7s-piggy'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="row mr-30">
+    <div class="col-xl-12">
+        <div *ngIf="!sharedService.habilitationButton('ADD',currentPath)" class=" d-flex justify-content-between">
+            <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                <button class="mr-2 btn-icon btn btn-primary" (click)="addExpenses(addExpensesModal)">
+                  <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+                    {{'expenses.add_expenses' | translate}}
+                </button>
+            </div>
+        </div>
+        <mat-tab-group class="page-mat-tabs">
+            <!-- status new -->
+            <mat-tab class="col-xl-2">
+                <ng-template matTabLabel>
+                    <span class="loans-lenght text-primary">{{expensesCount.countNew}}</span>
+                    <span class="control-label">{{ 'online_application.new' | translate }}</span>
+                </ng-template>
+                <app-expenses-table [statusTab]="0"></app-expenses-table>
+            </mat-tab>
+            <!-- status accepted -->
+            <mat-tab class="col-xl-2">
+                <ng-template matTabLabel>
+                    <span class="loans-lenght text-success">{{expensesCount.countAccepted}}</span>
+                    <span class="control-label">{{ 'online_application.accepted' | translate }}</span>
+                </ng-template>
+                <app-expenses-table [statusTab]="1"></app-expenses-table>
+            </mat-tab>
+            <!-- status rejected -->
+            <mat-tab class="col-xl-2">
+                <ng-template matTabLabel>
+                    <span class="loans-lenght text-danger">{{expensesCount.countRejected}}</span>
+                    <span class="control-label">{{ 'online_application.rejected' | translate }}</span>
+                </ng-template>
+                <app-expenses-table [statusTab]="-1"></app-expenses-table>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
+<!-- Add Expenses Modal-->
+<ng-template #addExpensesModal let-c="close" let-d="dismiss">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <form class="form col-xl-12 col-md-12 px-0" [formGroup]="newExpensesForm">
+            <div class="modal-header py-2">
+                <h4 class="modal-title">{{'expenses.add_expenses' | translate}}</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row no-gutters">
+                <div class="position-relative form-group col-xl-12 col-md-12">
+                    {{'expenses.balance' | translate}} : {{balance| number: this.decimalPlaces:'fr'}} EGP
+                </div>
+                <div class=" form-group col-xl-6 col-md-6 px-1">
+                    <label>{{'expenses.expenses_type' | translate}}</label>
+                    <div class="input-group">
+                        <select class="form-control" formControlName="expensesType" (change)="changeAmountByType()">
+                            <option selected value></option>
+                            <option *ngFor="let type of expensesTypes" [ngValue]="type">
+                                {{type.libel}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-xl-6 col-md-6 px-1">
+                    <label>  {{'expenses.expenses_amount' | translate}}  </label>
+                    <input class="form-control" type="number" min="0" formControlName="expensesAmount">
+                </div>
+            </div>
+            <div class="position-relative form-group col-xl-12 col-md-12">
+                <label> {{'expenses.expenses_description' | translate}} </label>
+                <div class="input-group">
+                    <textarea class="form-control" formControlName="description"></textarea>
+                </div>
+            </div>
+            <!-- Upload document -->
+            <div class="position-relative form-group col-xl-12 col-md-12 ">
+                <div class="table-responsive">
+                    <table class="align-middle mb-0 table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-left">{{'upload_document.document_type'| translate }} <span
+                                        class="text-danger">*</span></th>
+                                <th class="text-center">{{'upload_document.Upload_new_version'| translate }}</th>
+                                <th class="text-center"></th>
+                                <th class="text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="widget-content p-0">
+                                        <div class="widget-content-wrapper">
+                                            <div class="widget-content-left flex2">
+                                                <div class="widget-heading">{{docType}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="widget-content p-0">
+                                        <div class="widget-content-wrapper">
+                                            <div class="widget-content-left flex2">
+                                                <div class="widget-heading">{{docTitle}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <button
+                                        class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                                        type="button" (click)="fileInput.click()">
+                                        <i class="pe-7s-cloud-upload btn-icon-wrapper"></i>
+                                        <input #fileInput type="file" [name]="'file'" (change)="addDocuments($event)"
+                                            style="display:none;" formControlName="document" required>
+                                    </button>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-warning" (click)="view()">
+                                        <i class="pe-7s-look btn-icon-wrapper text-white"
+                                             ></i>
+                                    </button>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-danger" (click)="deleteDocument()">
+                                        <i class="pe-7s-trash btn-icon-wrapper" ></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- footer modal -->
+            <div class="modal-footer py-1">
+                <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.cancel' |
+                    translate}}</button>
+                <button type="submit" class="btn btn-success" (click)="onSubmitNewExpenses()">{{'button.submit' |
+                    translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

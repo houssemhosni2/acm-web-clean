@@ -1,0 +1,359 @@
+<div class="header-btn-lg pr-0 ml-0">
+  <div class="header-dots">
+    <button *ngIf="offline " type="button" class="btn btn-link mr-2 ">
+      <span>
+        <button class="btn-icon btn-icon-only btn d-flex justify-items-center p-0" (click)="changeStatus()">
+          <svg width="28px" height="28px" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 5L19 19" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M7.19222 6.10634C7.18748 6.10865 7.18274 6.11095 7.178 6.11327C5.61777 6.87424 4.25979 7.99367 3.21509 9.38003C2.88272 9.82111 2.97084 10.4481 3.41191 10.7805C3.85299 11.1129 4.47999 11.0247 4.81236 10.5837C5.66712 9.44937 6.77819 8.53347 8.05474 7.91085C8.2694 7.80616 8.48772 7.71025 8.70914 7.62326L7.19222 6.10634ZM10.2743 9.18837C9.66024 9.32403 9.06223 9.53207 8.49312 9.80965C7.3584 10.3631 6.37078 11.1772 5.611 12.1855C5.27863 12.6266 5.36675 13.2536 5.80782 13.5859C6.24889 13.9183 6.8759 13.8302 7.20827 13.3891C7.77811 12.6329 8.51882 12.0223 9.36986 11.6072C10.2154 11.1948 11.146 10.9871 12.0865 11.0006L10.2743 9.18837ZM17.8876 13.9733L12.9738 9.05948C13.9447 9.17853 14.888 9.47497 15.7559 9.93642C16.8706 10.5291 17.8292 11.3772 18.5533 12.4114C18.8701 12.8638 18.7601 13.4873 18.3077 13.8041C18.178 13.8949 18.0342 13.9507 17.8876 13.9733ZM10.9731 7.05879L9.26083 5.34653C10.2147 5.10125 11.2006 4.98437 12.1921 5.00168C13.9277 5.03197 15.6316 5.47261 17.1643 6.28758C18.697 7.10254 20.0151 8.26868 21.0108 9.69066C21.3275 10.1431 21.2176 10.7666 20.7652 11.0834C20.3128 11.4002 19.6892 11.2902 19.3725 10.8378C18.5578 9.67438 17.4794 8.72026 16.2253 8.05347C14.9713 7.38669 13.5772 7.02616 12.1572 7.00137C11.7605 6.99445 11.365 7.01377 10.9731 7.05879ZM13.0001 18C13.0001 17.4477 12.5524 17 12.0001 17C11.4478 17 11.0001 17.4477 11.0001 18C11.0001 18.5523 11.4478 19 12.0001 19C12.5524 19 13.0001 18.5523 13.0001 18ZM10.2466 13.4048C10.814 13.1281 11.4387 12.9896 12.0699 13.0006C12.701 13.0116 13.3206 13.1719 13.878 13.4682C14.4353 13.7646 14.9146 14.1886 15.2767 14.7057C15.5935 15.1581 15.4835 15.7816 15.0311 16.0984C14.5787 16.4152 13.9552 16.3053 13.6384 15.8528C13.4574 15.5943 13.2177 15.3823 12.939 15.2341C12.6604 15.0859 12.3506 15.0058 12.035 15.0003C11.7194 14.9948 11.407 15.0641 11.1233 15.2024C10.8397 15.3408 10.5928 15.5443 10.4028 15.7964C10.0704 16.2374 9.44344 16.3256 9.00236 15.9932C8.56129 15.6608 8.47317 15.0338 8.80554 14.5927C9.18543 14.0886 9.67924 13.6815 10.2466 13.4048Z"
+              fill="#fff" />
+          </svg>
+        </button>
+      </span>
+    </button>
+    <button *ngIf="!offline && sizeModule != 0" type="button" class="btn btn-link mr-2 ">
+      <span>
+        <button class="btn-icon btn-icon-only btn d-flex justify-items-center p-0" (click)="changeStatus()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28px" height="28px" viewBox="0 0 24 24" fill="none">
+            <circle cx="1" cy="1" r="1" transform="matrix(1 0 0 -1 11 19)" fill="#fff" />
+            <path
+              d="M20.1915 10.2642C19.2864 8.97153 18.0881 7.9114 16.6947 7.17053C15.3014 6.42965 13.7524 6.02907 12.1746 6.00152C10.5967 5.97398 9.03471 6.32026 7.61632 7.01206C6.19793 7.70385 4.9634 8.72152 4.01367 9.98185M17.7341 12.985C17.1005 12.0801 16.2617 11.338 15.2863 10.8194C14.311 10.3008 13.2267 10.0203 12.1222 10.0011C11.0177 9.98179 9.9243 10.2242 8.93143 10.7084C7.93856 11.1927 7.07439 11.9051 6.40958 12.7873M14.4575 15.2793C14.1859 14.8915 13.8265 14.5734 13.4084 14.3512C12.9904 14.1289 12.5257 14.0087 12.0524 14.0005C11.579 13.9922 11.1104 14.0961 10.6849 14.3036C10.2594 14.5112 9.88904 14.8165 9.60412 15.1946"
+              stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </span>
+    </button>
+    <button type="button" class="btn btn-link mr-2">
+      <span>
+        <button  *ngIf="sizeModule != 0" class="btn-icon btn-icon-only btn d-flex justify-items-center p-0" [routerLink]="['/offline/overview']">
+          <i class="fa fa-refresh btn-icon-wrapper text-white  pt-2 font-size-xlg"></i>
+        </button>
+      </span>
+    </button>
+
+    <div class="btn-group" ngbDropdown autoClose="true" placement="bottom">
+
+      <button type="button" class="btn btn-link mr-2 " ngbDropdownToggle>
+        <span>
+          <button class="btn-icon btn-icon-only btn d-flex justify-items-center p-0">
+            <i class="fa fa-bell btn-icon-wrapper text-white  pt-2 font-size-xlg"></i>
+            <span class="badge bg-danger ml-0 mb-3">{{loanSharedService.countNotifications}}</span>
+          </button>
+        </span>
+      </button>
+
+
+
+      <div class="dropdown-menu" ngbDropdownMenu>
+
+        <div class="card-tabbed-header" *ngIf="!notifChecker">
+          <span class="no-data-notification">{{'NOTIFICATION.NO_DATA' | translate}}</span>
+        </div>
+
+        <div class="card-tabbed-header" *ngIf="notifChecker">
+          <div class="scroll-area-sm shadow-overflow">
+            <perfect-scrollbar style="max-height: 500px;" class="px-2">
+              <div
+                class="vertical-without-time vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                <div style="position: static;" class="ps ps--active-y" ng-reflect-disabled="false">
+                  <div class="ps-content">
+                    <ul class="todo-list-wrapper list-group list-group-flush">
+                      <li class="list-group-item pr-0 list-group-item-action btn"
+                        *ngFor="let notification of loanSharedService.getNotification(); let i = index">
+                        <div class="todo-indicator" [ngClass]="{
+                           'bg-primary' : notification.typeMotif === 'INFO',
+                           'bg-warning' : notification.typeMotif === 'WARN',
+                           'bg-danger' : notification.typeMotif === 'ALERT'}"></div>
+                        <div class="widget-content p-0">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left mr-2">
+                            </div>
+                            <div class="widget-content-left">
+                              <div class="widget-heading">
+                                {{notification.category}}
+                                <div class="badge bg-primary ml-2 " *ngIf="notification.typeMotif === 'INFO'">
+                                  {{'notifications.info' | translate}}
+                                </div>
+                                <div class="badge bg-warning ml-2 " *ngIf="notification.typeMotif === 'WARN'">
+                                  {{'notifications.warn' | translate}}
+                                </div>
+                                <div class="badge bg-danger ml-2 " *ngIf="notification.typeMotif === 'ALERT'">
+                                  {{'notifications.alert' | translate}}
+                                </div>
+                              </div>
+                              <div class="widget-subheading">
+                                <i *ngIf="notification.action === 'NEW APPLICATION' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.new_loan' | translate }}
+                                  {{' ' + notification.loanDTO.customerNameNoPipe|uppercase}}
+                                  {{'notifications.msg.at' | translate}}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                </i>
+                                <i *ngIf="notification.action === 'SUBMITTED FOR APPROVAL' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.submit_loan' | translate }}
+                                  {{' ' + notification.insertBy|uppercase}}
+                                  {{'notifications.msg.at' | translate}}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                </i>
+                                <i *ngIf="notification.action === 'UPDATE' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.submit_loan' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'REVIEW' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.review_loan' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'APPROVED' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.approved_loan' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'REJECT' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.reject_loan' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CLIENT ASKED FOR REVIEW' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.client_ask_for_review' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CLIENT ADD DATA' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.add_data_customer' | translate }}
+                                  {{'sidebar.customer' | translate }}
+                                  {{ notification.loanDTO?.customerNameNoPipe | uppercase }}
+                                  {{'notifications.on_loan' | translate }}
+                                  {{ notification.loanDTO?.accountNumber| uppercase}}
+                                  {{'notifications.at' | translate}}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                </i>
+                                <i *ngIf="notification.action === 'READY FOR DISBURSMENT' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.ready_for_disbursement' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'ALERT' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.warning_loan' | translate }}
+                                  {{ notification.loanDTO.accountNumber}}
+                                </i>
+                                <i *ngIf="notification.action === 'WARNING' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.alert_loan' | translate }}
+                                  {{ notification.loanDTO.accountNumber}}
+                                </i>
+                                <i *ngIf="notification.action === 'REASSIGN' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.reassign_loan' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'ASSIGN_IB' && notification.category === 'LOAN_IB'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.assign_loan' | translate }}
+                                  {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy| uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'MESSAGE_IB' && notification.category === 'MESSAGE_IB'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.message_customer' | translate }}
+                                  {{ notification.insertBy }}
+                                  {{'notifications.at' | translate }}
+                                  {{ notification.creactionDate | date:'dd/MM/yyyy hh:mm a'}}
+                                </i>
+                                <i *ngIf="notification.action === 'AUDIT' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.audit_loan' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'RISK' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.risk_loan' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'ASSIGN EXPENSES' && notification.category === 'EXPENSES'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.assign_expenses' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'REJECT EXPENSES' && notification.category === 'EXPENSES'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.assign_expenses' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'ACCEPT EXPENSES' && notification.category === 'EXPENSES'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.assign_expenses' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CENTRAL REVISION 2' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.central_revision' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'UPLOAD SIGNED AGREEMENT' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.upload_sign_agreement' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CUSTOMER DECISION' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.customer_decision' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'MEZA CARD SENT' && notification.category === 'MEZA'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.sent_meza_card' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'COMPLIANCE' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.compliance_loan' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CENTRAL REVISION 2' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.central_revision' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'UPLOAD SIGNED AGREEMENT' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.upload_sign_agreement' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CUSTOMER DECISION' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.customer_decision' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'NEW' && notification.category === 'REQUEST_EXCEPTION'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.exception_request_new' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CANCELLED' && notification.category === 'REQUEST_EXCEPTION'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.exception_request_cancelled' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'ACCEPTED' && notification.category === 'REQUEST_EXCEPTION'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.exception_request_accepted' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'REJECTED' && notification.category === 'REQUEST_EXCEPTION'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.exception_request_rejected' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'NEW' && notification.category === 'LOAN'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.new_notif_approval_participants'|translate}}
+                                </i>
+                                <i *ngIf="notification.action === 'NEW'&& notification.category === 'REMINDER_COLLECTION' "
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.reminder_notif' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'NEW'&& notification.category === 'REMINDER_SUP_COLLECTION' "
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.reminder_notif' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                                <i *ngIf="notification.action === 'CONDITIONNAL APPROVE' && notification.category === 'CONDITIONNAL_APPROVE'"
+                                  (click)="loanDetails(notification, i)">
+                                  {{'notifications.msg.conditionnal_approve' | translate }}
+                                  {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+                                  {{'notifications.msg.by' | translate}}
+                                  {{ notification.insertBy |uppercase}}
+                                </i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </perfect-scrollbar>
+          </div>
+        </div>
+        <div class="nav-justified">
+          <ul class="nav flex-column">
+            <li class="nav-item-divider nav-item mt-0"></li>
+            <li class="nav-item-btn text-center nav-item">
+              <button class="btn-shadow btn-wide btn-pill btn btn-focus btn-sm notif-btn"
+                [routerLink]="['/notification']">
+                {{'notifications.view_more' | translate}}</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loanSharedService.loadDataOffline" class="overlay" [dir]="'ltr'">
+  <circle-progress *ngIf="isOfflineModeEnabled()" class="circle" [percent]="progress" [radius]="100"
+    [outerStrokeWidth]="16" [innerStrokeWidth]="8" [outerStrokeColor]="'#30BFA5'" [innerStrokeColor]="'#495057'"
+    [animation]="false" [animationDuration]="10000" [showSubtitle]="false" [titleFontSize]="35" [unitsFontSize]="35"
+    [titleFontWeight]="600" [unitsFontWeight]="600"></circle-progress>
+</div>

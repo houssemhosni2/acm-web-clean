@@ -1,0 +1,24 @@
+<app-page-title *ngIf="type==='COLLECTION'" [heading]="'sidebar.unassigned_collections' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<app-page-title  *ngIf="type==='LEGAL'" [heading]="'sidebar.unassigned_legal_collections' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<app-page-title  *ngIf="type==='PROSPECTION'" [heading]="'sidebar.unassigned_prospection' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<div class="row mr-30">
+    <div class="col-xl-12">
+      <mat-tab-group class="page-mat-tabs">
+        <mat-tab class="col-xl-2">
+          <ng-template matTabLabel>
+            <div class="col-xl-2">
+              <span class="loans-lenght text-muted">  </span>
+              <span *ngIf="type==='COLLECTION'" class="control-label">{{ 'collections.unassigned_collection' | translate }}</span>
+              <span *ngIf="type==='LEGAL'" class="control-label">{{ 'sidebar.unassigned_legal_collections' | translate }}</span>
+              <span *ngIf="type==='PROSPECTION'" class="control-label">{{ 'sidebar.unassigned_prospection' | translate }}</span>
+            </div>
+          </ng-template>
+       <app-table-unassigned-collections [collectionPaginationEntity]="collectionPaginationEntity" [statusTab]="0" [products]="products" [branches]="branches" [statusList]="statusList" [collectionType]="type">
+        </app-table-unassigned-collections>
+        </mat-tab>
+       </mat-tab-group>
+    </div>
+</div>

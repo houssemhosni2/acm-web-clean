@@ -1,0 +1,259 @@
+<app-page-title [heading]="'receipt-view.receipt-view' | translate " [icon]="'pe-7s-cash'"
+    [status]="-1"></app-page-title>
+
+<div class="card-hover-shadow-2x m-1 mb-2 card">
+    <div class="card-header d-flex justify-content-between">
+        {{ 'credit-line-account.filter' | translate }}
+    </div>
+    <form [formGroup]="advancedSearchForm">
+        <div class="card-body">
+            <div class="col-xl-12 col-sm-12 row no-gutters">
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{ 'receipt-view.receipt-number' | translate }}</label>
+                        <input type="number" class="form-control" formControlName="receiptNumber">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{ 'receipt-view.value-date-from' | translate }}</label>
+                        <input type="date" class="form-control" formControlName="valueDateFrom">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{ 'receipt-view.value-date-to' | translate }}</label>
+                        <input type="date" class="form-control" formControlName="valueDateTo">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{ 'receipt-view.branch-name' | translate }}</label>
+                        <select class="form-control" formControlName="branchId">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let branch of branchList" [value]="branch.id">
+                                {{ branch.code }} - {{ branch.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{ 'receipt-view.currency' | translate }}</label>
+                        <select class="form-control" formControlName="currencyId">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let currency of currencyList" [value]="currency.id">
+                                {{ currency.symbol}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{'upload_document.Customer_Name'| translate }}</label>
+                        <p-autoComplete [(ngModel)]="customerName"
+                            [suggestions]="customerPaginationEntity.resultsCustomers"
+                            (completeMethod)="filterCustmorname($event)" formControlName="customerName"
+                            placeholder="{{'upload_document.Customer_Name'| translate }}" field="customerNameNoPipe"
+                            id="user-autocomplete" (onSelect)="selectLoanByCustomer()" [size]="30" [minLength]="1"
+                            [forceSelection]="false" [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+                            <ng-template let-filteredCustomer pTemplate="item">
+                                {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{'upload_document.customer_number'| translate }}</label>
+                        <input placeholder="{{'upload_document.customer_number'| translate }}"
+                            formControlName="customerNumber" name="customerNumber" type="text" class="form-control"
+                            (change)="selectLoanByCustomer()" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{'upload_document.Account_Number'| translate }}</label>
+                        <p-autoComplete dataKey="accountNumber" (completeMethod)="accountChange($event)"
+                            *ngIf="cutomerselectedInput === false" formControlName="accountNumber"
+                            placeholder="{{'upload_document.Loan_Account'| translate }}" [suggestions]="loanByCustomer"
+                            field="accountNumber" [size]="30" [minLength]="1" [forceSelection]="false"
+                            [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+                        </p-autoComplete>
+                        <select formControlName="accountNumber" class="form-control"
+                            *ngIf="cutomerselectedInput === true">
+                            <option *ngIf="loanFound" [ngValue]=null>{{'upload_document.account'| translate }}</option>
+                            <option *ngIf="!loanFound">{{'upload_document.noAccount'| translate }}</option>
+                            <option *ngFor="let l of loanByCustomer" [ngValue]="l.accountNumber">{{l.accountNumber}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="position-relative form-group">
+                        <label>{{'receipt-view.gl-account'| translate }}</label>
+                        <p-autoComplete 
+                            [suggestions]="acmGlAccountPagination.results"
+                            (completeMethod)="glAccountChange($event)" formControlName="acmGlAccount"
+                            placeholder="{{'receipt-view.gl-account'| translate }}" field="accountNumber"
+                            id="user-autocomplete" [size]="30" [minLength]="1"
+                            [forceSelection]="false" [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+                            <ng-template let-glAccount pTemplate="item">
+                                {{glAccount.accountNumber}} - {{glAccount.name}}
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-block text-end card-footer p-2">
+            <button class="btn btn-light mx-2" (click)="resetForm()">
+                <i class="pe-7s-refresh-2 btn-icon-wrapper"></i>
+                {{'upload_document.refresh'| translate }}</button>
+            <button class="btn btn-primary " (click)="onSubmit()" type="submit">{{'upload_document.search'| translate
+                }}</button>
+        </div>
+    </form>
+    
+</div>
+<div class="card-hover-shadow-2x m-1 mb-2 card">
+    <div class="card-header d-flex justify-content-between">
+        {{ "receipt-view.receipt-view" | translate }}
+        <div class="d-flex flex-end">
+            <div class="d-inline-block" ngbDropdown (openChange)="saveUserScreenPreferences($event)">
+                <button type="button" ngbDropdownToggle class="m-2 btn btn-info">
+                    <i class="pe-7s-config" style="font-size: 1.2rem;"></i></button>
+                <div ngbDropdownMenu class="dropdown-menu-hover-primary">
+                    <div class="flex ">
+                        <div class="flex flex-column justify-content-center">
+                            <div *ngFor="let col of cols">
+                                <div class="custom-checkbox custom-control m-2">
+                                    <label class="custom-control-label m-2">
+                                        <input class="custom-control-input m-2" type="checkbox"
+                                            [checked]="colExists(col)" (change)="changeTableColumns($event, col)" />
+                                        {{ col.header | translate }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-inline-block">
+                <button class=" m-2 btn btn-info" (click)="exportexcel()">
+                    <i class="pe-7s-download btn-icon-wrapper" style="font-size: 1.5rem;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <p-table #dt [responsive]="true" [autoLayout]=true [value]="acmJournalPagination.results"
+            (onLazyLoad)="reloadJournalList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+            [totalRecords]="acmJournalPagination.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+            [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [(first)]="first" >
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                        <div class="center-elem text-center">
+                            {{ col.header | translate}}
+                            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <input *ngSwitchCase="'receiptNumber'" class="form-control" type="number"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'description'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <select *ngSwitchCase="'acmBranch'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, 'acmBranch', 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let branch of branchList" [value]="branch.id">
+                                {{ branch.code }} - {{ branch.name }}
+                            </option>
+                        </select>
+                        <input *ngSwitchCase="'customerName'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, 'customerName', 'contains')">
+                        <input *ngSwitchCase="'customerNumber'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, 'customerNumber', 'contains')">
+                        <input *ngSwitchCase="'accountNumber'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, 'accountNumber', 'contains')">
+                        <select *ngSwitchCase="'loanStatus'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, 'loanStatus', 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option value="1">{{ 'dashboard.new' | translate }}</option>
+                            <option value="2">{{ 'dashboard.drafts' | translate }}</option>
+                            <option value="3">{{ 'dashboard.awaiting_approval' | translate }}</option>
+                            <option value="4">{{ 'dashboard.approved' | translate }}</option>
+                            <option value="5">{{ 'dashboard.rejected' | translate }}</option>
+                            <option value="6">{{ 'dashboard.cancelled' | translate }}</option>
+                            <option value="7">{{ 'dashboard.review' | translate }}</option>
+                            <option value="8">{{ 'dashboard.issued' | translate }}</option>
+                        </select>
+                        <input *ngSwitchCase="'amount'" class="form-control" type="number"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'valueDate'" class="form-control" type="date"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'drAccount'" class="form-control" type="string"
+                            (input)="dt.filter($event.target.value, 'drAccount', 'contains')">
+                        <input *ngSwitchCase="'crAccount'" class="form-control" type="string"
+                            (input)="dt.filter($event.target.value, 'crAccount', 'contains')">
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-journals let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <div *ngSwitchCase="'receiptNumber'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'acmBranch'">{{rowData["acmBranch"].name}}</div>
+                        <div *ngSwitchCase="'customerName'">
+                            <ng-container *ngIf="rowData['acmLoan'].customerDTO.customerName as text">
+                                {{ text.split('|').join(' ') }}
+                            </ng-container>
+                        </div>
+                        <div *ngSwitchCase="'customerNumber'">{{rowData["acmLoan"].customerDTO.customerNumber}}</div>
+                        <div *ngSwitchCase="'accountNumber'">{{rowData["acmLoan"].accountNumber}}</div>
+                        <div *ngSwitchCase="'loanStatus'">
+                            <div class="badge bg-primary" *ngIf="rowData['acmLoan'].statut == 1">
+                                {{ 'dashboard.new' | translate }}</div>
+                            <div class="badge bg-info" *ngIf="rowData['acmLoan'].statut == 2">
+                                {{ 'dashboard.drafts' | translate }}</div>
+                            <div class="badge bg-info" *ngIf="rowData['acmLoan'].statut == 3">
+                                {{ 'dashboard.awaiting_approval' | translate }}</div>
+                            <div class="badge bg-success" *ngIf="rowData['acmLoan'].statut == 4">
+                                {{ 'dashboard.approved' | translate }}</div>
+                            <div class="badge bg-danger" *ngIf="rowData['acmLoan'].statut == 5">
+                                {{ 'dashboard.rejected' | translate }}</div>
+                            <div class="badge bg-danger" *ngIf="rowData['acmLoan'].statut == 6">
+                                {{ 'dashboard.cancelled' | translate }}</div>
+                            <div class="badge bg-warning" *ngIf="rowData['acmLoan'].statut == 7">
+                                {{ 'dashboard.review' | translate }}</div>
+                            <div class="badge bg-success" *ngIf="rowData['acmLoan'].statut == 8">
+                                <div *ngIf="rowData['acmLoan'].earlyPaid === true">
+                                    Early Paid
+                                </div>
+                                <div *ngIf="rowData['acmLoan'].drAmount > rowData['acmLoan'].crAmount">
+                                    {{ 'dashboard.issued' | translate }}
+                                </div>
+                                <div
+                                    *ngIf="rowData['acmLoan'].drAmount <= rowData['acmLoan'].crAmount && (rowData['acmLoan'].earlyPaid === false || rowData['acmLoan'].earlyPaid === null)">
+                                    Paid
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngSwitchCase="'amount'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'valueDate'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+                        <div *ngSwitchCase="'drAccount'">
+                            {{rowData['drAccount']?.accountNumber}} - {{rowData['drAccount']?.name}}
+                        </div>
+                        <div *ngSwitchCase="'crAccount'">
+                            {{rowData['crAccount']?.accountNumber}} - {{rowData['crAccount']?.name}}
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

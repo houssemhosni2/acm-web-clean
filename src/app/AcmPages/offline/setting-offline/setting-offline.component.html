@@ -1,0 +1,314 @@
+<div >
+    <div class="">
+       <div class="modal-content customer-modal-content">
+          <div class="modal-header customer-modal-header">
+             <h4 class="modal-title custom-modal-title">{{'load_offline_data'| translate }}</h4>
+          </div>
+          <div class="modal-body custom-modal-body p-4">
+             <!-- Loans -->
+             <div class="my-4">
+                <form [formGroup]="loanPaginationForm">
+                   <div class="form-check form-check-custom">
+                      <input class="form-check-input form-check-input-custom" type="checkbox" formControlName="isChecked">
+                      <label class="form-check-label form-check-label-custom" for="isChecked">
+                      {{'sidebar.loan_application'| translate }}
+                      </label>
+                   </div>
+                   <hr>
+                   <div class="row" *ngIf="loanPaginationForm.get('isChecked').value" [@slideInOut]>
+                   <div class="form-group d-flex flex-column col-2">
+                      <label for="customerType">{{'category_loan.category_loan' | translate}}</label>
+                      <select class="form-control" id="customerType" formControlName="customerType">
+                         <option value="null">{{'category_loan.all' | translate}}</option>
+                         <option value="INDIV">{{'category_loan.individual' | translate}}</option>
+                         <option value="ORG">{{'category_loan.organisation' | translate}}</option>
+                         <option value="GRP">{{'category_loan.groupe' | translate}}</option>
+                      </select>
+                   </div>
+                   <div class="form-group d-flex flex-column col-2">
+                      <label for="productDescription">{{'dashboard.product_name' | translate}}</label>
+                      <select class="form-control" id="productDescription" formControlName="productDescription">
+                         <option value="null">{{'category_loan.all' | translate}}</option>
+                         <option *ngFor="let product of products" value="{{product.value}}">{{product.label}}</option>
+                      </select>
+                   </div>
+                   <div class="form-group d-flex flex-column col-2">
+                      <label for="customerNameNoPipe">{{'dashboard.client_name' | translate}}</label>
+                      <input class="form-control placeholder" type="text" id="customerNameNoPipe" formControlName="customerNameNoPipe">
+                   </div>
+                   <div class="form-group d-flex flex-column col-2">
+                      <label for="branchName">{{'customer_management.branch' | translate}}</label>
+                      <select class="form-control" id="branchName" formControlName="branchName">
+                         <option value="null">{{'category_loan.all' | translate}}</option>
+                         <option *ngFor="let branch of branches" value="{{branch.value}}">{{branch.value}}</option>
+                      </select>
+                   </div>
+                   <div class="form-group d-flex flex-column col-2">
+                      <label for="etapeWorkflow">{{'dashboard.status' | translate}}</label>
+                      <select class="form-control" id="etapeWorkflow" formControlName="etapeWorkflow">
+                         <option value="null">{{'category_loan.all' | translate}}</option>
+                         <option *ngFor="let statu of status" value="{{statu.label}}">
+                            <!-- Draft Badge: WARNING -->
+                            <div *ngIf="statu.value === 1">{{'process.initial_check' | translate}}</div>
+                            <div *ngIf="statu.value === 2">{{'process.field_visit' | translate}}</div>
+                            <div *ngIf="statu.value === 3">{{'process.guarantor' | translate}}</div>
+                            <div *ngIf="statu.value === 4">{{'process.collateral' | translate}}</div>
+                            <div *ngIf="statu.value === 5">{{'process.add_documents' | translate}}</div>
+                            <div *ngIf="statu.value === 6">{{'process.financial_analysis' | translate}}</div>
+                            <div *ngIf="statu.value === 18">{{'process.Screening' | translate}}</div>
+                            <div *ngIf="statu.value === 19">{{'process.Audit' | translate}}</div>
+                            <div *ngIf="statu.value === 20">{{'process.Risk' | translate}}</div>
+                            <div *ngIf="statu.value === 21">{{'process.Complete_Loan_Data' | translate}}</div>
+                            <!-- Approval Lvl + Review Badge: WARNING -->
+                            <div *ngIf="statu.value === 7">{{'process.approval_L1' | translate}}</div>
+                            <div *ngIf="statu.value === 8">{{'process.approval_L2' | translate}}</div>
+                            <div *ngIf="statu.value === 9">{{'process.approval_L3' | translate}}</div>
+                            <div *ngIf="statu.value === 10">{{'process.approval_L4' | translate}}</div>
+                            <div *ngIf="statu.value === 16">{{'process.Review' | translate}}</div>
+                            <!-- Approved Badge: SUCCESS -->
+                            <div *ngIf="statu.value === 11">{{'process.customer_decision' | translate}}</div>
+                            <div *ngIf="statu.value === 12">{{'process.upload_Agreements' | translate}}</div>
+                            <div *ngIf="statu.value === 13">{{'process.Disbursement' | translate}}</div>
+                            <div *ngIf="statu.value === 23">{{'process.central_revision' | translate}}</div>
+                            <!-- Rejected/Cancelled/Decline Badge: Danger -->
+                            <div *ngIf="statu.value === 14">{{'process.Rejected' | translate}}</div>
+                            <div *ngIf="statu.value === 15">{{'process.Cancelled' | translate}}</div>
+                            <div *ngIf="statu.value === 17">{{'process.Decline' | translate}}</div>
+                            <div *ngIf="statu.value == undefined">{{statu.label | uppercase}}</div>
+                         </option>
+                      </select>
+                   </div>
+                   <div class="form-group d-flex flex-column col-2 px-4" style="justify-content: end;">
+                      <button type="button" (click)="advancedLoan()" class="btn btn-primary mx-4" style="font-size: medium;">{{'button.advanced' | translate}}</button>
+                   </div>
+             </div>
+             </form>
+          </div>
+          <!-- customer -->
+          <div class="my-4">
+             <form [formGroup]="customerPaginationForm" >
+                <div class="form-check form-check-custom">
+                   <input class="form-check-input form-check-input-custom" type="checkbox" formControlName="isChecked">
+                   <label class="form-check-label form-check-label-custom" for="isChecked">
+                   {{'sidebar.customer'| translate }}
+                   </label>
+                </div>
+                <hr>
+                <div class="row" *ngIf="customerPaginationForm.get('isChecked').value" [@slideInOut]>
+                <div class="form-group d-flex flex-column col-2">
+                   <label for="customerType2">{{'category_loan.category_loan' | translate}}</label>
+                   <select class="form-control" id="customerType2" formControlName="customerType2">
+                      <option value="null">{{'category_loan.all' | translate}}</option>
+                      <option value="INDIV">{{'category_customer.individual' | translate}}</option>
+                      <option value="ORG">{{'category_customer.organisation' | translate}}</option>
+                      <option value="GRP">{{'category_customer.groupe' | translate}}</option>
+                   </select>
+                </div>
+                <div class="form-group d-flex flex-column col-2">
+                   <label for="identity">{{'customer.customer_identity' | translate}}</label>
+                   <input class="form-control placeholder" type="text" id="identity" formControlName="identity">
+                </div>
+                <div class="form-group d-flex flex-column col-2">
+                   <label for="branch">{{'customer.branch' | translate}}</label>
+                   <input class="form-control placeholder" type="text" id="branch" formControlName="branch">
+                </div>
+                <div class="form-group d-flex flex-column col-2">
+                   <label for="accountPortfolioDescription">{{'customer.portfolio' | translate}}</label>
+                   <input class="form-control placeholder" type="text" id="accountPortfolioDescription" formControlName="accountPortfolioDescription">
+                </div>
+                <div class="form-group d-flex flex-column col-2">
+                   <label for="amlStatus">{{'customer.aml_status' | translate}}</label>
+                   <select class="form-control" id="amlStatus" formControlName="amlStatus">
+                      <option value="">{{'category_loan.all' | translate}}</option>
+                      <option *ngFor="let state of amlStatusList" value="{{state}}">{{state}}</option>
+                   </select>
+                </div>
+                <div class="form-group d-flex flex-column col-2 px-4" style="justify-content: end;">
+                    <button type="button" (click)="advancedCustomer()" class="btn btn-primary mx-4" style="font-size: medium;">{{'button.advanced' | translate}}</button>
+                 </div>
+          </div>
+          </form>
+       </div>
+       <!-- collections -->
+       <div class="my-4">
+          <form [formGroup]="collectionPaginationForm" >
+             <div class="form-check form-check-custom">
+                <input class="form-check-input form-check-input-custom" type="checkbox" formControlName="isChecked">
+                <label class="form-check-label form-check-label-custom" for="isChecked">
+                {{'sidebar.collections'| translate }}
+                </label>
+             </div>
+             <hr>
+             <div class="row" *ngIf="collectionPaginationForm.get('isChecked').value" [@slideInOut]>
+             <div class="form-group d-flex flex-column col-2">
+                <label for="customerType3">{{'category_loan.category_loan' | translate}}</label>
+                <select class="form-control" id="customerType3" formControlName="customerType3">
+                   <option value="null">{{'category_loan.all' | translate}}</option>
+                   <option value="INDIV">{{'category_loan.individual' | translate}}</option>
+                   <option value="ORG">{{'category_loan.organisation' | translate}}</option>
+                   <option value="GRP">{{'category_loan.groupe' | translate}}</option>
+                </select>
+             </div>
+             <div class="form-group d-flex flex-column col-2">
+                <label for="productName">{{'dashboard.product_name' | translate}}</label>
+                <select class="form-control" id="productName" formControlName="productName">
+                   <option value="null">{{'category_loan.all' | translate}}</option>
+                   <option *ngFor="let product of productsCollection" value="{{product.value}}">{{product.label}}</option>
+                </select>
+             </div>
+             <div class="form-group d-flex flex-column col-2">
+                <label for="loanOfficer">{{'collections.collection-dashboard.loan_officer' | translate}}</label>
+                <input class="form-control placeholder" type="text" id="loanOfficer"  formControlName="loanOfficer">
+             </div>
+             <div class="form-group d-flex flex-column col-2">
+                <label for="branchCollection">{{'customer_management.branch' | translate}}</label>
+                <select class="form-control" id="branchCollection" formControlName="branchCollection">
+                   <option value="null">{{'category_loan.all' | translate}}</option>
+                   <option *ngFor="let branch of branchesCollection" value="{{branch.value}}">{{branch.value}}</option>
+                </select>
+             </div>
+             <div class="form-group d-flex flex-column col-2">
+                <label for="statutLibelle">{{'collections.collection-dashboard.pending_action' | translate}}</label>
+                <select class="form-control" id="statutLibelle" formControlName="statutLibelle">
+                   <option value="null">{{'category_loan.all' | translate}}</option>
+                   <option *ngFor="let state of statusList" value="{{state.value}}">{{state.value}}</option>
+                </select>
+             </div>
+             <div class="form-group d-flex flex-column col-2 px-4" style="justify-content: end;">
+                <button type="button" (click)="advancedCollection()" class="btn btn-primary mx-4" style="font-size: medium;">{{'button.advanced' | translate}}</button>
+             </div>
+       </div>
+       </form>
+    </div>
+    <!-- LEGAL -->
+    <div class="my-4">
+       <form [formGroup]="legalPaginationForm" >
+          <div class="form-check form-check-custom">
+             <input class="form-check-input form-check-input-custom" type="checkbox" formControlName="isChecked">
+             <label class="form-check-label form-check-label-custom" for="isChecked">
+             {{'sidebar.legal_collections'| translate }}
+             </label>
+          </div>
+          <hr>
+          <div class="row" *ngIf="legalPaginationForm.get('isChecked').value" [@slideInOut]>
+          <div class="form-group d-flex flex-column col-2">
+             <label for="customerType3">{{'category_loan.category_loan' | translate}}</label>
+             <select class="form-control" id="customerType3" formControlName="customerType3">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option value="INDIV">{{'category_loan.individual' | translate}}</option>
+                <option value="ORG">{{'category_loan.organisation' | translate}}</option>
+                <option value="GRP">{{'category_loan.groupe' | translate}}</option>
+             </select>
+          </div>
+          <div class="form-group d-flex flex-column col-2">
+             <label for="productName">{{'dashboard.product_name' | translate}}</label>
+             <select class="form-control" id="productName" formControlName="productName">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let product of productsLegal" value="{{product.value}}">{{product.label}}</option>
+             </select>
+          </div>
+          <div class="form-group d-flex flex-column col-2">
+             <label for="loanOfficer">{{'collections.collection-dashboard.loan_officer' | translate}}</label>
+             <input class="form-control placeholder" type="text" id="loanOfficer"  formControlName="loanOfficer">
+          </div>
+          <div class="form-group d-flex flex-column col-2">
+             <label for="branchCollection">{{'customer_management.branch' | translate}}</label>
+             <select class="form-control" id="branchCollection" formControlName="branchCollection">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let branch of branchesLegal" value="{{branch.value}}">{{branch.value}}</option>
+             </select>
+          </div>
+          <div class="form-group d-flex flex-column col-2">
+             <label for="statutLibelle">{{'collections.collection-dashboard.pending_action' | translate}}</label>
+             <select class="form-control" id="statutLibelle" formControlName="statutLibelle">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let state of statusLegalList" value="{{state.value}}">{{state.value}}</option>
+             </select>
+          </div>
+          <div class="form-group d-flex flex-column col-2 px-4" style="justify-content: end;">
+            <button type="button" (click)="advancedLegal()" class="btn btn-primary mx-4" style="font-size: medium;">{{'button.advanced' | translate}}</button>
+         </div>
+    </div>
+    </form>
+ </div>
+ </div>
+ <div class="modal-footer custom-modal-footer py-1">
+    <div class="px-1">
+       <button type="button"  class="btn btn-outline-danger mx-1">{{'button.cancel' | translate}}</button>
+       <button type="button" (click)="submit()" class="btn btn-success mx-1">{{'button.submit'|
+       translate }}</button>
+    </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div  *ngIf="advancedLoanSearch" class="overlay" @fadeInOut>
+    <div class="advanced-loan-modal">
+       <div class="table-container">
+          <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [status]="status" [products]="products" [branches]="branches" [source]="'settingOffline'"></app-dabshbord-table>
+       </div>
+       <div class="modal-footer custom-modal-footer">
+          <button (click)="advancedLoanSearch = false" class="btn btn-danger">
+          {{ 'button.cancel' | translate }}
+          </button>
+          <button (click)="submitLoanSearch()" class="btn btn-success">
+          {{ 'button.submit' | translate }}
+          </button>
+       </div>
+    </div>
+ </div>
+
+ <div  *ngIf="advancedCustomerSearch" class="overlay" @fadeInOut>
+    <div class="advanced-loan-modal">
+       <div class="table-container">
+        <app-customer-list [mode]="'6'" ></app-customer-list>
+    </div>
+       <div class="modal-footer custom-modal-footer">
+          <button (click)="advancedCustomerSearch = false" class="btn btn-danger">
+          {{ 'button.cancel' | translate }}
+          </button>
+          <button (click)="submitCustomerSearch()" class="btn btn-success">
+          {{ 'button.submit' | translate }}
+          </button>
+       </div>
+    </div>
+ </div>
+
+ <div  *ngIf="advancedCollectionSearch" class="overlay" @fadeInOut>
+    <div class="advanced-loan-modal">
+       <div class="table-container">
+        <app-table-collection [collectionPaginationEntity]="collectionPaginationEntity"
+        [products]="products" [branches]="branchesCollection" [statusList]="statusList"
+        [collectionType]="'COLLECTION'">
+      </app-table-collection>
+    </div>
+       <div class="modal-footer custom-modal-footer">
+          <button (click)="advancedCollectionSearch = false" class="btn btn-danger">
+          {{ 'button.cancel' | translate }}
+          </button>
+          <button (click)="submitCollectionSearch()" class="btn btn-success">
+          {{ 'button.submit' | translate }}
+          </button>
+       </div>
+    </div>
+ </div>
+
+ <div  *ngIf="advancedLegalSearch" class="overlay" @fadeInOut>
+    <div class="advanced-loan-modal">
+       <div class="table-container">
+        <app-table-collection [collectionPaginationEntity]="legalPaginationEntity"
+        [products]="productsLegal" [branches]="branchesLegal" [statusList]="statusLegalList"
+        [collectionType]="'LEGAL'">
+      </app-table-collection>
+    </div>
+       <div class="modal-footer custom-modal-footer">
+          <button (click)="advancedLegalSearch = false" class="btn btn-danger">
+          {{ 'button.cancel' | translate }}
+          </button>
+          <button (click)="submitLegalSearch()" class="btn btn-success">
+          {{ 'button.submit' | translate }}
+          </button>
+       </div>
+    </div>
+ </div>

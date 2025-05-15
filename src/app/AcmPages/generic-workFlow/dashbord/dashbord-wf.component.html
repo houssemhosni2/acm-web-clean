@@ -1,0 +1,95 @@
+<app-page-title *ngIf=  "this.sourceParam !== 'SCAN' && this.sourceParam !== 'DOUBTFUL'" [heading]="'sidebar.generic_wf'| translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+
+<app-page-title *ngIf=  "this.sourceParam == 'SCAN'" [heading]="'customer_aml.workflow_balayage' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+
+<app-page-title  *ngIf=  "this.sourceParam == 'DOUBTFUL'"  [heading]="'customer_aml.workflow_transaction' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<div class="row mr-30">
+  <div class="col-xl-12">
+    <mat-tab-group class="page-mat-tabs" (selectedTabChange)="changeTabs($event)">
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-muted fa fa-list icon-size-fa"></span>
+            <span class="size-text">{{ 'dashboard.task' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-generic-wf-table [source]="sourceParam"  [itemEntityList]="itemRequestEntityList" [stepList]="stepList" [statut]='0' >
+        </app-generic-wf-table>
+      </mat-tab>
+
+
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-danger fa fa-pencil-square-o icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.drafts' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-generic-wf-table   [source]="sourceParam"  [itemEntityList]="itemRequestEntityList" [statut]='2'   >
+        </app-generic-wf-table>
+      </mat-tab>
+
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class=" loans-lenght text-info fa fa-hourglass-start icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.awaiting_approval' | translate }}</span>
+        </ng-template>
+        <app-generic-wf-table   [source]="sourceParam"  [itemEntityList]="itemRequestEntityList" [statut]='3' >
+        </app-generic-wf-table>
+      </mat-tab>
+
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-success fa fa-check-circle icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.approved' | translate }}</span>
+        </ng-template>
+        <app-generic-wf-table   [source]="sourceParam"  [itemEntityList]="itemRequestEntityList" [statut]='4'>
+        </app-generic-wf-table>
+      </mat-tab>
+
+
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-success fa fa-check-square-o icon-size-fa"></span>
+          <span class="control-label"> {{ 'dashboard.closed' | translate }}</span>
+        </ng-template>
+        <app-generic-wf-table   [source]="sourceParam"  [itemEntityList]="itemRequestEntityList" [statut]='5'>
+        </app-generic-wf-table>
+            </mat-tab>
+
+
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-warning fa fa-check-square-o icon-size-fa"></span>
+            <span class="size-text">{{ 'dashboard.review' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-generic-wf-table   [itemEntityList]="itemRequestEntityList" [statut]='-2'>
+        </app-generic-wf-table>
+      </mat-tab>
+
+
+
+
+
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-danger fa fa-times-circle icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.rejected' | translate }}</span>
+        </ng-template>
+        <app-generic-wf-table   [itemEntityList]="itemRequestEntityList" [statut]='-1'>
+        </app-generic-wf-table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

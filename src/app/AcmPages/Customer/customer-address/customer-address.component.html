@@ -1,0 +1,247 @@
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseAddress" aria-expanded="true"
+       aria-controls="collapseCustomerAccount" (click)="toggleCollapse()">
+    <div *ngIf = "!supplier">
+      <i class="lnr-location text-secondary pr-2"></i>
+      {{ 'customer_management.address_information_groupe' | translate }}
+    </div>
+    <div *ngIf = "supplier">
+      <i class="lnr-location text-secondary pr-2"></i>
+      ADDRESSE FOURNISSEUR
+    </div>
+    <div>
+      <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+       data-parent="#accordionExample">
+    <div class="col-xl-12 d-flex justify-content-end p-3">
+      <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button" (click)="addAddress()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'button.add' | translate}}
+      </button>
+    </div>
+    <form [formGroup]="addressForm" (change)="changeFormAddress()">
+      <div class="card-body pt-0">
+        <div *ngFor="let adr of address, let i = index">
+          <div *ngIf="adr.action !== 'D'">
+            <div class="row" *ngIf = "!supplier">
+              <div class="col-2">
+                <div class="widget-content p-0 text-uppercase">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left px4">
+                        <div class="widget-heading py-1">{{'customer_management.address'| translate }} {{i + 1}}</div>
+                        <div class="custom-checkbox custom-control row">
+                          <div class="col-1">
+                            <input class="custom-control-input mx-1" type="checkbox" [checked]="addressForm.controls['addressType' + i].value.primaryAddressType === 1
+                                        || addressForm.controls['addressType' + i].value.primaryAddressType === true">
+                          </div>
+                          <div class="col-11 row">
+                            <div class="col-10">
+                              <label class="custom-control-label px-2">{{'customer_management.primary-address'| translate }}</label>
+                            </div>
+                            <div class ="col-2">
+                              <button class="btn btn-danger" (click)="deleteAddress(i)">
+                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+            </div>
+            <div class="row">
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.address_type'| translate }}</label>
+                  <span class="text-danger">*</span>
+                  <select class="form-control" name="addressType" formControlName="addressType{{i}}"
+                          [compareWith]="compareAddressType" (change)="changeAddress(i)">
+                    <option selected value>
+                      {{'customer_management.address_type_default_select'| translate }}
+                    </option>
+                    <option *ngFor="let a of addressType" [ngValue]="a">{{a.name}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label> {{'customer_management.date_moved_in'| translate }}</label>
+                  <span class="text-danger">*</span>
+                  <input type="date" class="form-control" formControlName="dateMovedIn{{i}}"
+                         (change)="changeAddress(i)">
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label> {{'customer_management.date_moved_out'| translate }}</label>
+                  <input type="date" class="form-control" formControlName="dateMoveOut{{i}}"
+                         (change)="changeAddress(i)">
+                </div>
+              </div>
+            </div>
+            <div class="row">{{country | json}}
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.country'| translate }}</label>
+                  <span *ngIf="mandatory" class="text-danger">*</span>
+                  <span *ngIf="requiredCountry" class="text-danger">*</span>
+                  <select class="form-control"
+                          (change)="loadList(addressListEntity[0]?.addressListID, i, 'country', null, false)"
+                          formControlName="country{{i}}" [compareWith]="compareAddressListValue">
+                    <option selected value>
+                      {{'customer_management.country_default_select'| translate }}</option>
+                    <ng-container *ngFor="let country of addressListValue[i] ">
+                      <option [ngValue]="country" *ngIf="country?.addressListID === addressListEntity[0]?.addressListID">
+                        {{country.name}}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.region'| translate }}</label>
+                  <span *ngIf="mandatory" class="text-danger">*</span>
+                  <span *ngIf="requiredRegion" class="text-danger">*</span>
+                  <select class="form-control"
+                          (change)="loadList(addressListEntity[1].addressListID, i, 'region', null, false)"
+                          formControlName="region{{i}}" [compareWith]="compareAddressListValue">
+                    <option selected value>
+                      {{'customer_management.region_default_select'| translate }}</option>
+                    <ng-container *ngFor="let region of addressListValue[i] ">
+                      <option [ngValue]="region" *ngIf="region.addressListID === addressListEntity[1].addressListID">
+                        {{region.name}}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+              </div>
+              <div  class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.city'| translate }}</label>
+                  <span *ngIf="mandatory" class="text-danger">*</span>
+                  <span *ngIf="requiredCity" class="text-danger">*</span>
+                  <select class="form-control" (change)="loadList(addressListEntity[2].addressListID, i, 'city', null, false)"
+                          formControlName="city{{i}}" [compareWith]="compareAddressListValue">
+                    <option selected value>
+                      {{'customer_management.city_default_select'| translate }}</option>
+                    <ng-container *ngFor="let city of addressListValue[i] ">
+                      <option [ngValue]="city" *ngIf="city.addressListID === addressListEntity[2].addressListID">
+                        {{city.name}}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div  class="row">
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.district'| translate }}</label>
+                  <span *ngIf="mandatory" class="text-danger">*</span>
+                  <span *ngIf="requiredDistrict" class="text-danger">*</span>
+                  <select class="form-control"
+                          (change)="loadList(addressListEntity[3].addressListID, i, 'district', null, false)"
+                          formControlName="district{{i}}" [compareWith]="compareAddressListValue">
+                    <option selected value>
+                      {{'customer_management.district_default_select'| translate }}</option>
+                    <ng-container *ngFor="let district of addressListValue[i] ">
+                      <option [ngValue]="district"
+                              *ngIf="district.addressListID === addressListEntity[3].addressListID">
+                        {{district.name}}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.street'| translate }}</label>
+                  <span *ngIf="requiredAddress1" class="text-danger">*</span>
+                  <input placeholder="{{'customer_management.street'| translate }}" name="street" type="text"
+                         class="form-control" formControlName="street{{i}}" (change)="changeAddress(i)"/>
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.building_number'| translate }}</label>
+                  <span *ngIf="requiredAddress2" class="text-danger">*</span>
+                  <input placeholder="{{'customer_management.building_number'| translate }}" name="buildingNumber"
+                         type="text" class="form-control" formControlName="buildingNumber{{i}}"
+                         (change)="changeAddress(i)"/>
+                </div>
+              </div>
+            </div>
+            <div class="row d-flex align-items-end">
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.unit_number'| translate }}</label>
+                  <span *ngIf="requiredAddress3" class="text-danger">*</span>
+                  <input placeholder="{{'customer_management.unit_number'| translate }}" name="unitNumber" type="text"
+                         class="form-control" formControlName="unitNumber{{i}}" (change)="changeAddress(i)"/>
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1">
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.zip_code'| translate }}</label>
+                  <span *ngIf="mandatory" class="text-danger">*</span>
+                  <span *ngIf="requiredZipCode" class="text-danger">*</span>
+                  <input placeholder="{{'customer_management.zip_code'| translate }}" name="zipCode" type="text"
+                         class="form-control" formControlName="zipCode{{i}}" (change)="changeAddress(i)"/>
+                </div>
+              </div>
+              <div class="col-xl-4 col-md-4 px-1" >
+                <div class="position-relative form-group">
+                  <label>{{'customer_management.gps-location'| translate }} </label>
+                  <div class="input-group">
+                    <input placeholder="{{'customer_management.gps-location'| translate }}"
+                           type="text" class="form-control" formControlName="map{{i}}" (change)="loadMarkerMap(i)"/>
+                    <div class="input-group-append">
+                      <button class="btn-icon btn-icon-only btn btn-primary" (click)="getCurrentPlace(i)" type="button">
+                        <i class="pe-7s-map-marker"></i>
+                      </button>
+                      <button class="btn btn-warning text-white" (click)="showMap(i)" type="button">
+                        <i class="pe-7s-look btn-icon-wrapper"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr class="solid">
+          </div>
+        </div>
+
+        <agm-map *ngIf="displayMap"
+          style="height: 450px;"
+          class="pb-3"
+          [latitude]="latitude"
+          [longitude]="longitude"
+          [zoom]="zoom"
+          [disableDefaultUI]="false"
+          [disableDoubleClickZoom]="true"
+          (mapReady)="mapReadyHandler($event)">
+          <agm-marker
+            *ngFor="let m of markers; let i = index"
+            [latitude]="m.lat"
+            [longitude]="m.lng"
+            [label]="m.label"
+            [markerDraggable]="m.draggable"
+            (dragEnd)="markerDragEnd(i, $event)">
+            <agm-info-window>
+              <strong>{{'customer_management.address'| translate }} {{i + 1}}</strong>
+            </agm-info-window>
+          </agm-marker>
+        </agm-map>
+      </div>
+    </form>
+  </div>
+</div>

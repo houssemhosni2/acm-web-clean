@@ -1,0 +1,340 @@
+<div class="row align-items-start">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body ACM-task">
+        <form [formGroup]="ihmRoutesForm">
+          <div class="position-relative form-group">
+            <label>{{'setting.field-setting.ihm_route'| translate }}</label>
+            <select class="form-control" formControlName="ihmRoute" (ngModelChange)="getFormsByIhmRoute($event)">
+              <option selected value >{{'setting.field-setting.default_select_ihm_route'| translate }}
+              </option>
+              <option *ngFor="let habilitationIhmRoute of habilitationIhmRoutes" [ngValue]="habilitationIhmRoute">
+                {{habilitationIhmRoute.description}}</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body ACM-task">
+        <form [formGroup]="ihmFormsForm" class="row d-flex ">
+          <div class="col-xl-10 col-md-10">
+            <div class="position-relative form-group">
+              <label>{{'setting.field-setting.ihm_forms'| translate }}</label>
+              <select class="form-control" formControlName="ihmForm" (ngModelChange)="getFieldsByIhmForm($event)"
+                      [attr.disabled]="!showForms ? '' : null">
+                <option selected value > {{'setting.field-setting.default_select_ihm_form'| translate }}
+                </option>
+                <option *ngFor="let ihmForm of ihmForms" [ngValue]="ihmForm">{{ihmForm.description}}</option>
+              </select>
+            </div>
+          </div>
+          <div [style]="{display : 'inline-flex', marginTop : '1.8rem'}">
+            <div class="col-xl-1 col-md-1 mb-3 ">
+              <button class="btn-icon btn-icon-only btn btn-success" [attr.disabled]="!showForms ? '' : null"
+                      (click)="addIhmForm(modalAddIhmForm)"><i
+                class="pe-7s-plus btn-icon-wrapper"></i>
+              </button>
+            </div>
+            <div class="col-xl-1 col-md-1 mb-3">
+              <button class="btn-icon btn-icon-only btn btn-warning" [attr.disabled]="!this.showTable ? '' : null"
+                      (click)="editIhmForm(modalAddIhmForm)">
+                      <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<div class="py-1">
+  <div class="main-card mb-2 card" *ngIf="showTable">
+    <div class="card-header">
+      <div class="row col-xl-12 xol-md-12 d-flex align-items-center">
+        <div class="col-xl-11 xol-md-11">
+          <i class="lnr-file-empty pr-2"> </i>
+          {{'setting.field-setting.fields'| translate }}
+        </div>
+        <div class="col-xl-1 col-md-1">
+          <button class="btn btn-primary" (click)="addIhmFields(modalContent)">add</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="table-responsive" *ngIf="ihmFields.length!=0 || newAcmIhmFieldEntity.length!=0 ">
+        <table class="mb-0 t table table-hover">
+          <thead>
+            <tr>
+              <th> {{'setting.field-setting.code_field'| translate }} </th>
+              <th> {{'setting.field-setting.ordre'| translate }} </th>
+              <th> {{'setting.field-setting.title'| translate }}</th>
+              <th> {{'setting.field-setting.type_field'| translate }}</th>
+              <th> {{'setting.field-setting.description'| translate }}</th>
+              <th> {{'setting.field-setting.status'| translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ihmField of ihmFields; let i = index">
+
+              <td>
+                {{ ihmField?.codeField}}
+              </td>
+              <td>
+                {{ ihmField?.ordre}}
+              </td>
+
+              <td>
+                {{ihmField.titre}}
+              </td>
+
+              <td>
+                {{ihmField.typeField}}
+              </td>
+
+              <td>
+                {{ihmField.description}}
+              </td>
+              <td>
+                <bSwitch [(ngModel)]="ihmField.enabled" [switch-size]="'mini'" [switch-animate]="true" [ngModelOptions]="{standalone : true}"
+                  [switch-off-color]="'danger'" class="px-2 mb-0" (click)="endableDisable(ihmField)">
+                </bSwitch>
+              </td>
+              <td>
+                <button class="btn btn-warning text-white" (click)="editField(modalContent,ihmField)">
+                  <fa name="pencil"></fa>
+                </button>
+              </td>
+            </tr>
+            <tr *ngFor="let ihmField of newAcmIhmFieldEntity; let i = index">
+
+              <td>
+                {{ ihmField?.codeField}}
+              </td>
+              <td>
+                {{ ihmField?.ordre}}
+              </td>
+
+              <td>
+                {{ihmField.titre}}
+              </td>
+
+              <td>
+                {{ihmField.typeField}}
+              </td>
+
+              <td>
+                {{ihmField.description}}
+              </td>
+              <td>
+                <bSwitch [(ngModel)]="ihmField.enabled" [switch-size]="'mini'" [switch-animate]="true" [ngModelOptions]="{standalone : true}"
+                         [switch-off-color]="'danger'" class="px-2 mb-0" (click)="endableDisable(ihmField)">
+                </bSwitch>
+              </td>
+              <td>
+                <button class="btn btn-warning text-white" (click)="editField(modalContent,ihmField)">
+                  <fa name="pencil"></fa>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <button class="btn btn-primary" [disabled]="newAcmIhmFieldEntity.length === 0" (click)="saveNewFields()">save</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title" *ngIf="editIhmField">{{'setting.field-setting.edit_field'| translate }}</h5>
+      <h5 class="modal-title" *ngIf="!editIhmField">{{'setting.field-setting.add_field'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='editIhmFieldForm' (ngSubmit)="edit()">
+      <div class="card-body">
+        <div class="position-relative pb-4">
+          <label> {{'setting.field-setting.type_field'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group">
+            <select (change)="onChangeTypeField($event.target.value)" type="text" class="form-control form-group"
+                    formControlName="type" [compareWith]="compareFieldType">
+              <option selected value></option>
+              <option *ngFor="let type of typesField" value="{{type}}">{{type}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.code_field'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="code" [disabled]="editIhmField">
+          </div>
+          <span class="text-danger px-1"> {{'setting.field-setting.code_description'| translate }}  </span>
+
+
+
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.title'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="title" required>
+          </div>
+          <span class="text-danger px-3"> {{'setting.field-setting.title_description'| translate }}  </span>
+
+        </div>
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.form_control_name'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="formControlName" required>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.sub_code_field'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="subCodeField">
+          </div>
+          <span class="text-danger px-3"> {{'setting.field-setting.sub_code_field_description'| translate }} </span>
+        </div>
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.placeholder'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="placeholder">
+          </div>
+          <span class="text-danger px-3"> {{'setting.field-setting.placeholder_description'| translate }} </span>
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.default_value'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="defaultValue">
+          </div>
+        </div>
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.ordre'| translate }}</label>
+           <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="ordre">
+          </div>
+         </div>
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.description'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group">
+            <textarea type="text" class="form-control" formControlName="description"></textarea>
+          </div>
+        </div>
+
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.field-setting.add_validators'| translate }}</label>
+          <div class="input-group">
+            <select (change)="onChangeValidator($event)" formControlName="validator" type="text"
+                    class="form-control form-group">
+              <option *ngFor="let acmIhmValidator of acmIhmValidatorEntities" [ngValue]="acmIhmValidator">
+                {{acmIhmValidator.codeValidator}}</option>
+            </select>
+
+          </div>
+        </div>
+
+        <div class="position-relative pb-4" *ngIf="showList">
+          <label>{{'setting.list'| translate }}</label>
+          <div class="input-group">
+            <select  formControlName="listId" type="text"
+                    class="form-control form-group">
+              <option *ngFor="let item of filteredSettings" [ngValue]="item.id">
+                {{item.valueJson?.name}}</option>
+            </select>
+
+          </div>
+        </div>
+        <div>
+          <div class="table-responsive" *ngIf="selectedIhmField.validators.length!=0">
+            <table class="mb-0 t table table-hover">
+              <thead>
+              <tr>
+                <th> {{'setting.field-setting.code_validator'| translate }}</th>
+                <th> {{'setting.field-setting.parameter'| translate }}</th>
+                <th> {{'setting.field-setting.type_validator'| translate }}</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let validator of selectedIhmField.validators; let i = index">
+                <td>{{validator.codeValidator}}</td>
+                <td>{{validator.parameter}}</td>
+                <td>{{validator.typeValidator}}</td>
+                <td>
+                  <button class="btn btn-danger" (click)="remove(i)">
+                    <i class="pe-7s-trash btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-1 btn btn-primary" type="submit" [disabled]="editIhmFieldForm.invalid">{{'button.save' |
+            translate}}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #modalAddIhmForm let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title" *ngIf="!editForm">{{'setting.field-setting.new_ihm_route'| translate }}</h5>
+      <h5 class="modal-title" *ngIf="editForm">{{'setting.field-setting.edit_ihm_route'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+  </div>
+  <form [formGroup]="ihmAddForm">
+    <div class="modal-body">
+      <div class="position-relative form-group">
+        <label>{{'setting.code'| translate }}</label>
+        <input class="form-control" formControlName="code" placeholder="code">
+      </div>
+      <div class="position-relative form-group">
+        <label>{{'setting.description'| translate }}</label>
+        <input class="form-control" formControlName="description" placeholder="Description">
+      </div>
+      <div class="position-relative form-group">
+        <label>{{'setting.field-setting.status'| translate }}</label><br>
+        <bSwitch formControlName="enable" [switch-size]="'mini'" [switch-animate]="true"
+                 [switch-off-color]="'danger'" class="px-2 mb-0" >
+        </bSwitch>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="saveIhmForm()">save</button>
+    </div>
+  </form>
+
+</ng-template>
+
+
+

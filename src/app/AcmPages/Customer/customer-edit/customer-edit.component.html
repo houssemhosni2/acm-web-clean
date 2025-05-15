@@ -1,0 +1,860 @@
+<!--title-->
+<app-page-title *ngIf="completeLoanData &&!modeGuarantor" [heading]="'customer_management.edit_customer'| translate "
+  [icon]="'pe-7s-culture'" [account]="''" [status]="-1"></app-page-title>
+<app-page-title *ngIf="modeGuarantor" [heading]="'customer_management.edit_guarantor'| translate"
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [status]="-1"></app-page-title>
+<!--form add-->
+<div *ngIf="selectedCustomer.customerType === 'INDIV'">
+  <div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+      aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomer()">
+      <div>
+        <i class="lnr-user text-secondary pr-2"></i>
+        {{ 'customer_management.customer_information_groupe' | translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expandedCustomer===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomer" [ngClass]="(expandedCustomer===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div *ngIf="filtersLoaded | async">
+        <form [formGroup]="sharedService.form.formGroup">
+          <div class="card-body">
+            <div class="col-xl-12 col-sm-12 row no-gutters">
+              <div *ngFor="let field of sharedService.form.acmIhmFields"
+                class="col-xl-4 col-lg-4 col-md-6 col-sm-12 px-1">
+                <div [ngSwitch]="field.formControlName">
+                  <div *ngIf="!field.hiddenHabilitation">
+                    <div *ngSwitchCase="'branch'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <select class="form-control" [formControlName]="field.formControlName" name="branch"
+                          [compareWith]="compareBranch" (change)="selectBranch()"
+                          [attr.disabled]="!field.enableHabilitation ? '' : null">
+                          <option selected value>
+                            {{'customer_management.branch_default_select'| translate }}</option>
+                          <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity">
+                            {{brancheEntity.description}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'loanOfficer'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <select class="form-control" [formControlName]="field.formControlName"
+                          [attr.disabled]=" !field.enableHabilitation  ?'':null"
+                          [compareWith]="comparePortfolio">
+                          <option selected value>
+                            {{'customer_management.account_portfolio'| translate }}
+                          <option *ngFor="let portfolio of listPortfolio" [ngValue]="portfolio">{{portfolio.portfolioName}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div *ngSwitchCase="'dateOfBirth'">
+                      <div class="position-relative form-group">
+                        <label> {{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <hijri-gregorian-datepicker [ngClass]="(empty===true)?'ACM-hijriError':'ACM-hijri'" (input)="onDateInputChange($event,'dateGr')"
+                          [(selectedDate)]="dateG" [isRequired]="true" [selectedDateType]="selectedDateTypeG"
+                          [disabled]="!field.enableHabilitation ? '' : null" (selectedDateChange)="convertDateToHijri()"
+                          [minGreg]="{year: 1938, month:1, day: 1}" [maxGreg]="{year: 2100, month:1, day: 1}"
+                          placeHolder="dd/mm/yyyy" #datePicker>
+                        </hijri-gregorian-datepicker>
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'hijriBirthdate'">
+                      <div class="position-relative form-group">
+                        <label> {{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <hijri-gregorian-datepicker [ngClass]="(empty===true)?'ACM-hijriError':'ACM-hijri'"
+                          [(selectedDate)]="dateH" [isRequired]="true" [selectedDateType]="selectedDateTypeH"
+                          [disabled]="!field.enableHabilitation ? '' : null"
+                          (selectedDateChange)="convertDateToGregorian()" [minHijri]="{year: 1356, month:10, day: 29}"
+                          [maxHijri]="{year: 1523, month:10, day: 20}" placeHolder="dd/mm/yyyy" #datePicker>
+                        </hijri-gregorian-datepicker>
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'gender'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <mat-radio-group labelPosition="after" [formControlName]="field.formControlName"
+                          [disabled]="!field.enableHabilitation ? '' : null" class="d-flex flex-row bd-highlight mb-3">
+                          <mat-radio-button class="pt-2 px-3 bd-highlight" value="M">
+                            {{'customer_management.male'| translate }}
+                          </mat-radio-button>
+                          <mat-radio-button class="pt-2 px-3 bd-highlight" value="F">
+                            {{'customer_management.female'| translate }}
+                          </mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                    </div>
+                    <!-- <div *ngSwitchCase="'nationality'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <select class="form-control" [formControlName]="field.formControlName"
+                          (change)="changeNationality()"
+                          [attr.disabled]="!field.enableHabilitation
+                          || (selectedCustomer.enableCriticalData && !updateCriticalData)  ? '' : null">
+                          <option selected value disabled>
+                            {{'customer_management.nationality_default_select'| translate }}
+                          </option>
+                          <ng-container *ngFor="let nat of nationalityList ">
+                            <option [ngValue]="nat">
+                              {{nat.description}}
+                            </option>
+                          </ng-container>
+                        </select>
+                      </div>
+                    </div> -->
+                     <div  *ngSwitchCase="'nationality'">
+                      <div
+                        *ngIf="field.typeField === 'OPTIONS'">
+                        <div *ngIf="!field.hiddenHabilitation" class="position-relative form-group">
+                          <label>{{field.titre}}</label>
+                          <span class="text-danger" *ngIf="field.required">*</span>
+                          <select  [formControlName]="field.formControlName" class="form-control"   (change)="changeNationality($event.target.value)" >
+                            <option selected value="null">----</option>
+                            <ng-container *ngFor="let child of getChildren(field.listId)">
+                              <option [ngValue]="child.id">{{ child.valueJson.name }}</option>
+                            </ng-container>
+                          </select>
+                        </div>
+                      </div>
+                    </div> 
+                    <div *ngSwitchCase="'nationalId'">
+                      <div *ngIf="resident" class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <input class="form-control" [formControlName]="field.formControlName"
+                          (change)="changeNational($event)" [maxLength]="maxNationalId"
+                          [placeholder]="field.placeholder | translate"
+                          type="text"
+                          [attr.disabled]="!field.enableHabilitation
+                          || (selectedCustomer.enableCriticalData && !updateCriticalData) ? '' : null">
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'residentId'">
+                      <div *ngIf="!resident" class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <input class="form-control" [formControlName]="field.formControlName"
+                          [placeholder]="field.placeholder | translate"
+                          type="text" [attr.disabled]="!field.enableHabilitation
+                          || (selectedCustomer.enableCriticalData && !updateCriticalData) ? '' : null">
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'residentRelationStatus'">
+                      <div *ngIf="!resident" class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <select class="form-control" [formControlName]="field.formControlName"
+                          [attr.disabled]="!field.enableHabilitation
+                          || (selectedCustomer.enableCriticalData && !updateCriticalData) ? '' : null">
+                          <ng-container *ngFor="let nat of residentRelationStatusList ">
+                            <option [ngValue]="nat">
+                              {{nat.description}}
+                            </option>
+                          </ng-container>
+                        </select>
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'issueDate'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <hijri-gregorian-datepicker [ngClass]="(emptyIssueDate===true)?'ACM-hijriError':'ACM-hijri'" (input)="onDateInputChange($event,'issueDate')"
+                          [(selectedDate)]="issuedateG" [isRequired]="true" [selectedDateType]="selectedIssueDateTypeG"
+                          (selectedDateChange)="checkIssueDate()"
+                          [disabled]="!field.enableHabilitation ? '' : null" [minGreg]="{year: 1938, month:1, day: 1}"
+                          [maxGreg]="todayGreg" placeHolder="dd/mm/yyyy" #datePicker>
+                        </hijri-gregorian-datepicker>
+                      </div>
+                    </div>
+
+                    <!-- <div *ngSwitchCase="'placeNationalId'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <select class="form-control" [formControlName]="field.formControlName"
+                          [attr.disabled]="!field.enableHabilitation ? '' : null">
+                          <option selected value>
+                            {{'customer_management.place_national_id_default_select'| translate }}
+                          </option>
+                          <ng-container *ngFor="let child of getChildren(field.listId)">
+                            <option [ngValue]="child.id">{{ child.valueJson.name }}</option>
+                          </ng-container>
+                        </select>
+                      </div>
+                    </div> -->
+                    <div *ngSwitchCase="'nationalIDExpiryDate'">
+                      <div *ngIf="!resident" class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <hijri-gregorian-datepicker [ngClass]="(emptyExpiry===true)?'ACM-hijriError':'ACM-hijri'"
+                          [(selectedDate)]="expirydateG" [isRequired]="true" [selectedDateType]="selectedDateTypeG"
+                          (selectedDateChange)="convertExpiryDateToHijri()" [minGreg]="todayGreg"
+                          [maxGreg]="{year: 2100, month:1, day: 1}" placeHolder="dd/mm/yyyy" #datePicker>
+                        </hijri-gregorian-datepicker>
+                      </div>
+                      <div *ngIf="!resident"  class="row px-1 mt-1">
+                        <p class="px-4 text-uppercase ACM-field-description mb-0" ngClass="text-danger">
+                          {{'alert.min_expiry_date_1'| translate}} {{differencePeriodIssueDate}}
+                          {{'alert.min_expiry_date_2'| translate}} </p>
+                      </div>
+                    </div>
+                    <div *ngSwitchCase="'nationalIDExpiryHijriDate'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger">*</span>
+                        <hijri-gregorian-datepicker [ngClass]="(emptyExpiry===true)?'ACM-hijriError':'ACM-hijri'"
+                          [(selectedDate)]="expirydateH" [isRequired]="true" [selectedDateType]="selectedDateTypeH"
+                          (selectedDateChange)="convertExpiryDateToGregorian()" [minHijri]="todayHijri"
+                          [maxHijri]="{year: 1500, month:1, day: 1}" placeHolder="dd/mm/yyyy" #datePicker>
+                        </hijri-gregorian-datepicker>
+                      </div>
+                      <div class="row px-1 mt-1">
+                        <p class="px-4 text-uppercase ACM-field-description mb-0" ngClass="text-danger">
+                          {{'alert.min_expiry_date_1'| translate}} {{differencePeriodIssueDate}}
+                          {{'alert.min_expiry_date_2'| translate}} </p>
+                      </div>
+                    </div>
+                   <!--  <div *ngSwitchCase="'familySituation'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger" *ngIf="field.required">*</span>
+                        <select class="form-control" [formControlName]="field.formControlName"
+                          [attr.disabled]="!field.enableHabilitation ? '' : null">
+                          <option selected value>
+                            {{'customer_management.family_situation_default_select'| translate }}
+                          </option>
+                          <ng-container *ngFor="let child of getChildren(field.listId)">
+                            <option [ngValue]="child.id">{{ child.valueJson.name }}</option>
+                          </ng-container>
+                        </select>
+                      </div>
+                    </div> -->
+                    <div *ngSwitchCase="'patentNumber'" >
+                      <div class="position-relative form-group">
+                        <label>{{'customer_management.identifiant_Unique_RNE'| translate}}</label>
+                        <span class="text-danger"  *ngIf="field.required">*</span>
+                        <input class="form-control"  [formControlName]="field.formControlName" type="text" >
+                      </div>
+                    </div>
+
+                    <div *ngSwitchCase="'beneficialEffective'" >
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger"  *ngIf="field.required">*</span>
+                        <select class="form-control"  [formControlName]="field.formControlName" [attr.disabled]="!field.enableHabilitation ? '' : null">
+                          <option selected value="null">
+                            -- {{ 'customer_management.select-beneficial-effective' | translate }} --
+                          </option>
+                          <option value="oui">Oui</option>
+                          <option value="non">Non</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div *ngSwitchCase="'prospectionSource'">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger"  *ngIf="field.required">*</span>
+                        <select class="form-control"  [formControlName]="field.formControlName" [attr.disabled]="!field.enableHabilitation ? '' : null"
+                        (change)="selectSourceProspection($event)">
+                          <option *ngFor="let prospection of ProspectionListValues" value={{prospection.value}}>
+                            {{  prospection.description }}
+                          </option>   
+                        </select>
+                      </div>
+                    </div>
+
+                    <div *ngSwitchCase="'supplierRecommandation'" [hidden]="!supplierCheck">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger"  *ngIf="field.required">*</span>
+                        <select class="form-control"  [formControlName]="field.formControlName" [attr.disabled]="!field.enableHabilitation ? '' : null">
+                        <option selected value="null">
+                          {{'customer_management.fournisseur_default_select'| translate }}</option>
+                        <option *ngFor="let supplierEntity of supplierEntitys" [ngValue]="supplierEntity">
+                          {{supplierEntity.name}}
+                        </option>
+                      </select>
+                      </div>
+                    </div>
+
+                    <div *ngSwitchCase="'prospectionComment'"[hidden]="supplierCheck">
+                      <div class="position-relative form-group">
+                        <label>{{field.titre}}</label>
+                        <span class="text-danger"  *ngIf="field.required">*</span>
+                        <input class="form-control"  [formControlName]="field.formControlName" type="text" >
+                      </div>
+                    </div>
+
+                    <div *ngSwitchDefault>
+                      <div
+                        *ngIf="field.typeField === 'OPTIONS'" >
+                        <div *ngIf="!field.hiddenHabilitation" class="position-relative form-group">
+                          <label>{{field.titre}}</label>
+                          <span class="text-danger" *ngIf="field.required">*</span>
+                          <select class="form-control"  [formControlName]="field.formControlName" [attr.disabled]="!field.enableHabilitation ? '' : null">
+                            <option selected value>
+                              -----
+                            </option>
+                            <ng-container *ngFor="let child of getChildren(field.listId)">
+                              <option [ngValue]="child.id">{{ child.valueJson.name }}</option>
+                            </ng-container>
+                          </select>
+                        </div>
+                      </div>
+                    </div> 
+
+                    <div *ngSwitchDefault>
+                      <div
+                        *ngIf="field.typeField === 'TEXT' || field.typeField === 'EMAIL' || field.typeField === 'NUMBER'">
+                        <div *ngIf="!field.hiddenHabilitation" class="position-relative form-group">
+                          <label>{{field.titre}}</label>
+                          <span class="text-danger" *ngIf="field.required">*</span>
+                          <input [placeholder]="field.placeholder | translate" [formControlName]="field.formControlName"
+                            [name]="field.formControlName" [type]="field.typeField" class="form-control"
+                            [readonly]="!field.enableHabilitation" [maxlength]="field.max" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="text-center d-block p-3">
+        <button hidden class="btn-pill btn-shadow btn-wide fsize-1 btn btn-success btn-lg"
+          (click)="checkKYC(modalContent)" [disabled]="true">
+          <span class="mr-3 opacity-7">
+            <i class="icon pe-7s-config ion-ios-analytics-outline"></i>
+          </span>
+          <span class="mr-1">{{'customer_management.check_kyc'| translate }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="selectedCustomer.customerType === 'ORG'">
+  <form [formGroup]="customerOrganizartionForm" (change)="changeFormCustomer()">
+    <div class="card-hover-shadow-2x mb-1 card">
+      <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+        aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomer()">
+        <div>
+          <i class="lnr-user text-secondary pr-2"></i>
+          {{ 'customer_management.organisation_information' | translate }}
+        </div>
+        <div>
+          <i
+            [ngClass]="(expandedCustomer===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div [ngClass]="(expandedCustomer===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.organization_name'| translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="organizationName"
+                  placeholder="{{ 'customer_management.organization_name' | translate }}" />
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.Sector'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="sector">
+                  <option>{{'customer_management.select_a_sector'| translate }}</option>
+                  <option *ngFor="let sector of sectors" [ngValue]="sector.name">{{ sector.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.branch'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="branch" name="branch" (change)="selectBranch()"
+                  [compareWith]="compareBranch">
+                  <option selected value>
+                    {{'customer_management.branch_default_select'| translate }}</option>
+                  <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity">
+                    {{brancheEntity.description}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.account_portfolio'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="loanOfficer" [compareWith]="comparePortfolio">
+                  <option selected value>
+                    {{'customer_management.account_portfolio'| translate }}</option>
+                  <option *ngFor="let officer of portfolios" [ngValue]="officer">{{officer.fullName}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label> {{'customer_management.mobile'| translate }}</label>
+                <span class="text-danger">*</span>
+                <input class="form-control" placeholder="{{'customer_management.mask_phone_number'| translate }}"
+                  type="text" [maxLength]="phoneNumberMaskLength" formControlName="mobile">
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label> {{'customer_management.mobile2'| translate }}</label>
+                <input class="form-control" placeholder="{{'customer_management.mask_mobile'| translate }}" type="text"
+                  [maxLength]="mobileMaskLength" formControlName="mobile2">
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.email'| translate }}</label>
+                <span class="text-danger">*</span>
+                <input class="form-control" placeholder="{{'customer_management.email'| translate }}" type="email"
+                  formControlName="email">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.web_site'| translate }}</label>
+                <input class="form-control" type="text" formControlName="webSite"
+                  placeholder="{{'customer_management.web_site'| translate }}">
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.fax'| translate }}</label>
+                <input class="form-control" type="number" formControlName="fax"
+                  placeholder="{{'customer_management.fax'| translate }}">
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.account_year_end'| translate }}</label>
+                <span class="text-danger">*</span>
+                <input class="form-control" type="date" formControlName="accountYearEnd"
+                  placeholder="{{'customer_management.account_year_end'| translate }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-hover-shadow-2x mb-1 card">
+      <form [formGroup]="customerLinkOrgForm">
+        <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+          aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomerLink()">
+          <div>
+            <i class="lnr-user text-secondary pr-2"></i>
+            {{ 'customer_management.organisation_members' | translate }}
+          </div>
+          <div>
+            <i
+              [ngClass]="(expandedCustomerLink===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+          </div>
+        </div>
+        <div [ngClass]="(expandedCustomerLinkGrp===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+          data-parent="#accordionExample">
+          <div class="card-body">
+            <div class="row d-flex align-items-end">
+              <div class="col-xl-12 d-flex justify-content-end pt-3">
+                <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                  (click)="openLarge(content2,'LINK','ORG')">
+                  {{'customer_management.add_link'| translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="customerMemberOrgLink.length>0" class="table-responsive">
+            <table class="table">
+              <tr>
+                <th>{{'customer_management.customer_link'| translate }}</th>
+                <th>{{'customer_management.link_types'| translate }}</th>
+                <th>{{'customer_management.percentage_owned' | translate}}</th>
+                <th></th>
+              </tr>
+              <tr *ngFor="let link of customerMemberOrgLink, let i=index">
+                <td>{{this.sharedService.getCustomerName(link.member)}}</td>
+                <td>
+                  <select class="form-control" formControlName="linkRelationshipType{{i}}" (change)="getValueLinkOrg(i)">
+
+                    <option value="Partner">Partner</option>
+                  </select>
+                </td>
+                <td>
+                  <input class="form-control" type="number" formControlName="percentageOwned{{i}}"
+                    placeholder="{{'customer_management.percentage_owned' | translate}}"
+                    (change)="changePourcentageOwnerData()" min="0" max="100">
+                </td>
+
+                <td>
+                  <a type="button" class="btn btn-danger" (click)="deleteLinkOrg(i)">
+                    <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </form>
+    </div>
+  </form>
+</div>
+<div *ngIf="selectedCustomer.customerType === 'GRP'">
+  <form [formGroup]="customerGroupForm" (change)="changeFormCustomer()">
+    <div class="card-hover-shadow-2x mb-1 card">
+      <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+        aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomer()">
+        <div>
+          <i class="lnr-user text-secondary pr-2"></i>
+          {{ 'customer_management.customer_groupe' | translate }}
+        </div>
+        <div>
+          <i
+            [ngClass]="(expandedCustomer===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div [ngClass]="(expandedCustomer===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'customer_management.solidarity_group_name' | translate }}</label>
+                <span class="text-danger">*</span>
+                <input placeholder="{{'customer_management.solidarity_group_name' | translate }}" type="text"
+                  class="form-control" formControlName="solidarityName" />
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.account_portfolio'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="loanOfficer" name="loanOfficer"
+                  [compareWith]="comparePortfolio">
+                  <option selected value>
+                    {{'customer_management.account_portfolio'| translate }}</option>
+                  <option *ngFor="let officer of portfolios" [ngValue]="officer">{{officer.fullName}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-md-6 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.branch'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="branch" name="branch" [compareWith]="compareBranch">
+                  <option selected value>
+                    {{'customer_management.branch_default_select'| translate }}</option>
+                  <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity">
+                    {{brancheEntity.description}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-hover-shadow-2x mb-1 card">
+      <form [formGroup]="customerLinkGroupeForm">
+        <div class="card-header d-flex justify-content-between" data-target="#collapseCustomerGrp" aria-expanded="true"
+          aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomerLinkGrp()">
+          <div>
+            <i class="lnr-user text-secondary pr-2"></i>
+            {{ 'customer_management.group_members' | translate }}
+          </div>
+          <div>
+            <i
+              [ngClass]="(expandedCustomerLinkGrp===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+          </div>
+        </div>
+        <div [ngClass]="(expandedCustomerLinkGrp===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+          data-parent="#accordionExample">
+          <div class="card-body">
+            <div class="row d-flex align-items-end">
+              <div class="col-xl-12 d-flex justify-content-end pt-3">
+                <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                  (click)="openLarge(content2,'LINK','GRP')">
+                  {{'customer_management.add_link'| translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="customerMemberGrpLink.length>0" class="table-responsive">
+            <table class="table">
+              <tr>
+                <th>{{'customer_management.customer_link'| translate }}</th>
+                <th>{{'customer_management.select_a_link_type'| translate }}</th>
+                <th></th>
+              </tr>
+              <tr *ngFor="let link of customerMemberGrpLink, let i=index">
+                <td>{{this.sharedService.getCustomerName(link.member)}}</td>
+                <td>
+                  <select class="form-control" formControlName="linkRelationshipType{{i}}" (change)="getValueLinkGrp(i)">
+                    <option [selected]="true" [ngValue]=null>
+                      {{'customer_management.select_a_link_type'| translate }}
+                    </option>
+                    <option *ngFor="let role of roles" [ngValue]="role.description">
+                      {{role.description}}
+                    </option>
+                  </select>
+
+                </td>
+                <td>
+                  <a type="button" class="btn btn-danger" (click)="deleteLinkGrp(i)">
+                    <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </form>
+    </div>
+  </form>
+</div>
+<app-customer-disbursement [visibility]="showDisbursmentCardInformation" [branchId]="branchIdSelected" (updateBankInformation)="changeFormBankInformation()"
+  [listUDFLinkBankInformation]="itemsUDFLinksGroupeFieldsEntity | async" [oldMezzaCard]="mezzaCard" [expanded]="true" [mode]="true" [mezaCardMasks]="mezaCardMasks">
+</app-customer-disbursement>
+<app-customer-address [mandatory]="true" (updateAddress)="changeFormAddress()" [expanded]="true" [mode]="true"></app-customer-address>
+<div *ngIf="!isOfflineModeEnabled()" class="card-hover-shadow-2x mb-1 card">
+  <form [formGroup]="customerRelationShipForm">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseAddress" aria-expanded="true"
+      aria-controls="collapseCustomerAccount" (click)="toggleCollapseRelationships()">
+      <div>
+        <i class="pe-7s-repeat text-secondary pr-2"></i>
+        {{'customer_management.relationShips'| translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedRelationships===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expandedRelationships===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="row d-flex align-items-end">
+          <div class="col-xl-12 d-flex justify-content-end pt-3">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+              (click)="openLarge(content2,'RELATIONSHIP','RELATIONSHIP')">
+              <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+              {{'customer_management.add_relationShip'| translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="customerRelationShip.length>0" class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>{{'customer_management.customer_relationship'| translate }}</th>
+            <th>{{'customer_management.relationship_types'| translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let relation of customerRelationShip, let i=index">
+            <td>{{this.sharedService.getCustomerName(relation.member)}}
+            </td>
+            <td>
+              <select class="form-control" formControlName="relationshipType{{i}}" (change)="getValueRelationShip(i)">
+                <option [selected]="true" [ngValue]=null>
+                  {{'customer_management.select_a_relationship_type'| translate }}
+                </option>
+                <option *ngFor="let relationship of relationships" [ngValue]="relationship.name">
+                  {{relationship.name}}
+                </option>
+              </select>
+
+            </td>
+            <td>
+              <a type="button" class="btn btn-danger" (click)="deleteRelationship(i)">
+                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>
+<div  class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseLoanAnalyses" aria-expanded="true"
+    aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomerAnalyses()">
+    <div>
+      <i class="lnr-magnifier text-secondary pr-2"></i>
+      {{ 'customer.customer_analysis' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedUdf===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedUdf===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+    data-parent="#accordionExample">
+    <div class="card-body">
+      <div class="col-xl-12 d-flex justify-content-end pt-3">
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button" (click)="addUdf()">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add' | translate}}
+        </button>
+      </div>
+    </div>
+      <form [formGroup]="udfForm" (change)="changeFormCustomer()">
+        <div *ngFor="let udf of listUDFGroups, let j = index">
+          <hr class="solid" *ngIf="udf.enabled">
+          <div class="position-relative form-group" *ngIf="udf.enabled">
+            <label>{{'udf.udf_group'| translate }} </label>
+            <div class="row">
+              <div class="col-xl-6">
+                <select class="form-control" formControlName="udfGroup{{j}}" name="udfGroup"
+                  [compareWith]="comparegroup" (change)="getUdfFiledList(j, false)"
+                  [attr.disabled]="listUDFGroups[j].mondatory ? '': null">
+                  <option *ngFor="let udfGroup of udfGroups" [ngValue]="udfGroup">
+                    {{udfGroup.description}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-xl-6 px-3">
+                <button class="btn btn-danger" (click)="deleteGroup(j)" *ngIf="!listUDFGroups[j].mondatory">
+                  <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="udfFields[j]?.length > 0 && udfFormData && udf.enabled">
+            <div class="table-responsive mt-2">
+
+
+
+              <div class="container">
+                <div class="row">
+                  <div class="col-xl-4 col-md-4 mb-3" *ngFor="let udfField of udfFields[j] , let i=index">
+                    <div *ngIf="!udfField.delete">
+                      <label>
+                        {{ udfField.description }}
+                        <span class="text-danger" *ngIf="udfField.mandatory"> *</span>
+                      </label>
+                    </div>
+                    <div *ngIf="udfField.fieldType === 1 ">
+                      <input class="form-control" type="text"
+                        [placeholder]="mascPlacHolder(udfFields[j][i].fieldMasc)"
+                        formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        <div *ngIf="udfForm.get('udfField' + j + i).touched && udfForm.get('udfField' + j + i).invalid">
+                          <small class="text-danger" *ngIf="udfForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                        </div>
+                    </div>
+                    <div *ngIf="udfField.fieldType === 2">
+                      <input class="form-control" type="number"
+                        [placeholder]="mascPlacHolder(udfFields[j][i].fieldMasc)"
+                        formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        <div *ngIf="udfForm.get('udfField' + j + i).touched && udfForm.get('udfField' + j + i).invalid">
+                          <small class="text-danger" *ngIf="udfForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                        </div>
+                    </div>
+                    <div *ngIf="udfField.fieldType === 5">
+                      <select class="form-control" [formControlName]="'udfField' + j + i" [compareWith]="compareFieldUDF"
+                        name="udfField" (change)="changeUDFField(j, i)">
+                        <option selected value>
+                          {{'udf.udf_group_code_default_select'| translate }}
+                        </option>
+                        <option *ngFor="let udfFieldListValue of udfField.fieldListValuesDTOs"
+                          [ngValue]="udfFieldListValue">
+                          {{udfFieldListValue.description}}
+                        </option>
+                      </select>
+                      <div *ngIf="udfForm.get('udfField' + j + i).touched && udfForm.get('udfField' + j + i).invalid">
+                        <small class="text-danger" *ngIf="udfForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                      </div>
+                    </div>
+                    <div *ngIf="udfField.fieldType === 4">
+                      <input type="date" class="form-control"
+                        formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        <div *ngIf="udfForm.get('udfField' + j + i).touched && udfForm.get('udfField' + j + i).invalid">
+                          <small class="text-danger" *ngIf="udfForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+  </div>
+</div>
+<div class="d-block text-end card-footer p-2" *ngIf="completeLoanData">
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button class="mx-2 btn btn-success " type="submit" (click)="submitCustomer()">{{'button.save'| translate }}</button>
+</div>
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'customer_management.check_kyc_modal'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='kycForm'>
+      <div class="card-body px-0 pb-0">
+        <div class="position-relative pb-4 px-4">
+          <label>{{'customer_management.opt_code'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control"
+              placeholder="{{'customer_management.otp_placeholder'| translate }}" formControlName="optcode">
+          </div>
+        </div>
+        <div class="position-relative pb-4 px-4">
+          <label>{{'customer_management.transaction_id'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control"
+              placeholder="{{'customer_management.transaction_placeholder'| translate }}"
+              formControlName="transactionid">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-1 btn btn-primary" type="submit" (click)="submitKyc()">{{'customer_management.check' |
+            translate}}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div class="main-card card">
+    <div class="card-header py-2">
+      <h4 class="modal-title">{{'task.customers'| translate }}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <app-customer-search [guarantor]="true" [categoryCustomerLink]="customerLinkCategoryParam"
+      [currentUser]="currentUser" (selectedCustomer)="addCustomerRelationShipLink($event)"></app-customer-search>
+  </div>
+</ng-template>

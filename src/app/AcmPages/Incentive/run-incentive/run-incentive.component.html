@@ -1,0 +1,97 @@
+<app-page-title [heading]=" 'sidebar.run_incentive'| translate " [icon]="'pe-7s-gift'" [account]="''" [status]="-1">
+</app-page-title>
+
+<div class="card row">
+    <div class="card-header ">
+        <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+            <div class="card-title m-0">{{'incentive.run_incentives.titre'| translate }}</div>
+        </div>
+    </div>
+  <div class="py-0">
+    <div class="table-responsive">
+      <table class="align-middle mb-0 table table-hover">
+        <thead>
+        <tr>
+          <th class="text-center" scope="col"> {{'incentive.run_incentives.name' | translate }}</th>
+          <th class="text-center" scope="col">{{'incentive.run_incentives.frequency' | translate }}</th>
+          <th class="text-center" scope="col"></th>
+          <th class="text-center" scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let incentive of incentiveSettingRuns">
+          <td class="text-center">{{incentive.description}}</td>
+          <td class="text-center">{{incentive.frequency.description}}</td>
+          <td class="text-center">
+            <button class="btn btn-primary" (click)="calculate(incentive.code)" [ngbTooltip]="incentive.description" [disabled] = "checkHabilitation(incentive)">
+              <i class="pe-7s-play btn-icon-wrapper text-white"></i>
+            </button>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-warning" (click)="generateReport(incentive.code, 'current')" [ngbTooltip]="'Download Report'" [disabled] = "checkHabilitation(incentive)">
+              <i class="pe-7s-note2 btn-icon-wrapper"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="card row">
+  <div class="card-header ">
+    <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+      <div class="card-title m-0">{{'incentive.incentive_history' | translate }}</div>
+    </div>
+  </div>
+  <div class="pt-0">
+    <form [formGroup]="incentiveHistoryForm">
+      <div class="table-responsive">
+        <table class="align-middle mb-0 table table-hover">
+          <thead>
+          <tr>
+            <th scope="col">{{'incentive.incentive_type' | translate }}</th>
+            <th scope="col">{{'incentive.month' | translate }}</th>
+            <th scope="col">{{'incentive.year' | translate }}</th>
+            <th class="text-center" scope="col"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <select class="form-control" formControlName="incentiveReport" (change)="loadYearMonth()">
+                <option [ngValue]="null">-------------</option>
+                <option *ngFor="let incentive of incentiveSettingRuns" [ngValue]="incentive">
+                  {{incentive.description}}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select class="form-control" formControlName="month" [attr.disabled]="!selectedReport ? '' : null">
+                <option [ngValue]="null">-------------</option>
+                <option *ngFor="let month of incentiveHistoryMonth" [ngValue]="month.value">
+                  {{month.value}}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select class="form-control" formControlName="year" [attr.disabled]="!selectedReport ? '' : null">
+                <option [ngValue]="null">-------------</option>
+                <option *ngFor="let year of incentiveHistoryYears" [ngValue]="year.value">
+                  {{year.value}}
+                </option>
+              </select>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-warning" [ngbTooltip]="'Download Report'" [disabled]="incentiveHistoryForm.invalid"
+                      (click)="generateReport(null, 'history')">
+                <i class="pe-7s-note2 btn-icon-wrapper"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+</div>

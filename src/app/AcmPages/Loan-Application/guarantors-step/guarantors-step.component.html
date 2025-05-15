@@ -1,0 +1,37 @@
+<app-page-title [heading]=" 'sidebar.loan_application'| translate " [icon]="'pe-7s-note2'"
+                [account]="loan.accountNumber" [status]="loan.statutWorkflow" [loanApplicationStatus]="loan?.loanApplicationStatus"></app-page-title>
+<div class="row">
+  <div class="col-md-9 col-xl-9 px-1">
+
+    <app-customer [expanded]="false"></app-customer>
+    <app-loan-info [expanded]="true"></app-loan-info>
+    <div *ngIf="loan.etapeWorkflow > 23" >
+    <app-loan-provider-article [mode]="view" [supplier]="loan.productDTO.supplier"> </app-loan-provider-article>
+    </div>
+    <app-list-documents [expanded]="true"></app-list-documents>
+    <app-guarantors-details [expanded]="true"  (applicationFee)="getApplicationFeeValue($event)"(isApplicationFee) = "getIsApplicationFee($event)"></app-guarantors-details>
+    <app-customer-notes  [expanded]="true"></app-customer-notes>
+    <app-event-table  [expanded]="true" [source]="'LOAN'"></app-event-table>
+    <app-conditional-approve-list *ngIf="loan.etapeWorkflow > 23 || !isOfflineModeEnabled()" [expanded]="true"></app-conditional-approve-list>
+    <app-upload-item [saveFilesAction]="saveFilesAction" (lengthDocuments)="receiveLengthDocuments($event)" [category]="categoryLoan"
+    [originSource]="originSource" [expanded]="true" (saveDone)="saveDocumentsDone($event)" (checkRequiredDoc)="checkRequiredDocumentParent($event)">
+    </app-upload-item>
+    <app-udf-step-workflow  [source]="'workflow'" [category]="'LOAN'"></app-udf-step-workflow>
+    <div class=" d-block text-end pt-2">
+      <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+      <button class="mb-2 mx-2 btn btn-secondary text-white"
+              (click)="previousStep()" >{{'button.previous' | translate}}</button>
+        <button class="mb-2 mx-2 btn btn-success " *ngIf="(!loanSharedService.habilitationButton('NEXT',currentPath) && loan.parentId === 0 && loan.isOwnerOrValidator) || isOfflineModeEnabled()"
+        (click)="saveGuarantor()" >{{'button.save'| translate }}</button>
+      <button class="mb-2 btn btn-primary" (click)="nextStep()" [disabled]='(applicationFeeParent === 0 && isApplicationFeeParent)'
+              *ngIf="(!loanSharedService.habilitationButton('NEXT',currentPath) && loan.parentId === 0 && loan.isOwnerOrValidator) || isOfflineModeEnabled()">{{'button.next' | translate}}</button>
+              <button class="mb-2 mx-2 btn btn-primary "
+              *ngIf=" displayButtonExecuteApi && (!loanSharedService.habilitationButton('EXECUTE_API',currentPath) && loan.isOwnerOrValidator) && !isOfflineModeEnabled()"
+              type="submit" (click)="executeThirdPartyApi()" >{{('Execute_api'|translate)}} </button>
+    </div>
+
+  </div>
+  <div class="col-md-3 col-xl-3 px-1">
+    <app-loan-process [etapeProcess]="currentStatus"></app-loan-process>
+  </div>
+</div>

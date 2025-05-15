@@ -1,0 +1,601 @@
+<!-- CUSTOMER SCREENING -->
+<div class="mb-1 card" *ngIf="checkScreeningComponent('_C')" >
+  <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapseOne"
+    aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapseCustomerScreening()">
+    <div class="card-header-title">
+      <i class="pe-7s-signal text-secondary px-2"></i>
+      {{'customer.customer_screening' | translate}}
+    </div>
+    <div>
+      <i
+        [ngClass]="(expandedCustomerScreening===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseOne" [ngClass]="(expandedCustomerScreening===true)?'collapse show':'collapse'"
+    aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div class="px-4 pt-1">
+      <div class="row">
+        <div class="col-xl-5">
+          <p class="h4"> {{'collaterol.customer' | translate}} : {{ customer.customerNameNoPipe }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row card-body py-4">
+      <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceCustomer==1,
+      'col-sm-6 col-md-6 col-xl-6': numberOccuranceCustomer==2,
+      'col-sm-6 col-md-4 col-xl-4': numberOccuranceCustomer==3 }" *ngIf="checkScreeningComponent('AML_C') && (maxScore || isScreening) ">
+        <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+          <div class="progress-circle-wrapper">
+            <div class="round-progress-text">
+              <span>{{maxScore}}</span>
+              <round-progress [current]="customer.currentCustomerAML" [max]="100" [color]="customer.colorCustomerAml"
+                [background]="customer.colorCustomerAml" [radius]="62" [stroke]="6" [semicircle]="false"
+                [rounded]="true" [clockwise]="false" [responsive]="true" [duration]="1400"
+                [animation]="'easeInOutQuart'" [animationDelay]="0">
+              </round-progress>
+            </div> 
+          </div>
+          <div *ngIf="customer.listName?.length>0" style="margin-top: 5px;" class="aml-data" >
+            <span *ngFor="let lstNameBadge of customer.listName" style = "margin-right:5px;">
+              <span [class]="lstNameBadge.badge">
+                {{lstNameBadge.name}}
+              </span>
+            </span>
+          </div>
+
+          <!--AML CUSTOMER-->
+          <div class="widget-chart-content">
+            <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}"><span>{{'screening.aml' |
+                translate}}</span></div>
+            <div class="widget-description opacity-8 text-focus">
+              <span class="text-info pl-1">
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                  <button
+                    *ngIf="!loanApproval && !loanSharedService.habilitationButton('RUN_AML_CUSTOMER',currentPath) && loan.isOwnerOrValidator"
+                    class="btn btn-primary" (click)="runCustomer('AML',customer)" [disabled]="!isScreening  || isOfflineModeEnabled()" >{{'button.run' | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group">
+                  <button class="btn btn-primary" (click)="getAmlData(content1, customer)"
+                    [disabled]="!isExistAmlDetails(customer)">{{'button.details' | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                  <button class="btn btn-success" (click)="recommend('AML', customer)"
+                    *ngIf="!loanSharedService.habilitationButton('ACCEPT_AML_CUSTOMER',currentPath) && buttonCustomerAml && loan.isOwnerOrValidator">
+                    {{'button.accept' | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group"
+                  *ngIf="!loanSharedService.habilitationButton('REJECT_AML_CUSTOMER',currentPath) && buttonCustomerAml && loan.isOwnerOrValidator">
+                  <button class="btn btn-danger" (click)="rejectModal(reject, 'AML')">{{'button.reject' |
+                    translate}}</button>
+                </div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<!--SCORE CUSTOMER    -->
+    <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceCustomer==1,
+    'col-sm-6 col-md-6 col-xl-6': numberOccuranceCustomer==2,
+    'col-sm-6 col-md-4 col-xl-4': numberOccuranceCustomer==3 }" *ngIf="checkScreeningComponent('SCORE_C') && ( isScreening)">
+   <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+     <div class="progress-circle-wrapper">
+       <div class="round-progress-text">
+         <span>{{customer.currentCustomerSCORE}}</span>
+         <round-progress [current]="customer.currentCustomerSCORE" [max]="100" [color]="customer.colorCustomerSCORE"
+           [background]="customer.colorCustomerSCORE" [radius]="62" [stroke]="6" [semicircle]="false"
+           [rounded]="true" [clockwise]="false" [responsive]="true" [duration]="1400"
+           [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+       </div>
+       <span>{{customer.riskLabelCustomerSCORE}}</span>
+     </div>
+
+     <div class="widget-chart-content">
+       <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}">
+         {{'screening.SCORE' | translate}}
+       </div>
+       <div class="widget-description opacity-8 text-focus">
+         <span class="text-info py-2">
+           <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+             <button class="btn btn-primary" (click)="runCustomer('SCORE')" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' | translate}}</button>
+           </div>
+           <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+             <button class="btn btn-primary" [disabled]="!customer.existSCORE"
+               (click)="detailModal(content,customer,'CUSTOMER','SCORE' )">{{'button.details'
+               | translate}}</button>
+           </div>
+         </span>
+       </div>
+     </div>
+   </div>
+ </div>
+ 
+      <!--KYC CUSTOMER-->
+      <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceCustomer==1,
+     'col-sm-6 col-md-6 col-xl-6': numberOccuranceCustomer==2,
+     'col-sm-6 col-md-4 col-xl-4': numberOccuranceCustomer==3 }" *ngIf="checkScreeningComponent('KYC_C') && (customer.currentCustomerKYC || isScreening)">
+        <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+          <div class="progress-circle-wrapper">
+            <div class="round-progress-text">
+              <span>{{customer.currentCustomerKYC}}</span>
+              <round-progress [current]="customer.currentCustomerKYC" [max]="100" [color]="customer.colorCustomerKYC"
+                [background]="customer.colorCustomerKYC" [radius]="62" [stroke]="6" [semicircle]="false"
+                [rounded]="true" [clockwise]="false" [responsive]="true" [duration]="1400"
+                [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+            </div>
+            <span>{{customer.riskLabelCustomerKYC}}</span>
+          </div>
+
+          <div class="widget-chart-content">
+            <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}">
+              {{'screening.kyc' | translate}}
+            </div>
+            <div class="widget-description opacity-8 text-focus">
+              <span class="text-info py-2">
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                  <button *ngIf="!loanSharedService.habilitationButton('RUN_KYC_CUSTOMER',currentPath)" class="btn btn-primary" (click)="runCustomer('KYC')" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                  <button class="btn btn-primary" [disabled]="!customer.existkyc"
+                    (click)="detailModal(content,customer,'CUSTOMER','KYC' )">{{'button.details'
+                    | translate}}</button>
+                </div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceCustomer==1,
+      'col-sm-6 col-md-6 col-xl-6': numberOccuranceCustomer==2,
+      'col-sm-6 col-md-4 col-xl-4': numberOccuranceCustomer==3 }" *ngIf="checkScreeningComponent('CREDIT_C') && (customer.currentCustomerISCORE || isScreening)">
+        <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+          <div class="progress-circle-wrapper">
+            <div class="round-progress-text">
+              <span>{{customer.currentCustomerISCORE}}</span>
+              <round-progress [current]="customer.currentCustomerISCORE" [max]="100"
+                [color]="customer.colorCustomerISCORE" [background]="customer.colorCustomerISCORE" [radius]="62"
+                [stroke]="6" [semicircle]="false" [rounded]="true" [clockwise]="false" [responsive]="true"
+                [duration]="1400" [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+            </div>
+          </div>
+          <!--ISCORE CUSTOMER-->
+          <div class="widget-chart-content">
+            <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}"><span>
+                <!-- {{'screening.sima' |translate}} -->
+                SCORE 
+              </span></div>
+            <div class="widget-description text-focus">
+              <span class="text-warning pl-1">
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                  <button
+                    *ngIf="!loanApproval && !loanSharedService.habilitationButton('RUN_ISCORE_CUSTOMER',currentPath) && loan.isOwnerOrValidator"
+                    class="btn btn-primary" (click)="runCustomer('ISCORE')" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group">
+                  <button class="btn btn-primary" (click)="detailModal(content,customer,'CUSTOMER','ISCORE' )"
+                    [disabled]="!customer.existISCORE">{{'button.details' | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                  <button class="btn btn-success" (click)="recommend('ISCORE', customer)"
+                    *ngIf="!loanSharedService.habilitationButton('ACCPET_ISCORE_CUSTOMER',currentPath) && buttonCustomer && loan.isOwnerOrValidator">{{'button.accept'
+                    | translate}}</button>
+                </div>
+                <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group">
+                  <button class="btn btn-danger" (click)="rejectModal(reject, 'ISCORE')"
+                    *ngIf="!loanSharedService.habilitationButton('REJECT_ISCORE_CUSTOMER',currentPath) && buttonCustomer && loan.isOwnerOrValidator">{{'button.reject'
+                    | translate}}</button>
+                </div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- GUARANTOR SCREENING -->
+<div *ngIf="guarantors.length >0 &&checkScreeningComponent('_G')">
+  <div class="mb-1 card">
+    <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapsetwo"
+      aria-expanded="true" aria-controls="collapsetwo" (click)="toggleCollapseGuanatorsScreening()">
+      <div class="card-header-title"><i class="pe-7s-signal text-secondary px-2"></i>
+        {{'customer.guanators_screening' | translate}}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedGuanatorsScreening===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapsetwo" [ngClass]="(expandedGuanatorsScreening===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div *ngFor="let guarantor of guarantors; let i =index">
+        <div class="px-4 pt-1">
+          <div class="row">
+            <div class="col-xl-7">
+              <p class="h4"> {{'customer.guarantor' | translate}} : {{ guarantor.customerNameNoPipe }}</p>
+            </div>
+            <div class="col-xl-5">
+              <p class="h4"> {{ guarantor.amountGuarantor| number: this.decimalPlaces:'fr' }} {{ loan?.currencySymbol }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row card-body pt-0 py-4">
+          <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceGuarantor==1,
+          'col-sm-6 col-md-6 col-xl-6': numberOccuranceGuarantor==2,
+          'col-sm-6 col-md-4 col-xl-4': numberOccuranceGuarantor==3 }" *ngIf="checkScreeningComponent('AML_G')  && (guarantor.currentCustomerAML || isScreening)">
+            <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+              <div class="progress-circle-wrapper">
+                <div class="round-progress-text">
+                  <span>{{guarantor.currentCustomerAML}}</span>
+                  <round-progress [current]="guarantor.currentCustomerAML" [max]="100"
+                    [color]="guarantor.colorCustomerAml" [background]="guarantor.colorCustomerAml" [radius]="62"
+                    [stroke]="6" [semicircle]="false" [rounded]="true" [clockwise]="false" [responsive]="true"
+                    [duration]="1400" [animation]="'easeInOutQuart'" [animationDelay]="0">
+                  </round-progress>
+                </div>
+              </div>
+              <div *ngIf="guarantor.listName.length>0" style = "margin-top:5px ;" class="aml-data" >
+                <span *ngFor="let lstNameBadge of guarantor.listName" style = "margin-right:5px ;">
+                  <span [class]="lstNameBadge.badge">
+                    {{lstNameBadge.name}}
+                  </span>
+                </span>
+              </div>
+              <!--AML GUARANTOR-->
+              <div class="widget-chart-content">
+                <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}"><span>{{'screening.aml' |
+                    translate}}</span></div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-info pl-1">
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                      <button
+                        *ngIf="!loanApproval && !loanSharedService.habilitationButton('RUN_AML_GUARANTOR',currentPath) && loan.isOwnerOrValidator"
+                        class="btn btn-primary" (click)="runGuarantor(guarantor,'AML',i)" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' |
+                        translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group">
+                      <button class="btn btn-primary" (click)="getAmlData(content1, guarantor)"
+                        [disabled]="!isExistAmlDetails(guarantor)">{{'button.details' | translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                      <button class="btn btn-success" (click)="recommend('AML', guarantor)"
+                        *ngIf="!loanSharedService.habilitationButton('ACCEPT_AML_GUARANTOR',currentPath) && buttonGuarantorAml && loan.isOwnerOrValidator">{{'button.accept'
+                        | translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group">
+                      <button class="btn btn-danger" (click)="rejectGuarantor(i)"
+                        *ngIf="!loanSharedService.habilitationButton('REJECT_AML_GUARANTOR',currentPath) && buttonGuarantorAml && loan.isOwnerOrValidator">{{'button.reject'
+                        | translate}}</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceGuarantor==1,
+                      'col-sm-6 col-md-6 col-xl-6': numberOccuranceGuarantor==2,
+                      'col-sm-6 col-md-4 col-xl-4': numberOccuranceGuarantor==3 }"
+            *ngIf="checkScreeningComponent('SCORE_G') && (guarantor.currentCustomerSCORE || isScreening)">
+            <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+              <div class="progress-circle-wrapper">
+                <div class="round-progress-text">
+                  <span>{{guarantor.currentCustomerSCORE}}</span>
+                  <round-progress [current]="guarantor.currentCustomerSCORE" [max]="100"
+                    [color]="guarantor.colorCustomerSCORE" [background]="guarantor.colorCustomerSCORE" [radius]="62"
+                    [stroke]="6" [semicircle]="false" [rounded]="true" [clockwise]="false" [responsive]="true"
+                    [duration]="1400" [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+                </div>
+                <span>{{guarantor.riskLabelCustomerSCORE}}</span>
+              </div>
+              <!--SCORE GUARANTOR-->
+              <div class="widget-chart-content">
+                <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}">
+                  {{'screening.SCORE' | translate}}
+                </div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-info py-2">
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                      <button class="btn btn-primary" (click)="runGuarantor(guarantor,'SCORE', i)" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' |
+                        translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                      <button class="btn btn-primary" (click)="detailModal(content,guarantor,'GUARANTOR','SCORE' )"
+                        [disabled]="!guarantor.existSCORE">{{'button.details' | translate}}</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceGuarantor==1,
+                      'col-sm-6 col-md-6 col-xl-6': numberOccuranceGuarantor==2,
+                      'col-sm-6 col-md-4 col-xl-4': numberOccuranceGuarantor==3 }"
+            *ngIf="checkScreeningComponent('KYC_G') && (guarantor.currentCustomerKYC || isScreening)">
+            <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+              <div class="progress-circle-wrapper">
+                <div class="round-progress-text">
+                  <span>{{guarantor.currentCustomerKYC}}</span>
+                  <round-progress [current]="guarantor.currentCustomerKYC" [max]="100"
+                    [color]="guarantor.colorCustomerKYC" [background]="guarantor.colorCustomerKYC" [radius]="62"
+                    [stroke]="6" [semicircle]="false" [rounded]="true" [clockwise]="false" [responsive]="true"
+                    [duration]="1400" [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+                </div>
+                <span>{{guarantor.riskLabelCustomerKYC}}</span>
+              </div>
+              <!--KYC GUARANTOR-->
+              <div class="widget-chart-content">
+                <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}">
+                  {{'screening.kyc' | translate}}
+                </div>
+                <div class="widget-description opacity-8 text-focus">
+                  <span class="text-info py-2">
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                      <button class="btn btn-primary" (click)="runGuarantor(guarantor,'KYC', i)" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' |
+                        translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                      <button class="btn btn-primary" (click)="detailModal(content,guarantor,'GUARANTOR','KYC' )"
+                        [disabled]="!guarantor.existkyc">{{'button.details' | translate}}</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div [ngClass]="{'col-sm-6 col-md-12 col-xl-12': numberOccuranceGuarantor==1,
+                      'col-sm-6 col-md-6 col-xl-6': numberOccuranceGuarantor==2,
+                      'col-sm-6 col-md-4 col-xl-4': numberOccuranceGuarantor==3 }"
+            *ngIf="checkScreeningComponent('CREDIT_G') && (guarantor.currentCustomerISCORE || isScreening)">
+            <div class="card no-shadow rm-border bg-transparent widget-chart space-screenig text-left">
+              <div class="progress-circle-wrapper">
+                <div class="round-progress-text">
+                  <span>{{guarantor.currentCustomerISCORE}}</span>
+                  <round-progress [current]="guarantor.currentCustomerISCORE" [max]="100"
+                    [color]="guarantor.colorCustomerISCORE" [background]="guarantor.colorCustomerISCORE" [radius]="62"
+                    [stroke]="6" [semicircle]="false" [rounded]="true" [clockwise]="false" [responsive]="true"
+                    [duration]="1400" [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+                </div>
+              </div>
+              <!--AML GUARANTOR-->
+              <div class="widget-chart-content">
+                <div class="widget-numbers ACM-Screening-text-{{translate.currentLang}}"><span>
+                    {{'screening.sima' | translate}}
+                    SCORE 
+                  </span></div>
+                <div class="widget-description text-focus">
+                  <span class="text-warning pl-1">
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="First group" style="margin-right: 5px;">
+                      <button
+                        *ngIf="!loanApproval && !loanSharedService.habilitationButton('RUN_ISCORE_GUARANTOR',currentPath) && loan.isOwnerOrValidator"
+                        class="btn btn-primary" (click)="runGuarantor(guarantor,'ISCORE',i)" [disabled]="!isScreening || isOfflineModeEnabled()">{{'button.run' |
+                        translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group">
+                      <button class="btn btn-primary" (click)="detailModal(content,guarantor,'GUARANTOR','ISCORE' )"
+                        [disabled]="!guarantor.existISCORE">{{'button.details' | translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1 px-1" role="group" aria-label="Second group"
+                         *ngIf="!loanSharedService.habilitationButton('ACCEPT_ISCORE_GUARANTOR',currentPath)  && buttonGuarantor && loan.isOwnerOrValidator">
+                      <button class="btn btn-success" (click)="recommend('ISCORE', guarantor) ">{{'button.accept' | translate}}</button>
+                    </div>
+                    <div class="btn-group mr-2 pt-1" role="group" aria-label="Second group"
+                      *ngIf="!loanSharedService.habilitationButton('REJECT_ISCORE_GUARANTOR',currentPath) && buttonGuarantor && loan.isOwnerOrValidator">
+                      <button class="btn btn-danger" (click)="rejectGuarantor(i)">{{'button.reject' |
+                        translate}}</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h4 class="modal-title">{{'button.details'| translate }}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div>
+      <div class="card-body">
+        <perfect-scrollbar style="height: 500px;">
+          <div class="table-responsive">
+            <table class="table">
+              <tr>
+                <th class="text-center">{{'upload_document.inserted_date'| translate }}</th>
+                <th class="text-center">{{'upload_document.inserted_by'| translate }}</th>
+                <th class="text-center">{{'customer.status'| translate }}</th>
+                <th class="text-center">{{'upload_document.download_report'| translate }}</th>
+              </tr>
+              <tr *ngFor="let thirdPartyHistorique of thirdPartyHistoriques">
+                <td class="text-center">{{ thirdPartyHistorique.dateInsertion | date: 'dd/MM/yyyy'}}</td>
+                <td class="text-center">{{ thirdPartyHistorique.insertBy}}</td>
+                <td class="text-center">{{ thirdPartyHistorique.status}}</td>
+                <td>
+                  <button
+                    *ngIf="showButtonDownloadISCORE && !(thirdPartyHistorique.status=== 'ERROR' || thirdPartyHistorique.status==='FAILED') "
+                    class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                    (click)="downloadISCORERapport(thirdPartyHistorique)">
+                    <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                  </button>
+                  <button
+                    *ngIf="showButtonDownloadAML && !(thirdPartyHistorique.status=== 'ERROR' || thirdPartyHistorique.status==='FAILED')"
+                    class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                    (click)="downloadAmlRapport(thirdPartyHistorique)">
+                    <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                  </button>
+                  <div *ngIf="(thirdPartyHistorique.status=== 'ERROR' || thirdPartyHistorique.status==='FAILED')">
+                    <h6 class="text-danger pt-3">{{ 'customer.error_message' | translate }}</h6>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </perfect-scrollbar>
+      </div>
+    </div>
+    <div class="modal-footer py-1">
+      <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+        translate}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #reject let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="rejectForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'reject.reject_loan'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'reject.reject_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifRejetsEntity of settingMotifRejetsEntitys"
+              [ngValue]="settingMotifRejetsEntity">
+              {{settingMotifRejetsEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'reject.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="custom-control-input" id="exampleCustomCheckboxReject" type="checkbox"
+                formControlName="confirm">
+              <label class="custom-control-label ms-2" for="exampleCustomCheckboxReject">{{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-danger">{{'button.reject' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #content1 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h4 class="modal-title">{{'button.details'| translate }}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="amlDetails">
+      <div class="main-card mb-3 card">
+        <div class="card-body">
+          <app-aml-profile-informtion [gender]="amlDetails?.mapRecord?.Gender"
+            [type]="amlDetails?.mapRecord?.recordType" [nameDetails]="amlDetails?.mapRecord?.NameDetails"
+            [descriptions]="amlDetails?.mapRecord?.Descriptions" [dateDetails]="amlDetails?.mapRecord?.DateDetails"
+            [images]="amlDetails?.mapRecord?.Images"></app-aml-profile-informtion>
+        </div>
+      </div>
+      <div class="tabs-animated tabs-animated-shadow tabs-rounded-lg card">
+        <ul class="nav nav-tabs nav-justified">
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': detailsTab}" (click)="changeTab(1)">
+              <span style="font-size: medium;">{{ 'aml_profile_details.details' | translate}}</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': sanctionsListTab}" (click)="changeTab(2)">
+              <span style="font-size: medium;">{{ 'aml_profile_details.sanctions_list' | translate}}</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': identityTab}" (click)="changeTab(3)">
+              <span style="font-size: medium;">{{ 'aml_profile_details.identity' | translate}}</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': functionsTab}" (click)="changeTab(4)">
+              <span style="font-size: medium;">{{ 'aml_profile_details.functions' | translate}}</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': noteTab}" (click)="changeTab(5)">
+              <span style="font-size: medium;">{{ 'aml_profile_details.note' | translate}}</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': sourcesTab}" (click)="changeTab(6)">
+              <span style="font-size: medium;">{{ 'aml_profile_details.sources' | translate}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="detailsTab">
+        <div class="main-card mb-3 card">
+          <app-aml-profile-details [descriptions]="amlDetails?.mapRecord?.Descriptions"
+            [expanded]="true"></app-aml-profile-details>
+        </div>
+      </div>
+      <div *ngIf="sanctionsListTab">
+        <div class="main-card mb-3 card">
+          <app-aml-profile-sanctions-references [sanctionsReferences]="amlDetails?.mapRecord?.SanctionsReferences"
+            [expanded]="true"></app-aml-profile-sanctions-references>
+        </div>
+      </div>
+      <div *ngIf="identityTab">
+        <div class="main-card mb-3 card">
+          <app-aml-profile-identity [iDNumberTypes]="amlDetails?.mapRecord?.IDNumberTypes"
+            [expanded]="true"></app-aml-profile-identity>
+        </div>
+      </div>
+      <div *ngIf="functionsTab">
+        <div class="main-card mb-3 card">
+          <app-aml-profile-function [roleDetail]="amlDetails?.mapRecord?.RoleDetail"
+            [expanded]="true"></app-aml-profile-function>
+        </div>
+      </div>
+      <div *ngIf="noteTab">
+        <div class="main-card mb-3 card">
+          <app-aml-profile-note [profileNotes]="amlDetails?.mapRecord?.ProfileNotes"
+            [expanded]="true"></app-aml-profile-note>
+        </div>
+      </div>
+      <div *ngIf="sourcesTab">
+        <div class="main-card mb-3 card">
+          <app-aml-profile-sources [sourceDescription]="amlDetails?.mapRecord?.SourceDescription"
+            [expanded]="true"></app-aml-profile-sources>
+        </div>
+      </div>
+      <div class="main-card mb-3 card">
+        <app-aml-workflow-details [acmAmlChecksDTOs]="acmAmlChecksDTOs"
+          (dismissModal)="dismissModal($event)"></app-aml-workflow-details>
+      </div>
+
+    </div>
+    <div class="modal-footer py-1">
+      <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+        translate}}</button>
+    </div>
+  </div>
+</ng-template>

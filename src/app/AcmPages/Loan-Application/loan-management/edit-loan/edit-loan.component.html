@@ -1,0 +1,548 @@
+<!--title-->
+<app-page-title *ngIf="completeLoanData" [heading]="'loan_management.edit_loan'| translate " [icon]="'pe-7s-culture'"
+                [account]="''" [status]="-1"></app-page-title>
+<app-customer [expanded]="true" *ngIf="completeLoanData"></app-customer>
+<!--form add-->
+<form [formGroup]="editLoanForm" (change)="changeFormLoan(false)">
+  <div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseLoanDetails" aria-expanded="true"
+         aria-controls="collapseCustomerAccount" (click)="toggleCollapseLoanDetails()">
+      <div>
+        <i class="lnr-file-empty text-secondary pr-2"></i>
+        {{ 'loan_management.loan_details.loan_detail' | translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedLoanDetails===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expandedLoanDetails===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+         data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-xl-6 col-sm-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.loan_details.account_portfolio'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="accountPortfolio" name="accountPortfolio"
+                      [compareWith]="compareAccountPortfolio">
+                <option selected value>
+                  {{'loan_management.loan_details.account_portfolio_default_select'| translate }}
+                </option>
+                <option *ngFor="let accountPortfolio of accountPortfolios" [ngValue]="accountPortfolio">
+                  {{accountPortfolio.fullName}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.loan_details.loan_reason'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="loanReason" name="loanReason"
+                      [compareWith]="compareLoanReason">
+                <option selected value>
+                  {{'loan_management.loan_details.loan_reason_default_select'| translate }}
+                </option>
+                <option *ngFor="let productLoanReason of productLoanReasons"
+                        [ngValue]="productLoanReason">
+                  {{productLoanReason.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-xl-6 col-md-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.loan_details.source_of_funds'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="sourceOfFunds" name="sourceOfFunds"
+                      [compareWith]="compareSourceOfFunds">
+                <option selected value>
+                  {{'loan_management.loan_details.source_of_funds_default_select'| translate }}
+                </option>
+                <option *ngFor="let sourceOfFunds of sourceOfFundss" [ngValue]="sourceOfFunds">
+                  {{sourceOfFunds.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-xl-6 col-md-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.calculators.product'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="product" name="product"
+                      [compareWith]="compareProduct" (change)="getProductRequirement()" disabled>
+                <option selected value>
+                  {{'loan_management.calculators.product_code_default_select'| translate }}
+                </option>
+                <option *ngFor="let product of products" [ngValue]="product">
+                  {{product.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<app-loan-provider-article (addNewAsset)="addNewAsset()" *ngIf = "product.supplier"
+(selectAssets)="newAsset($event)" (totalAmount)="totalAmount($event)" (calculRequired)="calculRequired($event)" [mode]="edit" [supplier]="product.supplier">
+</app-loan-provider-article>
+
+<div *ngIf="selectedLoan.loanApplicationStatus === 'NEW_APPLICATION'" >
+<div *ngIf="customer.customerType !== 'GRP'">
+  <form [formGroup]="editLoanSimulationIndivForm" (change)="changeFormLoan( true)">
+    <div class="card-hover-shadow-2x mb-1 card">
+      <div class="card-header d-flex justify-content-between" data-target="#collapseLoanSimulation"
+           aria-expanded="true" aria-controls="collapseCustomerAccount" (click)="toggleCollapseLoanSimulation()">
+        <div>
+          <i class="lnr-sync text-secondary pr-2"></i>
+          {{ 'loan_management.calculators.loan_simulation' | translate }}
+        </div>
+        <div>
+          <i
+            [ngClass]="(expandedLoanSimulation===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div [ngClass]="(expandedLoanSimulation===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+           data-parent="#accordionExample">
+        <div class="card-body">
+
+          <div *ngIf="product.supplier" class="row">
+            <div class="col-xl-5 col-md-5 px-1 position-relative">
+              <label> {{'supplier.assets_amount'| translate }} </label>
+              <div class="form-group input-group mb-2">
+                <input class="form-control" placeholder="{{'supplier.assets_amount'| translate }}" type="number"
+                  value="{{currentAmount}}" disabled>
+                <span class="input-group-append">
+                  <button class="btn btn-light border hl" ngxclipboard="" type="button"
+                    ng-reflect-target-elm="">{{currencySymbol}}</button>
+                </span>
+              </div>
+            </div>
+            <div class="col-xl-5 col-md-5 px-1 position-relative">
+              <label>{{'supplier.personnel_imput'| translate }}</label>
+              <div class="form-group input-group mb-2">
+                <input class="form-control" placeholder="{{'supplier.personnel_imput'| translate }}" type="number"
+                  min="0" value="{{apportPersonnel}}" (change)="updateApportPersonnel($event.target.value)">
+                <span class="input-group-append">
+                  <button class="btn btn-light border" ngxclipboard="" type="button"
+                    ng-reflect-target-elm="">{{currencySymbol}}</button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row no-gutters position-relative">
+            <div class="col-xl-4 col-md-4 px-1">
+              <label>{{'loan_management.calculators.loan_amount'| translate }}</label>
+              <span class="text-danger">*</span>
+              <div class="form-group input-group mb-2">
+                <input class="form-control" placeholder="{{'loan_management.calculators.loan_amount'| translate }}"
+                       type="number" step="500" min="0" formControlName="loanAmount" (change)="getMinMaxValueTerm()">
+                <span class="input-group-append">
+                    <button class="btn btn-light lh" ngxclipboard="" type="button"
+                            ng-reflect-target-elm="">{{currencySymbol}}</button>
+                  </span>
+              </div>
+              <div class="form-row d-flex align">
+                <p class="px-1 text-uppercase ACM-field-description mb-0"
+                   [ngClass]="limitMinAmountValidation ? 'text-danger' : ''"> {{'button.min'| translate }} {{this.minAmountValidation}}</p>
+                <p class="px-1 text-uppercase ACM-field-description mb-0"
+                   [ngClass]="limitMaxAmountValidation ? 'text-danger' : ''"> {{'button.max'| translate }} {{this.maxAmountValidation}}</p>
+              </div>
+            </div>
+
+            <div *ngIf="product.isFrequency" class="col-xl-3 col-md-3 px-1">
+              <label>{{'loan.frequency'| translate }}</label>
+              <span class="text-danger">*</span>
+              <div class="form-group input-group mb-2">
+                <input class="form-control" placeholder="Repayement frequency" type="number" step="1" min="0"
+                  formControlName="frequency">
+                <span class="input-group-append">
+                  <button class="btn btn-light border" ngxclipboard="" type="button"
+                    ng-reflect-target-elm="">{{currencySymbol}}</button>
+                </span>
+              </div>
+            </div>
+            <div *ngIf="product.isFrequency" class="col-xl-3 col-md-3 px-1">
+              <label>{{'loan.interest_frequency'| translate }}</label>
+              <span class="text-danger">*</span>
+              <div class="form-group input-group mb-2">
+                <input class="form-control" placeholder="Interest frequency" type="number" step="1" min="0"
+                  formControlName="interestFrequency" (change)="getInitialPaymentValue()">
+                <span class="input-group-append">
+                  <button class="btn btn-light border" ngxclipboard="" type="button"
+                    ng-reflect-target-elm="">{{currencySymbol}}</button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row no-gutters position-relative">
+            <div class="col-xl-6 col-md-6 px-1">
+              <div class="form-group">
+                <label>{{'loan_management.calculators.loan_term'| translate }}</label>
+                <span class="text-danger">*</span>
+                <div class="form-group row">
+                  <div class="col-xl-8 col-md-8">
+                    <input class="form-control" placeholder="{{'loan_management.calculators.loan_term'| translate }}"
+                           type="number" step="1" min="0" formControlName="loanTerm" (change)="getMinMaxValueAmount()">
+                    <div class="form-row d-flex align">
+                      <p class="px-1 text-uppercase ACM-field-description mb-0"
+                         [ngClass]="limitMinTermValidation ? 'text-danger' : ''"> {{'button.min'| translate }} {{this.minTermValidation}}</p>
+                      <p class="px-1 text-uppercase ACM-field-description mb-0"
+                         [ngClass]="limitMaxTermValidation ? 'text-danger' : ''"> {{'button.max'| translate }} {{this.maxTermValidation}}</p>
+                    </div>
+                  </div>
+                  <div class="col-xl-4 col-md-4">
+                      <span class="input-group-append">
+                        <select class="custom-select" [attr.disabled]="methodCalcule === '-1'?'':null"
+                                formControlName="termType" [style]="{height : 'auto'}">
+                          <option value=1>{{"term-periode.day" | translate}}</option>
+                          <option value=3>{{"term-periode.month" | translate}}</option>
+                          <option value=2>{{"term-periode.week" | translate}}</option>
+                          <option value=5>{{"term-periode.year" | translate}}</option>
+                        </select>
+                      </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row no-gutters">
+            <div class="col-xl-5 col-md-5 px-1">
+              <div class="position-relative form-group">
+                <label> {{'loan_management.calculators.issue_date'| translate }}</label>
+                <span class="text-danger">*</span>
+                <input class="form-control" placeholder="{{'loan_management.calculators.issue_date'| translate }}"
+                       type="date" [min]="minIssueDatevalue" formControlName="issueDate" (change)="getInitialPaymentValue()">
+              </div>
+            </div>
+            <div class="col-xl-5 col-md-5 px-1">
+              <div class="position-relative form-group">
+                <label> {{'loan_management.calculators.initial_payment'| translate }}</label>
+                <span class="text-danger">*</span>
+                <input class="form-control"
+                       placeholder="{{'loan_management.calculators.initial_payment'| translate }}"
+                       type="date" formControlName="initialPayment">
+              </div>
+            </div>
+          </div>
+          <div class="row no-gutters d-flex align-items-end">
+            <div class="col-xl-10 col-md-10 px-1">
+              <div class="position-relative form-group">
+                <label> {{'loan_management.calculators.periods_deferred'| translate }}</label>
+                <div class="form-group row no-gutters">
+                  <div class="col-xl-6 col-md-6">
+                    <input class="form-control"
+                           placeholder="{{'loan_management.calculators.periods_deferred'| translate }}" type="number"
+                           formControlName="periodsDeferred" (change)="checkDeferredPeriod()">
+                    <div class="form-row d-flex align">
+                      <p class="px-1 text-uppercase ACM-field-description mb-0"
+                         [ngClass]="limitMinPeriodsValidation ? 'text-danger' : ''"> {{'button.min'| translate }} {{this.minPeriodsValidation}}</p>
+                      <p class="px-1 text-uppercase ACM-field-description mb-0"
+                         [ngClass]="limitMaxPeriodsValidation ? 'text-danger' : ''"> {{'button.max'| translate }} {{this.maxPeriodsValidation}}</p>
+                    </div>
+                  </div>
+                  <div class="col-xl-5 col-md-6">
+                      <span class="input-group-append">
+                        <select class="form-control" formControlName="periodsDeferredType"  [compareWith]="compareFrequency">
+                          <option selected value disabled>
+                           {{'upload_document.default_select' | translate}}
+                          </option>
+                          <ng-container *ngIf="product !== undefined && product?.productDetailsDTOs !== undefined" >
+                            <option *ngFor="let type of product?.productDetailsDTOs[0]?.deferredPeriodTypeDTOs"
+                              [ngValue]="type.deferredPeriodTypeId">
+                              {{type.code}}
+                            </option>
+                          </ng-container>
+                        </select>
+                      </span>
+                  </div>
+                  <div class="col-xl-1 col-md-6">
+                    <div class="form-group">
+                      <button class="btn btn-primary" (click)="calculate(true)">{{'button.calculate'| translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr class="solid">
+          <div class="row d-flex align-items-end">
+            <div class="col-xl-5 col-md-5 px-1">
+              <label>{{'loan_management.calculators.apr'| translate }}</label>
+              <div class="form-group input-group">
+                <input class="form-control" readonly placeholder="{{'loan_management.calculators.apr'| translate }}"
+                       type="number" step="500" min="0" formControlName="apr">
+                <span class="input-group-append">
+                    <button class="btn btn-light lh" ngxclipboard="" type="button"
+                            ng-reflect-target-elm="">{{currencySymbol}}</button>
+                  </span>
+              </div>
+            </div>
+            <div class="col-xl-5 col-md-5 px-1">
+              <label>{{'loan_management.calculators.repayment'| translate }}</label>
+              <div class="form-group input-group">
+                <input class="form-control" readonly
+                       placeholder="{{'loan_management.calculators.repayment'| translate }}" type="number" step="500"
+                       min="0"
+                       formControlName="repayment">
+                <span class="input-group-append">
+                    <button class="btn btn-light lh" ngxclipboard="" type="button"
+                            ng-reflect-target-elm="">{{currencySymbol}}</button>
+                  </span>
+              </div>
+            </div>
+            <div
+              class="card no-shadow rm-border bg-transparent widget-chart text-left col-xl-2 col-md-2 px-1 ACM-calculate" style="display:none">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-8 bg-danger"></div>
+                <i class="pe-7s-cash text-white"></i>
+              </div>
+              <div class="widget-chart-content">
+                <div class="widget-subheading"> {{'loan_management.calculators.apr'| translate }}</div>
+                <div class="widget-numbers text-black ACM-font-size-calculate"><span>{{this.apr}} % </span></div>
+              </div>
+            </div>
+          </div>
+          <div class="row ">
+            <div class="col-xl-5 col-md-5 px-1">
+              <label> {{'loan_management.calculators.fees'| translate }}</label>
+              <div class="form-group input-group">
+                <input readOnly class="form-control" placeholder="{{'loan_management.calculators.fees'| translate }}"
+                       type="number" formControlName="fees">
+                <span class="input-group-append">
+                    <button class="btn btn-light lh" ngxclipboard="" type="button"
+                            ng-reflect-target-elm="">{{currencySymbol}}</button>
+                  </span>
+              </div>
+            </div>
+            <div class="col-xl-5 col-md-5 px-1">
+              <label> {{'loan_management.calculators.closing_balance'| translate }}</label>
+              <div class="form-group input-group">
+                <input readOnly class="form-control"
+                       placeholder="{{'loan_management.calculators.closing_balance'| translate }}" type="number"
+                       formControlName="closingBalance">
+                <span class="input-group-append">
+                    <button class="btn btn-light lh" ngxclipboard="" type="button"
+                            ng-reflect-target-elm="">{{currencySymbol}}</button>
+                  </span>
+              </div>
+            </div>
+            <div
+              class="card no-shadow rm-border bg-transparent widget-chart text-left col-xl-2 col-md-2 px-1 ACM-calculate" style="display:none">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-8 bg-success"></div>
+                <i class="pe-7s-cash text-white"></i>
+              </div>
+              <div class="widget-chart-content">
+                <div class="widget-subheading">{{'loan_management.calculators.irr'| translate }}</div>
+                <div class="widget-numbers text-success ACM-font-size-calculate"><span>{{this.irr}} %</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div *ngIf="schedules.length > 0 ">
+  <div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseLoanSchedule" aria-expanded="true"
+         aria-controls="collapseCustomerAccount" (click)="toggleCollapseLoanSchedule()">
+      <div>
+        <i class="lnr-chart-bars text-secondary pr-2"></i>
+        {{ 'schedule.schedule' | translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedLoanSchedule===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'" (click)="toggleCollapseLoanSchedule()"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expandedLoanSchedule===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+         data-parent="#accordionExample">
+         <div class="mb-2 mx-2 my-2 d-flex justify-content-end">
+          <div class="mt-2" *ngIf="sharedService.habilitationButton('UPDATE','acm-schedule')">
+            <button class=" mx-2 btn btn-primary" (click)="calculate(false)">
+              {{ 'schedule.synchronize_schedule' | translate }}
+            </button>
+            <input class="mt-2 form-check-input" type="checkbox" (click)="scheduleFlexibleChecked($event)">
+            <label class="custom-control-label"> {{ 'schedule.flexible_schedule' | translate }} </label>
+          </div>
+          <button
+            class="mb-2 mx-2 my-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+            (click)="downloadSchedule()">
+            <i ngbTooltip="{{'schedule.dowloand_schedule'| translate }}"
+               class="pe-7s-cloud-download btn-icon-wrapper"></i>
+          </button>
+        </div>
+      <div class="table-responsive mt-2">
+        <table class="mb-0 table green">
+          <thead>
+          <tr>
+            <th>{{'schedule.period'| translate }}</th>
+            <th>{{'schedule.repayment_date'| translate }}</th>
+            <th>{{'schedule.total_repayment'| translate }}</th>
+            <th>{{'schedule.interest'| translate }}</th>
+            <th>{{'schedule.principal'| translate }}</th>
+            <th>{{'schedule.balance'| translate }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let schedule of schedules | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+            <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+              {{ schedule.period}}</td>
+            <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+              {{ schedule.repaymentDate}}</td>
+              <td  *ngIf="!scheduleFlexibleIsChecked"
+              [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"> {{
+              schedule.totalRepayment | number : this.decimalPlaces:'fr'}} {{ currencySymbol }} </td>
+            <td *ngIf="scheduleFlexibleIsChecked">
+              <input (change)="totalRepayementChanged()" min="0" type="number" class="form-control"
+                [(ngModel)]="schedule.totalRepayment"></td>
+             
+            <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+              {{ schedule.interestRepayment  | number : this.decimalPlaces:'fr'}}
+              {{ product?.currency }}
+            </td>
+            <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+              {{ schedule.loanRepayment  | number : this.decimalPlaces:'fr'}}
+              {{ product?.currency }}
+            </td>
+            <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"
+             *ngIf="schedule !== lastLine">
+              {{ schedule.balance  | number : this.decimalPlaces:'fr'}} {{ product?.currency
+              }}</td>
+              <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"
+              *ngIf="schedule === lastLine"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer pb-0">
+      <div class="row w-100">
+        <div class="col-xl-6 col-lg-6 col-md-12">
+          <ngb-pagination [collectionSize]="schedules.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                          [maxSize]="3" [boundaryLinks]="true">
+          </ngb-pagination>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12">
+          <div class="d-flex justify-content-lg-end">
+            <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+              <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+              <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+              <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+              <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<app-calculator  [selectedLoan]="selectedLoan" [selectedProduct]="product" [loanDetailsValidity]="editLoanForm.valid"
+[source]="'edit-loan'" (loanFormDetailsTouched)="markAsTouched($event)" [show]="selectedLoan.loanApplicationStatus !== 'NEW_APPLICATION'"></app-calculator>
+
+<app-udf-step-workflow [source]="'workflow'"[category]="'LOAN'"></app-udf-step-workflow>
+<!-- <div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseLoanAnalyses" aria-expanded="true"
+       aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomerAnalyses()">
+    <div>
+      <i class="lnr-magnifier text-secondary pr-2"></i>
+      {{ 'loan_management.loan_analyses' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedUdf===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedUdf===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+       data-parent="#accordionExample">
+    <div class="card-body">
+      <div class="col-xl-12 d-flex justify-content-end pt-3">
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                (click)="addUdfLoan()">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add' | translate}}
+        </button>
+      </div>
+      <form [formGroup]="udfLoanForm" (change)="changeFormLoan(false)">
+        <div *ngFor="let udf of listUDFGroupsLoan, let j = index">
+          <hr class="solid" *ngIf="udf.enabled">
+          <div class="position-relative form-group" *ngIf="udf.enabled && ((udf.code === 'Industry Code' || udf.code === 'Loans informations') || (udf.code === null))">
+            <label>{{'udf.udf_group'| translate }} </label>
+            <div class="row">
+              <div class="col-xl-6">
+                <select class="form-control" formControlName="udfGroup{{j}}" name="udfGroup"
+                        [compareWith]="comparegroup" (change)="getUdfFiledListLoan(j, false)" [attr.disabled] = "listUDFGroupsLoan[j].mondatory ? '': null">
+                  <option *ngFor="let udfGroup of udfGroupsLoan" [ngValue]="udfGroup">
+                    {{udfGroup.description}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-xl-6 px-3">
+                <button class="btn btn-danger" (click)="deleteGroupLoan(j)" *ngIf="!listUDFGroupsLoan[j].mondatory">
+                  <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="udfFieldsLoan[j].length > 0 && udf.enabled && udfFormData">
+            <div class="table-responsive mt-2">
+              <table class="mb-0 table green">
+                <thead>
+                <tr>
+                  <th>{{'udf.udf_filed'| translate }}</th>
+                  <th>{{'udf.value'| translate }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let udfField of udfFieldsLoan[j] , let i=index">
+                    <td *ngIf="!udfField.delete">{{ udfField.description}}
+                      <span class="text-danger" *ngIf="udfField.mandatory"> *</span>
+                    </td>
+                    <td *ngIf="!udfField.delete && udfField.fieldType === 1 "><input class="form-control" type="text"
+                                                                 [placeholder]="mascPlacHolder(udfFieldsLoan[j][i].fieldMasc)"
+                                                                 formControlName="udfField{{j}}{{i}}" name="udfField"/>
+                    </td>
+                    <td *ngIf="!udfField.delete && udfField.fieldType === 2 "><input class="form-control" type="number"
+                                                                 [placeholder]="mascPlacHolder(udfFieldsLoan[j][i].fieldMasc)"
+                                                                 formControlName="udfField{{j}}{{i}}" name="udfField"/>
+                    </td>
+                    <td *ngIf="!udfField.delete && udfField.fieldType === 5 " >
+                      <select class="form-control"  [formControlName]="'udfField' + j + i"
+                              [compareWith]="compareFieldUDF" name="udfField" (change)="changeUDFField(j, i)">
+                        <option [ngValue]="null" selected></option>
+                        <option *ngFor="let udfFieldListValue of udfField.fieldListValuesDTOs"
+                                [ngValue]="udfFieldListValue">
+                          {{udfFieldListValue.description}}
+                        </option>
+                      </select>
+                    </td>
+                    <td *ngIf="!udfField.delete && udfField.fieldType === 4 ">
+                      <input type="date" class="form-control" formControlName="udfField{{j}}{{i}}"
+                             name="udfField"/>
+                    </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->
+<div class="d-block text-end card-footer p-2" *ngIf="completeLoanData">
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button class="btn btn-success mx-2" (click)="submitLoan()">{{'button.save'| translate }}</button>
+</div>

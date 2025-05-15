@@ -1,0 +1,262 @@
+<div *ngIf="activationKey.length !== 0">
+  <div class="card">
+    <div class="card-header">
+      {{'setting.journal-entry.type'| translate }}
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="d-inline-flex align-items-center btn btn-primary" (click)="addJournalEntryType(modalContent)">
+          <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+          {{'setting.setting_configuration_product.add'| translate }}
+        </button>
+      </div>
+    </div>
+    <div>
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{'setting.code'| translate }}</th>
+            <th>{{'setting.description'| translate }}</th>
+            <th>{{'setting.journal'| translate }}</th>
+            <th>{{'setting.status'| translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let settingJournalEntryTypeEntity of settingJournalEntryTypeEntitys | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+            <td>{{settingJournalEntryTypeEntity.code }}</td>
+            <td>{{ settingJournalEntryTypeEntity.description }}</td>
+            <td>{{ settingJournalEntryTypeEntity.journalDescription }}</td>
+            <td>
+              <bSwitch [(ngModel)]="settingJournalEntryTypeEntity.enabled" [switch-size]="'mini'"
+                [switch-animate]="true" [switch-off-color]="'danger'" [switch-handle-width]="40" class="px-2 mb-0"
+                (click)="endableDisable(settingJournalEntryTypeEntity)">
+              </bSwitch>
+            </td>
+            <td>
+              <button class="btn btn-warning text-white  mr-4 "
+                (click)="updateJournalEntryType(modalContent, settingJournalEntryTypeEntity)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+              <button class="btn btn-danger text-white"
+                (click)="deleteSettingJournalEntryType(settingJournalEntryTypeEntity,i)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="settingJournalEntryTypeEntitys.length" [(page)]="page" [pageSize]="pageSize"
+          size="sm" [maxSize]="3" [boundaryLinks]="true">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- journal enteries -->
+  <div class="py-1">
+    <div class="card">
+      <div class="card-header">
+        {{'setting.journal-entry.journal_entries'| translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+          <button class="d-inline-flex align-items-center btn btn-primary" (click)="addJournalEnteries()">
+            <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+            {{'setting.journal-entry.add_journal_enteries_'| translate }}
+          </button>
+        </div>
+      </div>
+      <div class="col-xl-4 col-md-4 px-1">
+        <div class="position-relative form-group">
+          <label>{{'setting.journal-entry.type'| translate }}</label>
+          <span class="text-danger">*</span>
+          <select class="form-control" name="journalEntryType" [(ngModel)]="selectedType"
+            (change)="getJournalEnteries()">
+            <option selected value disabled>
+              {{'setting.journal-entry.journal-entries-type-select'| translate }}
+            </option>
+            <option *ngFor="let a of settingJournalEntryTypeEntitys" [ngValue]="a">{{a.code}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <table class="mb-0 t table table-hover">
+          <thead>
+            <tr>
+              <th>{{'setting.code'| translate }}</th>
+              <th>{{'setting.label'| translate }}</th>
+              <th>{{'setting.description'| translate }}</th>
+              <th>{{'setting.amount'| translate }}</th>
+              <th>{{'setting.journal-entry.percentage'| translate }}</th>
+              <th>{{'setting.journal-entry.debit_account'| translate }}</th>
+              <th>{{'setting.journal-entry.credit_account'| translate }}</th>
+              <th>{{'setting.journal-entry.supplier' | translate }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let journalEntrieForm of journalEntriesForms; let i = index" class="form" [formGroup]="journalEntrieForm">
+              <tr>
+
+
+                <td class="col-sm-1">
+                  <div>
+                    <input class="form-control" formControlName="code">
+                  </div>
+                </td>
+                <td class="col-sm-1">
+                  <div>
+                    <input class="form-control" formControlName="label">
+                  </div>
+                </td>
+                <td class="col-sm-2">
+                  <div>
+                    <input class="form-control" formControlName="description">
+                  </div>
+                </td>
+                <td class="col-sm-2">
+                  <div>
+                    <select class="form-control" formControlName="amount"
+                      (change)="supplierEnable($event.target.value, i)">
+                      <option>Loan principal</option>
+                      <option>Loan interest</option>
+                      <option>Total asset</option>
+                      <option>Personnel contribution</option>
+                      <option>Withholding Tax</option>
+                      <option>Total asset HT</option>
+                    </select>
+                  </div>
+                </td>
+                <td class="col-sm-2">
+                  <div class="input-group">
+                    <div>
+                      <input type="number" class="form-control" formControlName="percentage" min="0">
+                    </div>
+                    <span class="input-group-append">
+                      <button class="btn btn-light border hl" ngxclipboard="" type="button"
+                        ng-reflect-target-elm="">%</button></span>
+                  </div>
+                </td>
+                <td class="col-sm-2">
+                  <div class="input-group">
+                    <p-autoComplete (completeMethod)="filterCreditAcount($event)" formControlName="debitAcount"
+                      placeholder="{{'setting.journal-entry.debit_account'| translate }}"
+                      [suggestions]="listCreditAcount" field="number" id="debitAcount" [size]="30" [minLength]="1"
+                      [forceSelection]="true" [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+                      <ng-template let-filteredDebitAcount pTemplate="item">
+                        {{filteredDebitAcount.number}}
+                      </ng-template>
+                    </p-autoComplete>
+                  </div>
+                </td>
+                <td class="col-sm-2">
+                  <div class="input-group">
+                    <p-autoComplete (completeMethod)="filterCreditAcount($event)" formControlName="creditAcount"
+                      placeholder="{{'setting.journal-entry.credit_account'| translate }}"
+                      [suggestions]="listCreditAcount" field="number" id="creditAcount" [size]="30" [minLength]="1"
+                      [forceSelection]="true" [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+                      <ng-template let-filteredCreditAcount pTemplate="item">
+                        {{filteredCreditAcount.number}}
+                      </ng-template>
+                    </p-autoComplete>
+                  </div>
+                </td>
+                <td class="col-sm-2">
+                  <div class="input-group" style="flex-wrap: nowrap !important;">
+                    <mat-checkbox formControlName="bySupplier">{{'setting.journal-entry.supplier' | translate }}
+                    </mat-checkbox>
+                  </div>
+                </td>
+                <td>
+                  <div class="row d-flex justify-content-end px-3">
+                    <div class="px-2">
+                      <button class="btn btn-danger" (click)="deleteJournalEntries(i)">
+                        <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+
+      <div class="modal-footer py-1">
+        <button type="submit" class="btn btn-primary" (click)="onsave()">{{'button.save' |
+          translate}} </button>
+      </div>
+    </div>
+
+
+  </div>
+
+  <ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2" *ngIf="popuppMode === 'UPDATE'">
+        <h5 class="modal-title">{{'setting.journal-entry.update_setting_Journal_entry_type'| translate }}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+          <span aria-hidden="true" (click)="closeModale()">&times;</span>
+        </button>
+      </div>
+      <div class="modal-header py-2" *ngIf="popuppMode === 'ADD'">
+        <h5 class="modal-title">{{'setting.journal-entry.add_setting_Journal_entry_type'| translate }}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+          <span aria-hidden="true" (click)="closeModale()">&times;</span>
+        </button>
+      </div>
+      <form class="form" [formGroup]='groupForm'>
+        <div class="card-body">
+
+
+          <div class="position-relative pb-4">
+            <label>{{'setting.code'| translate }}</label>
+            <span class="text-danger">*</span>
+            <div class="input-group form-group">
+              <input type="text" class="form-control" formControlName="code">
+            </div>
+          </div>
+          <div class="position-relative pb-4">
+            <label>{{'setting.description'| translate }}</label>
+            <div class="input-group">
+              <textarea class="form-control" formControlName="description"></textarea>
+            </div>
+          </div>
+          <div class="position-relative pb-4">
+            <label>{{'setting.journal'| translate }}</label>
+            <span class="text-danger">*</span>
+            <div class="input-group">
+              <select class="form-control" formControlName="journal" [compareWith]="compareJournal">
+                <option selected value disabled>
+                  {{'setting.journal-entry.journal-select'| translate }}
+                </option>
+                <option *ngFor="let journal of journalEntities" [ngValue]="journal">{{journal.valueJson}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-1 btn btn-primary" (click)="onSubmit()">{{'button.save' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+</div>

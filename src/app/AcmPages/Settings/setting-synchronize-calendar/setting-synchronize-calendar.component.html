@@ -1,0 +1,89 @@
+<div class="card">
+  <div class="card-header">
+    {{ 'setting.setting_notifications.synchronize-calendar' | translate }}  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "setting.category" | translate }}</th>
+            <th>{{ "setting.status" | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let settingNotificationsEntity of SettingNotificationsEntitys;
+              let i = index
+            "
+          >
+            <td>{{ settingNotificationsEntity.category }}</td>
+            <td>
+              <bSwitch
+                [(ngModel)]="settingNotificationsEntity.enabled"
+                [switch-size]="'mini'"
+                [switch-animate]="true"
+                [switch-off-color]="'danger'"
+                [switch-handle-width]="40"
+                class="px-2 mb-0"
+                (click)="endableDisable(content, settingNotificationsEntity)"
+              >
+              </bSwitch>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #content>
+  <div [ngClass]="{ 'text-end': translate.currentLang === 'ar' }">
+    <div class="modal-header py-2">
+      <div class="row no-gutters align-items-center">
+        <div class="col-xl-3">
+          <div class="fa fa-question-circle text-info ACM-icon-question"></div>
+        </div>
+        <div class="col-xl-9">
+          <h4 class="modal-title">
+            {{ "confirmation_dialog.title" | translate }}
+          </h4>
+        </div>
+      </div>
+      <button type="button" class="close">
+        <span aria-hidden="true" (click)="closeModal()">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body row no-gutters">
+      <div
+        mat-dialog-content
+        *ngIf="messageDisplayed === 'change_status_all_users'"
+      >
+        {{ "notifications.change_status_all_users_synchro" | translate }}
+      </div>
+      <div mat-dialog-content *ngIf="messageDisplayed === 'change_status'">
+        {{ "notifications.change_status_all_users_synchro" | translate }}
+      </div>
+    </div>
+    <div class="modal-footer py-0">
+      <div mat-dialog-actions class="my-2">
+        <button
+          mat-button
+          class="btn btn-outline-2x btn-outline-success active"
+          (click)="getAnswer(true)"
+          cdkFocusInitial
+        >
+          {{ "button.yes" | translate }}
+        </button>
+        <button
+          mat-button
+          class="btn btn-outline-2x btn-outline-danger active"
+          (click)="getAnswer(false)"
+          cdkFocusInitial
+        >
+          {{ "button.no" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

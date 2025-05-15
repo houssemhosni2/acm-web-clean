@@ -1,0 +1,79 @@
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="claimsPaginationEntity.resultsClaims"
+        sortMode="multiple"
+        (onLazyLoad)="reloadClaimList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="claimsPaginationEntity.resultsClaims?.length > 0" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [totalRecords]="claimsPaginationEntity.totalElements"
+      [showCurrentPageReport]="true" [(selection)]="claimsListEntity" selectionMode="single">
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <!-- actions button -->
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'id'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'category'" class="form-control"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="">{{ 'category_loan.all' | translate }}</option>
+              <option value="CUSTOMER">{{ 'task.customer' | translate }}</option>
+              <option value="PROSPECT">{{ 'category_customer.prospect' | translate }}</option>
+          </select>
+            <input *ngSwitchCase="'subject'" class="form-control ACM-Dashbord-customername-col" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+            <input *ngSwitchCase="'customer'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'dateInsertion'" class="form-control ACM-Dashbord-Date-col"  type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'dueDate'" class="form-control ACM-Dashbord-Date-col" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'ownerName'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'priority'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'claimOwner'" class="form-control" type="text" min="0" step="50"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'claimGroupOwner'" class="form-control" type="text" min="0" step="1"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-collections let-rowData let-columns="columns">
+        <tr *ngIf="rowData" [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+            <div *ngSwitchCase="'id'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'category'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'subject'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'customer'" class="ACM-Dashbord-customernametd-col">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'dateInsertion'">{{rowData[col.field]| date: 'dd/MM/yyyy'}}</div>
+            <div *ngSwitchCase="'dueDate'">{{rowData[col.field]| date: 'dd/MM/yyyy'}}</div>
+              <div *ngSwitchCase="'ownerName'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'priority'">{{rowData[col.field] }}</div>
+              <div *ngSwitchCase="'claimOwner'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'unpaidAmount'">
+                  {{rowData[col.field]  | number : this.devToolsServices.getDecimalPlaces(collections.currencyDecimalPlaces):'fr'}}
+                  {{ collections?.currencySymbol }} </div>
+            <div *ngSwitchCase="'claimGroupOwner'">{{rowData[col.field]}}</div>
+
+          </td>
+          <td>
+            <button (click)='claimDetails(rowData)' pButton type='button' icon='fa fa-edit'></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

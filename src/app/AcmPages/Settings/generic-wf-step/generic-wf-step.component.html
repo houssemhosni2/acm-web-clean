@@ -1,0 +1,124 @@
+<div class="accordion mb-1" id="accordionExample" >
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+      aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-book text-secondary px-2"></i>
+        {{'generic_wf.recous'| translate }}
+      </div>
+
+
+    </div>
+    <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne">
+      <div>
+        <div class="card-body">
+
+          <!-- bouton popup-->
+          <div class="page-title-actions mb-3 d-flex justify-content-end">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button" [disabled] ="genericWorkFlowObjects.length===0"
+              (click)="openLarge(content6)">
+
+              {{'button.add' | translate}}
+            </button>
+          </div>
+
+        </div>
+        <!-- tableau notes -->
+        <div class="table-responsive" *ngIf = "itemEntitys.length>0">
+          <table class="mb-0 table green">
+            <thead>
+              <tr>
+                <th>{{'generic_wf.creation_date'| translate }}</th>
+                <th>{{'generic_wf.recous_type'| translate }}</th>
+                <th>{{'generic_wf.insertBy'| translate }}</th>
+                <th>{{'generic_wf.number_recours'| translate }}</th>
+                <th>{{'generic_wf.status'| translate }}</th>
+                <th class="text-center"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr  *ngFor  = "let item of this.itemEntitys">
+                <td >
+                   {{item.dateInsertion | date : 'dd/MM/yyyy hh:mm a'}}
+                </td>
+                <td >
+                  <div class="badge bg-info ng-star-inserted">
+                  {{item.genericWorkFlowObject.name}}
+                </div>
+
+                </td>
+                <td>
+                  <!-- <div class="badge bg-info ng-star-inserted"> -->
+                    {{item.insertBy}}
+                  <!-- </div> -->
+                </td>
+                <td >
+
+                    {{item.id}}
+
+                </td>
+                <td >
+                   <div class="badge bg-primary ng-star-inserted">
+                  {{item.actualStepName}}
+                   </div>
+                </td>
+
+                <td>
+                  <button  class="btn btn-warning" (click)= "openGenericWorkflow(item)" style =  " margin-right: 10px;"  >
+                    <i class="pe-7s-look btn-icon-wrapper text-white" style =  "font-size: 18px;"></i>
+                  </button>
+                  <button class="btn btn-info"  (click)= " assignItem(item)" [disabled]="item.owner !== null">
+                             <i class="pe-7s-users btn-icon-wrapper text-white " style =  "font-size: 18px;"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--popup-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new note-->
+    <form [formGroup]="popupForm" (ngSubmit)="addGenericWorkFlow()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'generic_wf.sub_workflow'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="c(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+
+        <div class="col-xl-12 ">
+          <label for="genericWorkflow">{{'generic_wf.generic_wf'| translate }} </label>
+
+          <select class="form-control" name="genericWorkflow" formControlName="genericWorkflow"
+            [compareWith]="compareObject" >
+
+            <option *ngFor="let a of genericWorkFlowObjects" [ngValue]="a">{{a.name}}
+            </option>
+          </select>
+
+
+
+          <!-- <select name="genericWorkflow" class="form-control" formControlName="genericWorkflow">
+            <option *ngFor="let objectWf of genericWorkFlowObjects" [ngValue]="objectWf"> {{objectWf.name}}</option>
+          </select> -->
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="reset()">{{'button.cancel' | translate}}</button>
+        <button  [disabled]="!this.popupForm.valid" type="submit"
+          class="btn btn-primary"> {{'button.add' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

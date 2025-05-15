@@ -1,0 +1,195 @@
+<!--title-->
+<app-page-title [heading]="'sidebar.update_asset' | translate" [icon]="'pe-7s-note2'" [account]="''"
+  [status]="-1"></app-page-title>
+<!--form add-->
+
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseAsset" aria-expanded="true"
+    aria-controls="collapseAsset" (click)="toggleCollapseAsset()">
+    <div>
+      <i class="pe-7s-note2 text-secondary pr-2 px-1"></i>
+      {{'asset.article'|translate}}
+    </div>
+    <div>
+      <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseAsset" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+    data-parent="#accordionExample">
+    <form [formGroup]="assetForm" *ngIf="valid">
+      <div class="card-body pt-0">
+        <div class="row">
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'sidebar.supplier'|translate}}</label>
+              <input type="text" class="form-control" disabled [value]="asset.supplierName">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'sidebar.article_code'|translate}}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="codeArticle">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'expenses-settings.libel'|translate}}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="libelle">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'asset.description'|translate}}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="description">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative">
+              <label> {{ 'asset.type' | translate }} </label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="typeAsset" (change)="typeAssetChanged()">
+                <option selected value>-- {{ 'asset.select-asset-type' | translate }} --</option>
+                <option *ngFor="let type of typeList" [ngValue]="type">
+                  {{type.libelle}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative">
+              <label> {{ 'asset.categorie' | translate }} </label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="categoryAsset" (change)="categoryAssetChanged()">
+                <option selected value>-- {{ 'asset.select-asset-category' | translate }} --</option>
+                <option *ngFor="let category of categoryListChange" [ngValue]="category">
+                  {{category.libelle}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative">
+              <label> {{ 'asset.sous-categorie' | translate }} </label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="subCategoryAsset">
+                <option selected value>-- {{ 'asset.select-asset-sub-category' | translate }} --</option>
+                <option *ngFor="let subCategory of subCategoryListChange" [ngValue]="subCategory">
+                  {{subCategory.libelle}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'setting.setting_document_type.date_debut'|translate}}</label>
+              <input type="date" class="form-control" formControlName="dateDebut">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'task.end_date'|translate}}</label>
+              <input type="date" class="form-control" formControlName="dateFin">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'financial_analysis.unit_price'|translate}}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="prixUnitaire" (input)="validateInput($event)">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'asset.discount-asset'|translate}}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="remiseArticle">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{ 'asset.reserved-stock' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="reservedStock">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{ 'asset.tva' | translate }}</label>
+              <select class="form-control" formControlName="tva">
+                <option value="0">0%</option>
+                <option value="7">7%</option>
+                <option value="13">13%</option>
+                <option value="19">19%</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{ 'asset.promotion' | translate }}</label>
+              <input type="text" class="form-control" formControlName="promotion">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{ 'asset.promotion-start-date' | translate }}</label>
+              <input type="date" class="form-control" formControlName="promotionStartDate">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{ 'asset.promotion-end-date' | translate }}</label>
+              <input type="date" class="form-control" formControlName="promotionEndDate">
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative">
+              <label>{{ 'Grandeur_de_mesure' | translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="mesure" (change)="onMesureChange($event)">
+                <option value="Poids">{{ 'Poids' | translate }}</option>
+                <option value="Volume">{{ 'Volume' | translate }}</option>
+                <option value="Unité">{{ 'Unité' | translate }}</option>
+                <option value="Superficie">{{ 'Superficie' | translate }}</option>
+                <option value="Longueur">{{ 'Longueur' | translate }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-4 px-1">
+            <div class="position-relative">
+              <label>{{ 'unite' | translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="unite">
+                <option value="">
+                </option>
+                <option *ngFor="let option of mesureOptions" [ngValue]="option">
+                  {{option | translate}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="solid">
+    </form>
+  </div>
+</div>
+<div class="d-block text-end card-footer p-2">
+  <button *ngIf="mode === 'update'" class="mx-2 btn btn-success " type="submit" (click)="submit()"
+    >{{'button.save'| translate }}</button>
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">
+    {{'button.exit' | translate}}
+  </button>
+</div>

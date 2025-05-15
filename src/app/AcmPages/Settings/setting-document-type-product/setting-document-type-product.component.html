@@ -1,0 +1,58 @@
+<div class="card">
+  <div class="card-header">
+    {{'setting.setting_document_product.setting_document_product' | translate}}
+  </div>
+  <div>
+    <ngx-loading [show]="loading"
+                 [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="position-relative">
+        <p-table #sdbp [autoLayout]=true
+        [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10"
+        [value]="settingDocumentsByProduct" [lazy]="false" [lazyLoadOnInit]="false">
+          <ng-template pTemplate="header">
+          <tr>
+            <th>{{'setting.code'| translate }}</th>
+            <th>{{'setting.label'| translate }}</th>
+            <th>{{'setting.description'| translate }}</th>
+            <th>{{'setting.category'| translate }}</th>
+            <th>{{'setting.status'| translate }}</th>
+            <th>{{'setting.setting_document_product.mandatory'| translate }}</th>
+            <th>{{'setting.setting_document_product.report_name'| translate }}</th>
+            <th></th>
+          </tr>
+        </ng-template>
+          <ng-template pTemplate="body" let-documentType let-rowIndex="rowIndex">
+            <tr>
+            <th scope="row">{{documentType.settingDocumentTypeDTO.code}}</th>
+            <td>{{documentType.settingDocumentTypeDTO.libelle}}</td>
+            <td>{{documentType.settingDocumentTypeDTO.description}}</td>
+            <td>{{'document_type_categories.' + documentType.settingDocumentTypeDTO.categorie| translate }}</td>
+            <td>
+              <bSwitch [(ngModel)]="documentType.enabled" (changeState)="toggleStatus(documentType)"
+                       [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0"
+                       [disabled]="!documentType.settingDocumentTypeDTO.enabled"></bSwitch>
+            </td>
+            <td>
+              <bSwitch [(ngModel)]="documentType.mandatory" [switch-size]="'mini'" [switch-animate]="true"
+                       [switch-off-color]="'danger'" class="px-2 mb-0" [disabled]="!documentType.enabled"
+                       (changeState)="toggleMandatory(documentType)"></bSwitch>
+            </td>
+            <td>
+              <form [formGroup]=reportNameForm>
+                <div class="ACM_table_input" *ngIf="documentType.settingDocumentTypeDTO.categorie ===2||documentType.settingDocumentTypeDTO.categorie ===4||documentType.settingDocumentTypeDTO.categorie ===5 || documentType.settingDocumentTypeDTO.categorie ===11">
+                  <input class="form-control col-8" formControlName="reportName{{rowIndex}}" type="text"
+                         (change)="changeReportName(rowIndex)">
+                         <button type="button" class="mx-2 btn btn-success mr-l" placement="top"
+                         ngbTooltip="{{'setting.setting_document_product.tooltipe'| translate }}"
+                         [disabled]="!reportNameForm.controls['updated' + rowIndex]"
+                         (click)="updateReportName(documentType,rowIndex)"><i class="pe-7s-check btn-icon-wrapper"></i>
+                 </button>
+                </div>
+              </form>
+            </td>
+          </tr>
+        </ng-template>
+        </p-table>
+    </div>
+  </div>
+</div>

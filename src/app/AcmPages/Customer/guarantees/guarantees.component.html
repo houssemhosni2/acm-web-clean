@@ -1,0 +1,55 @@
+<div class="accordion mb-1" id="accordionExample">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseListDocument"
+            aria-expanded="true" aria-controls="collapseListGuarantees" (click)="toggleCollapse()">
+            <div>
+                <i class="lnr-file-empty px-2"></i>
+                {{'customer-360.guarantees'| translate }}
+            </div>
+            <div>
+                <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+            </div>
+        </div>
+        <div id="collapseListGuarantees" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+            aria-labelledby="headingOne">
+            <div *ngIf="guarantees.length > 0">
+                <div class="">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="ACM-document-table-column" scope="col"> {{'upload_document.Loan_Account' |
+                                    translate }}</th>
+                                <th class="ACM-document-table-column" scope="col">{{'loan.loan_amount' |
+                                    translate }}</th>
+                                <th class="ACM-document-table-column" scope="col">{{'dashboard.product_name' |
+                                    translate }}</th>
+                                <th class="ACM-document-table-column" scope="col">{{'dashboard.client_name' |
+                                    translate }}</th>
+                                <th class="ACM-document-table-column" scope="col">{{'customer.total_guaranteeing' |
+                                    translate }}</th>
+                                <th class="ACM-document-table-column" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let loan of guarantees">
+                                <td scope="row">{{loan.loanAccount}}</td>
+                                <td>{{loan.loanAmount| number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                <td>{{loan.product}}</td>
+                                <td>{{loan.customer}}</td>
+                                <td>{{loan.amountGuarantor| number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                <td><button class="btn btn-warning" >
+                                  <i class="pe-7s-look btn-icon-wrapper text-white"  (click)="changeGarantor(loan.member)"></i>
+                                </button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="guarantees.length === 0">
+                <div class="card-body">
+                    <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

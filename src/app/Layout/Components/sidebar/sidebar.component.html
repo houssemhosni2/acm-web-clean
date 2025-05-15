@@ -1,0 +1,649 @@
+<div [class]="'app-sidebar sidebar-shadow ' + (config$ | async).sidebarTheme">
+  <div class="app-header__logo">
+    <div *ngIf="globals.sidebarHover === true">
+      <span class="ACM_font ACM-header-logo">ADVANCED CREDIT MANAGEMENT</span>
+    </div>
+    <div *ngIf="globals.sidebarHover === false">
+      <span class="ACM_font">ACM</span>
+    </div>
+  </div>
+  <div class="app-sidebar-content" (mouseover)="sidebarHoverMouseIn()" (mouseout)="sidebarHoverMouseOut()">
+    <div class="app-sidebar-scroll">
+      <perfect-scrollbar [autoPropagation]="false" class="scroll-container" [scrollIndicators]="false"
+        style="max-width: 600px; max-height:86.7vh;">
+        <div class="v-sidebar-menu vsm-default">
+          <div class="vsm-list">
+            <div class="vsm-header" *ngIf="pathSharedService.habilitationPath('IHM_ANALYTICS')"></div>
+            <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ANALYTICS')">
+              <a [routerLink]="['/analytics']" routerLinkActive="Active" class="vsm-link">
+                <i class="vsm-icon pe-7s-graph1"></i>
+                <span class="vsm-title">{{'sidebar.dashboard'| translate }}</span>
+              </a>
+            </div>
+            <ngb-accordion [destroyOnHide]="false" [closeOthers]="true" [activeIds]="extraParameter">
+              <ngb-panel
+                *ngIf="(pathSharedService.habilitationPath('IHM_CALENDAR')) || (pathSharedService.habilitationPath('IHM_TASK'))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="elementsMenu"
+                *ngIf="(pathSharedService.habilitationPath('IHM_CALENDAR')) || (pathSharedService.habilitationPath('IHM_TASK'))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-date"></i>
+                    <span class="vsm-title">{{ 'sidebar.crm' | translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CALENDAR')">
+                        <a [routerLink]="['/crm/calendar']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.calender'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_TASK')">
+                        <a [routerLink]="['/crm/task']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.tasks'| translate }}</span></a>
+                      </div>
+
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_TASK_LIST')">
+                        <a [routerLink]="['/crm/task-list']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.task_list'| translate }}</span></a>
+                      </div>
+
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CLAIMS')">
+                        <a [routerLink]="['/crm/claims']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'claims.dashboard'| translate }}</span></a>
+                      </div>
+
+                      <div class="vsm-item" *ngIf="(pathSharedService.habilitationPath('IHM_PROSPECTION'))">
+                        <a [routerLink]="['/crm/prospection']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.prospection_dashboard'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="(pathSharedService.habilitationPath('IHM_UNASSIGNED_PROSPECTION'))">
+                        <a [routerLink]="['/crm/unassigned-prospections']" [queryParams]="{type: 'PROSPECTION'}"
+                          routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.unassigned_prospection'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="(pathSharedService.habilitationPath('IHM_SIMULATION_LOAN'))">
+                        <a [routerLink]="['/acm/simulation-loan']" class="vsm-link">
+                          <span class="vsm-title">{{'simulate_loan'| translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                *ngIf="pathSharedService.habilitationPath('IHM_CUSTOMER_360') || pathSharedService.habilitationPath('IHM_CUSTOMER_MANAGEMENT') ">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="materialFormControls"
+                *ngIf="pathSharedService.habilitationPath('IHM_CUSTOMER_360') || pathSharedService.habilitationPath('IHM_CUSTOMER_MANAGEMENT')
+              || pathSharedService.habilitationPath('IHM_CUSTOMER_EDIT') || pathSharedService.habilitationPath('IHM_MEZA_CARD_CHECK')
+              || pathSharedService.habilitationPath('IHM_ADD_PROSPECT') || pathSharedService.habilitationPath('IHM_LIST_PROSPECT') ">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-user"></i>
+                    <span class="vsm-title">{{'sidebar.customer'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ADD_PROSPECT')">
+                        <a [routerLink]="['/acm/prospect-management']" class="vsm-link" (click)="addProspect()">
+                          <span class="vsm-title">{{'sidebar.prospect_management'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LIST_PROSPECT')">
+                        <a [routerLink]="['/acm/list-prospect']" [queryParams]="{mode: 5}" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.liste_prospect'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CUSTOMER_MANAGEMENT')">
+                        <a [routerLink]="['/acm/customer-management']" (click)="customerReset()" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.customer_management'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CUSTOMER_EDIT')">
+                        <a routerLinkActive="active-item" [routerLink]="['/acm/customer-edit-menu']"
+                          [queryParams]="{mode: 2}" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.edit_customer'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CUSTOMER_360')">
+                        <a [routerLink]="['/acm/customer-360']" [queryParams]="{mode: 1}" routerLinkActive="Active"
+                          class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.customer_360'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_MEZA_CARD_CHECK')">
+                        <a [routerLink]="['/acm/meza-card-check']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.customer_meza_card'| translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel *ngIf="((pathSharedService.habilitationPath('IHM_LOAN_ASSIGN')) || (pathSharedService.habilitationPath('IHM_ONLINE_APPLICATION'))
+              || (pathSharedService.habilitationPath('HOME')))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="pagesMenu3" *ngIf="((pathSharedService.habilitationPath('IHM_LOAN_ASSIGN')) || (pathSharedService.habilitationPath('IHM_ONLINE_APPLICATION'))
+              || (pathSharedService.habilitationPath('HOME')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-credit"></i>
+                    <span class="vsm-title">{{'sidebar.loan_application'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_UNASSIGNED_LOANS')">
+                        <a [routerLink]="['/acm/unassigned-loans']" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.unassigned_loans' |translate}}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ISSUED_LOANS')">
+                        <a [routerLink]="['/acm/issued-loans']" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.issued_loans' | translate}}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LOAN_ASSIGN')">
+                        <a [routerLink]="['/online-applications/loan-assign']" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.assign_loan'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ONLINE_APPLICATION')">
+                        <a [routerLink]="['/online-applications/online-application']" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.online_application'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('HOME')">
+                        <a [routerLink]="['/acm']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.list_application'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LOAN_MANAGEMENT')">
+                        <a [routerLink]="['/acm/customer-list']" [queryParams]="{mode: 3}" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.loan_management'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item"
+                        *ngIf="renewelLoanCondition  && pathSharedService.habilitationPath('IHM_EXCEPTION_REQUESTS')">
+                        <a [routerLink]="['/acm/exception-request']" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.exception_request' |translate}}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                *ngIf="((pathSharedService.habilitationPath('IHM_FIND_DOCUMENT')) || (pathSharedService.habilitationPath('IHM_ADD_DOCUMENT')))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="dmsMenu"
+                *ngIf="((pathSharedService.habilitationPath('IHM_FIND_DOCUMENT')) || (pathSharedService.habilitationPath('IHM_ADD_DOCUMENT')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-cloud-upload"></i>
+                    <span class="vsm-title">{{'sidebar.ged'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_FIND_DOCUMENT')">
+                        <a [routerLink]="['/acm/find-document']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.find_document'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ADD_DOCUMENT')">
+                        <a [routerLink]="['/acm/add-document']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.upload_document'| translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                *ngIf="((pathSharedService.habilitationPath('IHM_EXPENSES_SETTING')) || (pathSharedService.habilitationPath('IHM_EXPENSES_LIST')))">
+                >
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                *ngIf="((pathSharedService.habilitationPath('IHM_EXPENSES_SETTING')) || (pathSharedService.habilitationPath('IHM_EXPENSES_LIST')))">
+                <ng-template ngbPanelHeader
+                  *ngIf="((pathSharedService.habilitationPath('IHM_EXPENSES_SETTING')) || (pathSharedService.habilitationPath('IHM_EXPENSES_LIST')))">
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-piggy"></i>
+                    <span class="vsm-title">{{'sidebar.expenses'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_EXPENSES_SETTING')">
+                        <a [routerLink]="['/expenses/expenses-settings']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.setting_expenses'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_EXPENSES_LIST')">
+                        <a [routerLink]="['/expenses/expenses-list']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.list_expenses'| translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel>
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="collectionMenu" *ngIf="((pathSharedService.habilitationPath('IHM_COLLECTIONS')) ||
+              (pathSharedService.habilitationPath('IHM_UNASSIGNED_COLLECTION')) ||
+              (pathSharedService.habilitationPath('IHM_LEGAL')) ||
+              (pathSharedService.habilitationPath('IHM_UNASSIGNED_LEGAL')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon fa fa-folder-open"></i>
+                    <span class="vsm-title">{{'sidebar.collections'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div *ngIf="(pathSharedService.habilitationPath('IHM_COLLECTIONS'))" class="vsm-item">
+                        <a [routerLink]="['/acm/collections']" [queryParams]="{type: 'COLLECTION'}"
+                          routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.list_collections'| translate }}</span></a>
+                      </div>
+                      <div *ngIf="(pathSharedService.habilitationPath('IHM_UNASSIGNED_COLLECTION'))" class="vsm-item">
+                        <a [routerLink]="['/acm/unassigned-collections']" [queryParams]="{type: 'COLLECTION'}"
+                          class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.unassigned_collections'|translate}}</span></a>
+                      </div>
+                      <div *ngIf="(pathSharedService.habilitationPath('IHM_LEGAL'))" class="vsm-item">
+                        <a [routerLink]="['/acm/legal']" [queryParams]="{type: 'LEGAL'}" routerLinkActive="Active"
+                          class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.list_legal_collections'| translate }}</span></a>
+                      </div>
+                      <div *ngIf="(pathSharedService.habilitationPath('IHM_UNASSIGNED_LEGAL'))" class="vsm-item">
+                        <a [routerLink]="['/acm/unassigned-legal']" [queryParams]="{type: 'LEGAL'}" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.unassigned_legal_collections'|translate}}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel>
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="creditLineMenu" *ngIf="(
+                (pathSharedService.habilitationPath('IHM_ADD_CREDIT_LINE')) ||
+                (pathSharedService.habilitationPath('IHM_LIST_CREDIT_LINE')) ||
+                (pathSharedService.habilitationPath('IHM_CREDIT_LINE_ACCOUNT')) ||
+                (pathSharedService.habilitationPath('IHM_CREDIT_LINE_ACCOUNT_REPORTS')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-cash"></i>
+                    <span class="vsm-title">{{'credit-line.creditLine'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div *ngIf="pathSharedService.habilitationPath('IHM_ADD_CREDIT_LINE')" class="vsm-item">
+                        <a [routerLink]="['/acm/add-credit-line']" [queryParams]="{source: 'ADD'}"
+                          routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{ 'credit-line.add-credit-line' | translate }}</span></a>
+                      </div>
+                      <div *ngIf="pathSharedService.habilitationPath('IHM_LIST_CREDIT_LINE')" class="vsm-item">
+                        <a [routerLink]="['/acm/list-credit-line']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{ 'credit-line.edit-credit-line' | translate }}</span></a>
+                      </div>
+                      <div *ngIf="pathSharedService.habilitationPath('IHM_CREDIT_LINE_ACCOUNT')" class="vsm-item">
+                        <a [routerLink]="['/acm/credit-line-accounts']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title"> {{ 'credit-line.credit-line-accounts' | translate }} </span></a>
+                      </div>
+                      <div *ngIf="pathSharedService.habilitationPath('IHM_CREDIT_LINE_ACCOUNT_REPORTS')"
+                        class="vsm-item">
+                        <a [routerLink]="['/acm/credit-line-reports']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title"> {{ 'credit-line.credit-line-reports' | translate }} </span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel>
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="partnersMenu" *ngIf="(
+                (pathSharedService.habilitationPath('IHM_ADD_THIRD_PARTY')) ||
+                (pathSharedService.habilitationPath('IHM_EDIT_THIRD_PARTY')) )">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon fa fa-handshake-o"></i>
+                    <span class="vsm-title">{{ 'sidebar.partners' | translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div *ngIf="pathSharedService.habilitationPath('IHM_ADD_THIRD_PARTY')" class="vsm-item">
+                        <a [routerLink]="['/settings/add-setting-third-party']" [queryParams]="{source: 'ADD'}"
+                          routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'button.add_party'|translate}}</span></a>
+                      </div>
+                      <div *ngIf="pathSharedService.habilitationPath('IHM_EDIT_THIRD_PARTY')" class="vsm-item">
+                        <a [routerLink]="['/settings/setting-third-party']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'button.edit_party'|translate}}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel *ngIf="pathSharedService.habilitationPath('IHM_SETTING_AML')">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="complianceMenu" *ngIf="pathSharedService.habilitationPath('IHM_SETTING_AML')">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-check"></i>
+                    <span class="vsm-title">{{'sidebar.compliance'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_SETTING_AML')">
+                        <a [routerLink]="['/settings/setting-aml']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'setting.aml_setting.aml_setting'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CUSTOMER_AML_CHECK')">
+                        <a routerLinkActive="active-item" [routerLink]="['/acm/customer-aml-check']"
+                          [queryParams]="{mode: 4}" class="vsm-link">
+                          <span class="vsm-title">{{'customer_aml.aml_check'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item">
+                        <a class="vsm-link"   (click)="navigateToAml( 'SCAN')">
+                          <span class="vsm-title">{{'customer_aml.workflow_balayage'| translate }}</span></a>
+                      </div>
+
+                      <div class="vsm-item">
+                        <a  class="vsm-link"   (click)="navigateToAml( 'DOUBTFUL')">
+                          <span class="vsm-title">{{'customer_aml.workflow_transaction'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item">
+                        <a  class="vsm-link"   (click)="navigateToUnassignedGw()">
+                          <span class="vsm-title">{{'customer_aml.unassigned'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_BLACKLIST')">
+                        <a  class="vsm-link" [routerLink]="['/acm/blacklist']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{ 'blacklist.blacklist' | translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                *ngIf="((pathSharedService.habilitationPath('IHM_MEZA_CARD_ACTIVATE')) || (pathSharedService.habilitationPath('IHM_MEZA_CARD_SETTING')))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                *ngIf="((pathSharedService.habilitationPath('IHM_MEZA_CARD_ACTIVATE')) || (pathSharedService.habilitationPath('IHM_MEZA_CARD_SETTING')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-credit"></i>
+                    <span class="vsm-title">
+                      {{'meza_card.meza_card'| translate }}
+                    </span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_MEZA_CARD_SETTING')">
+                        <a [routerLink]="['/setting-meza/setting-meza-card']" routerLinkActive="Active"
+                          class="vsm-link"> <span class="vsm-title">{{'meza_card.setting_Meza_Card'| translate
+                            }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_MEZA_CARD_ACTIVATE')">
+                        <a [routerLink]="['/setting-meza/activate-meza-card']" routerLinkActive="Active"
+                          class="vsm-link"> <span class="vsm-title">{{'meza_card.activate_Meza_Card'| translate
+                            }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel *ngIf="((pathSharedService.habilitationPath('IHM_ADD_SUPPLIER')) ||
+              (pathSharedService.habilitationPath('IHM_LIST_SUPPLIER'))
+              ||(pathSharedService.habilitationPath('IHM_ADD_ASSET'))
+              || (pathSharedService.habilitationPath('IHM_LIST_ASSET')))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+
+              <ngb-panel id="supplierMenu" *ngIf="((pathSharedService.habilitationPath('IHM_ADD_SUPPLIER')) ||
+              (pathSharedService.habilitationPath('IHM_LIST_SUPPLIER'))
+              ||(pathSharedService.habilitationPath('IHM_ADD_ASSET'))
+              || (pathSharedService.habilitationPath('IHM_LIST_ASSET')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-box2"></i>
+                    <span class="vsm-title">{{ 'sidebar.supplier' | translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ADD_SUPPLIER')">
+                        <a [routerLink]="['/acm/supplier-add']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.add_supplier'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LIST_SUPPLIER')">
+                        <a [routerLink]="['/acm/supplier-list']" [queryParams]="{mode: 2}" routerLinkActive="Active"
+                          class="vsm-link"> <span class="vsm-title">{{'sidebar.edit_supplier'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LIST_SUPPLIER')">
+                        <a [routerLink]="['/acm/supplier-360']" [queryParams]="{mode: 1}" routerLinkActive="Active"
+                          class="vsm-link"> <span class="vsm-title">{{'sidebar.supplier_360' | translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_ADD_ASSET')">
+                        <a [routerLink]="['/acm/add-asset']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.add_asset' | translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LIST_ASSET')">
+                        <a [routerLink]="['/acm/list-asset']" routerLinkActive="Active" class="vsm-link"> <span
+                            class="vsm-title">{{'sidebar.list_asset' | translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel *ngIf="((pathSharedService.habilitationPath('IHM_REGISTRATION_INCENTIVE')) ||
+              (pathSharedService.habilitationPath('IHM_OPERATION_INCENTIVE'))
+              ||(pathSharedService.habilitationPath('IHM_LEGEL_INCENTIVE'))
+              || (pathSharedService.habilitationPath('IHM_RUN_INCENTIVE'))
+              || (pathSharedService.habilitationPath('IHM_ISSUANCE_REPAYEMENT_INCENTIVE')))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="incentiveId" *ngIf="((pathSharedService.habilitationPath('IHM_REGISTRATION_INCENTIVE')) ||
+               (pathSharedService.habilitationPath('IHM_OPERATION_INCENTIVE'))
+               ||(pathSharedService.habilitationPath('IHM_LEGEL_INCENTIVE'))
+               || (pathSharedService.habilitationPath('IHM_RUN_INCENTIVE'))
+               || (pathSharedService.habilitationPath('IHM_ISSUANCE_REPAYEMENT_INCENTIVE')))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-gift"></i>
+                    <span class="vsm-title">{{'sidebar.incentive'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item"
+                        *ngIf="pathSharedService.habilitationPath('IHM_ISSUANCE_REPAYEMENT_INCENTIVE')">
+                        <a [routerLink]="['/incentives/issuance-repayment-incentives']" routerLinkActive="Active"
+                          class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.issuance_and_repayment_incentives'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_REGISTRATION_INCENTIVE')">
+                        <a [routerLink]="['/incentives/registration-incentive']" routerLinkActive="Active"
+                          class="vsm-link"> <span class="vsm-title">{{'sidebar.registration_incentives'| translate
+                            }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_OPERATION_INCENTIVE')">
+                        <a [routerLink]="['/incentives/operations-incentives']" routerLinkActive="Active"
+                          class="vsm-link"> <span class="vsm-title">{{'sidebar.operations_incentives'| translate
+                            }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_LEGEL_INCENTIVE')">
+                        <a [routerLink]="['/incentives/legel-incentive']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.legal_incentive'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_RUN_INCENTIVE')">
+                        <a [routerLink]="['/incentives/run-incentive']" routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'sidebar.run_incentive'| translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+
+              <ngb-panel *ngIf="(pathSharedService.habilitationPath('IHM_SIMULATION_LOAN'))">
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+
+
+
+
+              <ngb-panel id="generic-product"
+                *ngIf="(pathSharedService.habilitationPath('IHM_CREATE_ITEM_WF')) && (pathSharedService.habilitationPath('IHM_GENERIC_WF_DASHBORD')) && (pathSharedService.habilitationPath('IHM_GENERIC_WF_UNASSIGNED'))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-science"></i>
+                    <span class="vsm-title">{{'generic-product.generic-product'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item" *ngIf="(pathSharedService.habilitationPath('IHM_CREATE_ITEM_WF'))">
+                        <a [routerLink]="['/acm/create-item']" class="vsm-link">
+                          <span class="vsm-title">{{'generic-product.new'| translate }}</span></a>
+                      </div>
+
+                      <div class="vsm-item" *ngIf="(pathSharedService.habilitationPath('IHM_GENERIC_WF_DASHBORD'))">
+                        <a [routerLink]="['/acm/generic-wf-dashbord']" class="vsm-link">
+                          <span class="vsm-title">{{'generic-product.list'| translate }}</span></a>
+                      </div>
+
+                      <div class="vsm-item" *ngIf="(pathSharedService.habilitationPath('IHM_GENERIC_WF_UNASSIGNED'))">
+                        <a [routerLink]="['/acm/unassigned-wf']" class="vsm-link">
+                          <span class="vsm-title">{{'generic-product.unassined'| translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+
+              </ngb-panel>
+
+              <ngb-panel>
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header"></div>
+                </ng-template>
+              </ngb-panel>
+
+              <ngb-panel id="chartOfAccountsMenu" *ngIf="(pathSharedService.habilitationPath('IHM_GL_ACCOUNTS'))">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-cash"></i>
+                    <span class="vsm-title">{{'gl-accounts.chart-of-accounts'| translate }}</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item"  *ngIf="(pathSharedService.habilitationPath('IHM_GL_ACCOUNTS'))">
+                        <a [routerLink]="['/acm/gl-accounts']" 
+                          routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{'gl-accounts.gl-accounts'| translate }}</span></a>
+                      </div>
+                      <div class="vsm-item"  *ngIf="(pathSharedService.habilitationPath('IHM_RECEIPT_VIEW'))">
+                        <a [routerLink]="['/acm/receipt-view']" 
+                          routerLinkActive="Active" class="vsm-link">
+                          <span class="vsm-title">{{ "receipt-view.receipt-view" | translate }}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              
+
+
+
+
+
+
+
+
+
+
+            </ngb-accordion>
+            <div class="vsm-header" *ngIf="pathSharedService.habilitationPath('IHM_NOTIFICATIONS')"></div>
+            <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_NOTIFICATIONS')">
+              <a [routerLink]="['/notification']" class="vsm-link">
+                <i class="vsm-icon pe-7s-bell"></i>
+                <span class="vsm-title">{{'sidebar.notification'| translate }}</span>
+              </a>
+            </div>
+            <div class="vsm-header" *ngIf="pathSharedService.habilitationPath('IHM_REPPORTS_LIST')"></div>
+            <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_REPPORTS_LIST')">
+              <a [routerLink]="['/acm/reports-list']" [queryParams]="{mode: 1}" routerLinkActive="Active"
+                class="vsm-link">
+                <i class="vsm-icon pe-7s-note2"></i>
+                <span class="vsm-title">{{'sidebar.reports_list'| translate }}</span>
+              </a>
+            </div>
+            <div class="vsm-header" *ngIf="pathSharedService.habilitationPath('IHM_CORE_REPORTING')"></div>
+            <div class="vsm-item" *ngIf="pathSharedService.habilitationPath('IHM_CORE_REPORTING')">
+              <a [routerLink]="['/acm/reporting']" class="vsm-link">
+                <i class="vsm-icon pe-7s-note2"></i>
+                <span class="vsm-title">{{'sidebar.reports_list'| translate }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </perfect-scrollbar>
+    </div>
+  </div>
+</div>

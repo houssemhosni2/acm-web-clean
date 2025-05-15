@@ -1,0 +1,99 @@
+<app-page-title [heading]="'Generic Workflow'" [icon]="'lnr-user icon-gradient bg-ripe-malin'"
+  [account]="''"></app-page-title>
+
+
+
+<!-- begin form add product information -->
+<div>
+  <div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseFeature" aria-expanded="true"
+      aria-controls="collapseFeature" (click)="toggleCollapseFeatureProduct()">
+      <div>
+        <i class="lnr-user text-secondary pr-2"></i>
+        {{'setting.setting' | translate}}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedFeatureProduct===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseFeature" [ngClass]="(expandedFeatureProduct===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+      <form [formGroup]="formFeatureProduct">
+        <div class="card-body">
+          <div class="col-xl-12 col-sm-12 row no-gutters">
+
+
+
+            <div class="col-sm-6">
+              <div class="position-relative">
+                <label>{{'setting.product' | translate}}</label>
+
+                <select class="form-control" #selectedValue name="selectedValue" formControlName="workFlow"
+                  (change)="selectProductWorkflow()">
+                  <option disabled [selected]="productEntityWorkflow === null" value>{{'setting.select_product' |
+                    translate}}</option>
+                  <option *ngFor="let productEntity of productEntitys" [ngValue]="productEntity">
+                    {{productEntity.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+
+
+            <!-- <div class="position-relative pb-4">
+              <label>{{"customer.branch" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div class="input-group">
+                <select class="form-control" formControlName="branch" >
+                  <option selected value></option>
+                  <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity.branchID">
+                    {{brancheEntity.description}}</option>
+                </select>
+              </div>
+            </div> -->
+
+
+
+            <div class="col-sm-6">
+              <div class="position-relative">
+                <label> {{'customer.branch' | translate}}</label>
+                <span class="text-danger">*</span>
+                <ngx-select-dropdown tabindex="0" formControlName="branch" [multiple]="true" [options]="brancheEntitys"
+                  [config]="configBranch"></ngx-select-dropdown>
+              </div>
+            </div>
+
+            <!-- <div class="col-sm-4">
+              <div class="position-relative">
+                <label> Utilisateur</label>
+                <span class="text-danger">*</span>
+                <ngx-select-dropdown tabindex="0" formControlName="user" [multiple]="false" [options]="users"
+                  [config]="configUsers"></ngx-select-dropdown>
+              </div>
+            </div>
+              <div class="col-sm-4">
+                <div class="position-relative">
+                  <label>Calendrier de lancement</label>
+                  <span class="text-danger">*</span>
+                  <input type="date" class="form-control" formControlName="launchDate">
+                </div>
+              </div> -->
+
+
+
+
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="d-block text-end card-footer p-2">
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button class="mx-2 btn btn-success " type="submit" (click)="launchWorkFlow()">{{'button.save'| translate }}</button>
+</div>

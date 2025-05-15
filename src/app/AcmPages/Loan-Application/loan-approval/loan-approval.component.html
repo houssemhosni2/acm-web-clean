@@ -1,0 +1,717 @@
+<app-page-title [heading]=" 'sidebar.loan_application'| translate " [icon]="'pe-7s-note2'"
+  [account]="loan.accountNumber" [status]="loan.statutWorkflow"
+  [loanApplicationStatus]="loan?.loanApplicationStatus"></app-page-title>
+<div class="row">
+  <div class="col-md-9 col-xl-9 px-1" id="loan-approval">
+
+    <app-customer [expanded]="true"></app-customer>
+    <app-loan-info [expanded]="true"></app-loan-info>
+    <app-loan-provider-article [mode]="view" [supplier]="loan.productDTO.supplier"> </app-loan-provider-article>
+    <app-schedule [expanded]="false"></app-schedule>
+    <app-customer-account-360 [expanded]="false" [fromCustomer360] = "false"></app-customer-account-360>
+    <app-approval-field-visit [expanded]="false" *ngIf="checkComponentFieldVisitVisibily"></app-approval-field-visit>
+    <app-loan-guarantors [expanded]="false" *ngIf="checkComponentGuarantorVisibily"></app-loan-guarantors>
+    <app-collateral-step-details [expanded]="false"
+      *ngIf="checkComponentCollateralVisibily"></app-collateral-step-details>
+    <app-list-documents [expanded]="true"></app-list-documents>
+    <app-screening [expandedCustomerScreening]="false" [expandedGuanatorsScreening]="false" [loanApproval]="true">
+    </app-screening>
+    <app-financial-analysis-details [expanded]="false" *ngIf="checkComponentFinancialAnalisisVisibily">
+    </app-financial-analysis-details>
+    <app-other-information-loan *ngIf = "loan.otherInformations != null" [expanded]="true"></app-other-information-loan>
+    <app-customer-analyse [expanded]="false" typeUDF="2" [loanEntity]="loan"></app-customer-analyse>
+    <app-customer-analyse [expanded]="false" typeUDF="1"></app-customer-analyse>
+    <div class="card-hover-shadow-2x mb-1 card" *ngIf="loan.etapeWorkflow === 7">
+      <div class="card-header d-flex justify-content-between" data-target="#collapseLoanAnalyses" aria-expanded="true"
+        aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomerAnalyses()">
+        <div>
+          <i class="lnr-magnifier text-secondary pr-2"></i>
+          {{ 'loan_management.loan_analyses' | translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expandedUdf===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div [ngClass]="(expandedUdf===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div class="card-body">
+          <div class="col-xl-12 d-flex justify-content-end pt-3">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+              (click)="addUdfLoan()">
+              <fa class="mx-2" name="plus">
+                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+              </fa>
+              {{'button.add' | translate}}
+            </button>
+          </div>
+          <form [formGroup]="udfLoanForm">
+            <div *ngFor="let udf of listUDFGroupsLoan, let j = index">
+              <hr class="solid"
+                *ngIf="udf.enabled && ((udf.code === 'L1 Approval' || udf.code === 'Source of investigation') || (udf.code === null))">
+              <div class="position-relative form-group"
+                *ngIf="udf.enabled && ((udf.code === 'L1 Approval' || udf.code === 'Source of investigation') || (udf.code === null))">
+                <label>{{'udf.udf_group'| translate }} </label>
+                <div class="row">
+                  <div class="col-xl-6">
+                    <select class="form-control" formControlName="udfGroup{{j}}" name="udfGroup"
+                      [compareWith]="comparegroup" (change)="getUdfFiledListLoan(j, false)"
+                      [attr.disabled]="listUDFGroupsLoan[j].mondatory ? '': null">
+                      <option *ngFor="let udfGroup of udfGroupsLoan" [ngValue]="udfGroup">
+                        {{udfGroup.description}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-xl-6 px-3">
+                    <button class="btn btn-danger" (click)="deleteGroupLoan(j)" *ngIf="!listUDFGroupsLoan[j].mondatory">
+                      <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                *ngIf="udfFieldsLoan[j].length > 0 && udf.enabled && ((udf.code === 'L1 Approval' || udf.code === 'Source of investigation') || (udf.code === null))">
+                <div class="table-responsive mt-2">
+                  <table class="mb-0 table green">
+                    <thead>
+                      <tr>
+                        <th>{{'udf.udf_filed'| translate }}</th>
+                        <th>{{'udf.value'| translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let udfField of udfFieldsLoan[j] , let i=index">
+                        <td *ngIf="!udfField.delete">{{ udfField.description}}
+                          <span class="text-danger" *ngIf="udfField.mandatory"> *</span>
+                        </td>
+                        <td *ngIf="!udfField.delete && udfField.fieldType === 1"><input class="form-control" type="text"
+                            [placeholder]="mascPlacHolder(udfFieldsLoan[j][i].fieldMasc)"
+                            formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        </td>
+                        <td *ngIf="!udfField.delete && udfField.fieldType === 2"><input class="form-control"
+                            type="number" [placeholder]="mascPlacHolder(udfFieldsLoan[j][i].fieldMasc)"
+                            formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        </td>
+                        <td *ngIf="!udfField.delete && udfField.fieldType === 5" (change)="changeUDFField(j, i)">
+                          <select class="form-control" formControlName="udfField{{j}}{{i}}"
+                            [compareWith]="compareFieldUDF" name="udfField">
+                            <option [ngValue]="null" selected></option>
+                            <option *ngFor="let udfFieldListValue of udfField.fieldListValuesDTOs"
+                              [ngValue]="udfFieldListValue">
+                              {{udfFieldListValue.description}}
+                            </option>
+                          </select>
+                        </td>
+                        <td *ngIf="!udfField.delete && udfField.fieldType === 4">
+                          <input type="date" class="form-control" formControlName="udfField{{j}}{{i}}"
+                            name="udfField" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end">
+          <button class="mb-2 mx-2 btn btn-primary"
+            *ngIf="loanSharedService.buttonByStatutWorkflow(loan.statutWorkflow,currentPath) && !loanSharedService.habilitationButton('SAVE',currentPath) && loan.parentId === 0 && loan.isOwnerOrValidator"
+            (click)="submitLoan()">{{'button.save'| translate }}</button>
+
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="this.reisUrl != null" class="accordion mb-1" id="accordionExample">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseReisUrl"
+          aria-expanded="true" aria-controls="collapseReisUrl" (click)="toggleCollapse()">
+          <div>
+            <i class="lnr-book text-secondary px-2"></i>
+            Reis Url
+          </div>
+          <div>
+            <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+          </div>
+        </div>
+        <input class="form-control" placeholder="Reis Url" type="text"
+        value="{{this.reisUrl}}" disabled>
+
+      </div>
+    </div>
+
+    <app-customer-notes [expanded]="true"></app-customer-notes>
+    <app-event-table [expanded]="true" [source]="'LOAN'"></app-event-table>
+    <app-charge-fee-step [expanded]="true" [source]="'LOAN'"></app-charge-fee-step>
+    <div *ngIf="loan.etapeWorkflow > 23" >
+    <app-conditional-approve-list [expanded]="true"></app-conditional-approve-list>
+    </div>
+    <app-upload-item   [saveFilesAction]="saveFilesAction" (lengthDocuments)="receiveLengthDocuments($event)" [category]="categoryLoan"
+    [originSource]="originSource" [expanded]="true" (saveDone)="saveDocumentsDone($event)" (checkRequiredDoc)="checkRequiredDocumentParent($event)"
+    >
+    </app-upload-item>
+    <app-udf-step-workflow [source]="'workflow'"[category]="'LOAN'"></app-udf-step-workflow>
+  </div>
+  <div class="col-md-3 col-xl-3 px-1">
+    <app-loan-process></app-loan-process>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-9 col-md-9 pr-0 mt-2">
+    <div class="d-block text-end">
+      <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+
+      <button class="mb-2 mx-2 btn btn-warning text-white" *ngIf="!loanSharedService.habilitationButton('REVIEW',currentPath) && loan.parentId === 0
+        && loan.isOwnerOrValidator" (click)="reviewModal(content2)"
+        >{{'button.review' | translate}}</button>
+
+
+      <button *ngIf="!loanSharedService.habilitationButton('REJECT',currentPath) && loan.parentId === 0
+        && loan.isOwnerOrValidator" class="mb-2 mx-2 btn btn-danger" (click)="rejectModal(content1)"
+        >{{'button.reject' | translate}}</button>
+
+      <button *ngIf="!loanSharedService.habilitationButton('APPROVE',currentPath) && loan.parentId === 0
+        && loan.isOwnerOrValidator" class="mb-2 mx-2 btn btn-success" (click)="approveModel(content)"
+       >{{'button.approve' | translate}}</button>
+        <button class="mb-2 btn btn-success mx-2" (click)="saveUdfs()">{{'button.save'| translate }}</button>
+
+      <button
+        *ngIf="loan.parentId !== 0 && loan.statutWorkflow !== 13 && !loanSharedService.habilitationButton('CALCULATE',currentPath) && loan.isOwnerOrValidator"
+        (click)="approveModel(content)" class="mb-2 mx-2 btn btn-success">{{'button.calculate' | translate}}</button>
+
+      <button
+        *ngIf="loan.etapeWorkflow === 22 && !loanSharedService.habilitationButton('REFRESH_LOAN_STATUS',currentPath) && loan.parentId === 0 && loan.isOwnerOrValidator"
+        (click)="checkStatusIssued(loan)" class="mb-2 mx-2 btn btn-primary">{{'button.refresh_loan_status' |
+        translate}}</button>
+      <button class="mb-2 mx-2 btn btn-primary "
+        *ngIf=" displayButtonExecuteApi && (!loanSharedService.habilitationButton('EXECUTE_API',currentPath) && loan.isOwnerOrValidator)"
+        type="submit" (click)="executeThirdPartyApi()"
+        >{{('Execute_api'|translate)}} </button>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <h4>{{'loan_approval.approvel_calc'| translate }}</h4>
+      </div>
+      <div class="card-body px-0">
+        <perfect-scrollbar style="height: 500px;">
+          <!-- Calculator Topup/Refinance -->
+          <app-calculator [selectedProduct]="product" [selectedLoan]="loan" (requiredCalculate)="requiredCalculateFromCalculator($event)"
+            [show]="loan.loanApplicationStatus !== 'NEW_APPLICATION'" [source]="'loan-approval'"
+            [approveAction]="approveAction" (validateLoanApproval)="nextStepTopUpRefinance($event)"
+            [loanDetailsValidity]="true"></app-calculator>
+          <!-- Calculator of New application -->
+          <div *ngIf="loan.loanApplicationStatus === 'NEW_APPLICATION'">
+            <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="calcumationForm"
+              (change)="changeCalculationForm()">
+              <div class="card-body">
+                <div *ngIf="loan.productDTO.supplier" class="form-row d-flex align">
+                  <div class="col-xl-5 col-md-5 px-1 position-relative">
+                    <label> {{'supplier.assets_amount'| translate }} </label>
+                    <div class="form-group input-group mb-2">
+                      <input class="form-control" placeholder="{{'supplier.assets_amount'| translate }}" type="number"
+                        value="{{currentAmount}}" disabled>
+                      <span class="input-group-append">
+                        <button class="btn btn-light border lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-xl-5 col-md-5 px-1 position-relative">
+                    <label>{{'supplier.personnel_imput'| translate }}</label>
+                    <div class="form-group input-group mb-2">
+                      <input class="form-control" placeholder="{{'supplier.personnel_imput'| translate }}" type="number"
+                        min="0" value="{{apportPersonnel}}" (change)="updateApportPersonnel($event.target.value)">
+                      <span class="input-group-append">
+                        <button class="btn btn-light lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row d-flex align">
+                  <div class="col-xl-4 col-md-4 px-1">
+                    <label>{{'loan_management.calculators.loan_amount'| translate }}</label>
+                    <span class="text-danger">*</span>
+                    <div class="form-group input-group">
+                      <input class="form-control"
+                        placeholder="{{'loan_management.calculators.loan_amount'| translate }}" type="number" step="500"
+                        min="0" formControlName="loanAmount" (change)="getMinMaxValueTerm()">
+                      <span class="input-group-append">
+                        <button class="btn btn-light lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                    <div class="form-row d-flex align px-1">
+                      <p class="px-1 text-uppercase ACM-field-description mb-0"
+                        [ngClass]="limitMinAmountValidation ? 'text-danger' : ''"> {{'button.min'| translate }}
+                        {{this.minAmountValidation}}</p>
+                      <p class="px-1 text-uppercase ACM-field-description mb-0"
+                        [ngClass]="limitMaxAmountValidation ? 'text-danger' : ''"> {{'button.max'| translate }}
+                        {{this.maxAmountValidation}}</p>
+                    </div>
+                </div>
+                <div *ngIf="product.isFrequency" class="col-xl-3 col-md-3 px-1">
+                  <label>{{'loan.frequency'| translate }}</label>
+                  <span class="text-danger">*</span>
+                  <div class="form-group input-group mb-2">
+                    <input class="form-control" placeholder="Repayement frequency" type="number" step="1" min="0"
+                      formControlName="frequency">
+                    <span class="input-group-append">
+                      <button class="btn btn-light border" ngxclipboard="" type="button"
+                        ng-reflect-target-elm="">{{currencySymbol}}</button>
+                    </span>
+                  </div>
+                </div>
+                <div *ngIf="product.isFrequency" class="col-xl-3 col-md-3 px-1">
+                  <label>{{'loan.interest_frequency'| translate }}</label>
+                  <span class="text-danger">*</span>
+                  <div class="form-group input-group mb-2">
+                    <input class="form-control" placeholder="Interest frequency" type="number" step="1" min="0"
+                      formControlName="interestFrequency" (change)="getInitialPaymentValue(false)">
+                    <span class="input-group-append">
+                      <button class="btn btn-light border" ngxclipboard="" type="button"
+                        ng-reflect-target-elm="">{{currencySymbol}}</button>
+                    </span>
+                  </div>
+                </div>
+                </div>
+                <div class="form-row d-flex align">
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <div class="position-relative form-group">
+                      <label>{{'loan_management.calculators.loan_term'| translate }}</label>
+                      <span class="text-danger">*</span>
+                      <div class="form-group form-row d-flex">
+                        <div class="col-xl-8 col-md-8">
+                          <input class="form-control"
+                            placeholder="{{'loan_management.calculators.loan_term'| translate }}" type="number" step="1"
+                            min="0" formControlName="loanTerm" (change)="getMinMaxValueAmount()">
+                          <div class="form-row d-flex align">
+                            <p class="px-1 text-uppercase ACM-field-description mb-0"
+                              [ngClass]="limitMinTermValidation ? 'text-danger' : ''"> {{'button.min'| translate }}
+                              {{this.minTermValidation}}</p>
+                            <p class="px-1 text-uppercase ACM-field-description mb-0"
+                              [ngClass]="limitMaxTermValidation ? 'text-danger' : ''"> {{'button.max'| translate }}
+                              {{this.maxTermValidation}}</p>
+                          </div>
+                        </div>
+                        <div class="col-xl-4 col-md-4 px-1">
+                          <span class="input-group-append">
+                            <select class="custom-select" [attr.disabled]="methodCalcule === '-1'?'':null"
+                              formControlName="termType" [style]="{height : 'auto'}">
+                              <option value=1>{{"term-periode.day" | translate}}</option>
+                              <option value=3>{{"term-periode.month" | translate}}</option>
+                              <option value=2>{{"term-periode.week" | translate}}</option>
+                              <option value=5>{{"term-periode.year" | translate}}</option>
+                            </select>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="form-row d-flex align">
+
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <div class="position-relative form-group">
+                      <label> {{'loan_management.calculators.issue_date'| translate }}</label>
+                      <span class="text-danger">*</span>
+                      <input class="form-control" placeholder="{{'loan_management.calculators.issue_date'| translate }}"
+                        type="date" [min]="minIssueDatevalue" formControlName="issueDate"
+                        (change)="getInitialPaymentValue(false)">
+                    </div>
+                  </div>
+
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <div class="position-relative form-group">
+                      <label> {{'loan_management.calculators.initial_payment'| translate }}</label>
+                      <span class="text-danger">*</span>
+                      <input class="form-control"
+                        placeholder="{{'loan_management.calculators.initial_payment'| translate }}" type="date"
+                        formControlName="initialPayment">
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="form-row d-flex align-items-end">
+                  <div class="col-xl-10 col-md-9 px-1">
+                    <div class="position-relative form-group">
+                      <label> {{'loan_management.calculators.periods_deferred'| translate }}</label>
+                      <div class="form-group row no-gutters">
+
+                        <div class="col-xl-6 col-md-6">
+                          <input class="form-control"
+                            placeholder="{{'loan_management.calculators.periods_deferred'| translate }}" type="number"
+                            formControlName="periodsDeferred" (change)="checkDeferredPeriod()">
+                          <div class="form-row d-flex align">
+                            <p class="px-1 text-uppercase ACM-field-description mb-0"
+                              [ngClass]="limitMinPeriodsValidation ? 'text-danger' : ''"> {{'button.min'| translate }}
+                              {{this.minPeriodsValidation}}</p>
+                            <p class="px-1 text-uppercase ACM-field-description mb-0"
+                              [ngClass]="limitMaxPeriodsValidation ? 'text-danger' : ''"> {{'button.max'| translate }}
+                              {{this.maxPeriodsValidation}}</p>
+                          </div>
+                        </div>
+
+                        <div class="col-xl-4 col-md-6">
+                          <span class="input-group-append">
+                            <select class="form-select" formControlName="periodsDeferredType"
+                              [compareWith]="compareFrequency">
+                              <option selected value disabled>
+                                {{'upload_document.default_select' | translate}}
+                              </option>
+                              <ng-container *ngIf="product !== undefined && product?.productDetailsDTOs !== undefined">
+                                <option *ngFor="let type of product?.productDetailsDTOs[0]?.deferredPeriodTypeDTOs"
+                                  [ngValue]="type.deferredPeriodTypeId">
+                                  {{type.code}}
+                                </option>
+                              </ng-container>
+                            </select>
+                          </span>
+                        </div>
+
+                        <div *ngIf = "checkFielsRate" class="col-xl-6 col-md-8" style="margin-top: 20px;">
+                          <label> {{'loan_management.calculators.interestRate'| translate }}</label>
+
+                          <input class="form-control"
+                            placeholder="{{'loan_management.calculators.interestRate'| translate }}" type="number"
+                            formControlName="rate" (change)="checkRate()">
+                          <div class="form-row d-flex align">
+                            <p class="px-1 text-uppercase ACM-field-description mb-0"
+                              [ngClass]="limitMinRateValidation ? 'text-danger' : ''"> {{'button.min'| translate }}
+                              {{this.minRateValidation}}</p>
+                          </div>
+                        </div>
+
+                        <div class="col-xl-1 col-md-6 ms-5" style="margin-top: 40px;">
+                          <div class="form-group">
+                            <button class="btn btn-primary" (click)="calculate(true)">{{'button.calculate'|
+                              translate }}
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <hr class="solid">
+                <div class="row no-gutters d-flex align-items-end">
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <label>{{'loan_management.calculators.apr'| translate }}</label>
+                    <div class="form-group input-group">
+                      <input class="form-control" readonly
+                        placeholder="{{'loan_management.calculators.apr'| translate }}" type="number" step="500" min="0"
+                        formControlName="apr">
+                      <span class="input-group-append">
+                        <button class="btn btn-light lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <label>{{'loan_management.calculators.repayment'| translate }}</label>
+                    <div class="form-group input-group">
+                      <input class="form-control" readonly
+                        placeholder="{{'loan_management.calculators.repayment'| translate }}" type="number" step="500"
+                        min="0" formControlName="repayment">
+                      <span class="input-group-append">
+                        <button class="btn btn-light lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="card no-shadow rm-border bg-transparent widget-chart text-left col-xl-2 col-md-2 px-1 ACM-calculate"
+                    style="display:none">
+                    <div class="icon-wrapper rounded-circle">
+                      <div class="icon-wrapper-bg opacity-8 bg-danger"></div><i class="pe-7s-cash text-white"></i>
+                    </div>
+                    <div class="widget-chart-content">
+                      <div class="widget-subheading"> {{'loan_management.calculators.apr'| translate }}</div>
+                      <div class="widget-numbers text-black ACM-font-size-calculate"><span>{{this.apr}} % </span></div>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="row no-gutters ">
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <label> {{'loan_management.calculators.fees'| translate }}</label>
+                    <div class="form-group input-group">
+                      <input readOnly class="form-control"
+                        placeholder="{{'loan_management.calculators.fees'| translate }}" type="number"
+                        formControlName="fees">
+                      <span class="input-group-append">
+                        <button class="btn btn-light lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-xl-5 col-md-5 px-1">
+                    <label> {{'loan_management.calculators.closing_balance'| translate }}</label>
+                    <div class="form-group input-group">
+                      <input readOnly class="form-control"
+                        placeholder="{{'loan_management.calculators.closing_balance'| translate }}" type="number"
+                        formControlName="closingBalance">
+                      <span class="input-group-append">
+                        <button class="btn btn-light lh" ngxclipboard="" type="button"
+                          ng-reflect-target-elm="">{{currencySymbol}}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="card no-shadow rm-border bg-transparent widget-chart text-left col-xl-2 col-md-2 px-1 ACM-calculate"
+                    style="display:none">
+                    <div class="icon-wrapper rounded-circle">
+                      <div class="icon-wrapper-bg opacity-8 bg-success"></div><i class="pe-7s-cash text-white"></i>
+                    </div>
+                    <div class="widget-chart-content">
+                      <div class="widget-subheading">{{'loan_management.calculators.irr'| translate }}</div>
+                      <div class="widget-numbers text-success ACM-font-size-calculate"><span>{{this.irr}} %</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div *ngIf="schedules.length > 0 ">
+              <div class="mt-2" *ngIf="loanSharedService.habilitationButton('UPDATE','acm-schedule')">
+                <button class=" mx-2 btn btn-primary" (click)="calculate(false)">
+                  {{ 'schedule.synchronize_schedule' | translate }}
+                </button>
+                <input class="mt-2 form-check-input" type="checkbox" (click)="scheduleFlexibleChecked($event)">
+                <label class="custom-control-label"> {{ 'schedule.flexible_schedule' | translate }} </label>
+              </div>
+              <div class="table-responsive mt-2">
+                <div class="d-flex justify-content-end mt-5 mx-3">
+                  <button class="mb-2 mx-2 my-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                    type="button" (click)="downloadSchedule()">
+                    <i ngbTooltip="{{'schedule.dowloand_schedule'| translate }}"
+                      class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                  </button>
+                </div>
+                <table class="mb-0 table green">
+                  <thead>
+                    <tr>
+                      <th>{{'schedule.period'| translate }}</th>
+                      <th>{{'schedule.repayment_date'| translate }}</th>
+                      <th>{{'schedule.total_repayment'| translate }}</th>
+                      <th>{{'schedule.interest'| translate }}</th>
+                      <th>{{'schedule.principal'| translate }}</th>
+                      <th>{{'schedule.balance'| translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let schedule of schedules | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                      <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                        {{ schedule.period}}</td>
+                      <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                        {{ schedule.repaymentDate}}</td>
+                        <td *ngIf="!scheduleFlexibleIsChecked"
+                        [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"> {{
+                        schedule.totalRepayment | number : this.decimalPlaces:'fr'}} {{ currencySymbol }} </td>
+                      <td *ngIf="scheduleFlexibleIsChecked">
+                        <input (change)="totalRepayementChanged()" min="0" type="number" class="form-control"
+                          [(ngModel)]="schedule.totalRepayment">
+                      </td>
+                      <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                        {{ schedule.interestRepayment |
+                        number :
+                        this.decimalPlaces:'fr'}}
+                        {{ loan?.currencySymbol }}
+                      </td>
+                      <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                        {{ schedule.loanRepayment | number :
+                        this.decimalPlaces:'fr'}}
+                        {{ loan?.currencySymbol }}
+                      </td>
+                      <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"
+                        *ngIf="schedule !== lastLine">{{
+                        schedule.balance |
+                        number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                      <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"
+                        *ngIf="schedule === lastLine"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="row no-gutters w-100 ms-2">
+                <div class="col-xl-6 col-lg-6 col-md-12 p-2">
+                  <ngb-pagination [collectionSize]="schedules.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                    [maxSize]="3" [boundaryLinks]="true">
+                  </ngb-pagination>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 p-2">
+                  <div class="d-flex justify-content-lg-end">
+                    <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                      <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                      <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                      <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                      <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="schedules.length === 0">
+              <h6 class="pt-5 px-3 text-danger">{{ 'loan_approval.error_calculation' | translate }} </h6>
+            </div>
+          </div>
+          <hr>
+          <div *ngIf="loan.etapeWorkflow > 23" class="col-xl-12 col-md-12 px-3">
+            <h5>{{'alert.conditional-approve' | translate}}</h5>
+            <app-conditional-approve [changing]="changingValue" (validatorEvent)="validatorHandler($event)"></app-conditional-approve>
+          </div>
+        </perfect-scrollbar>
+      </div>
+      <div class="card-footer py-1 px-0">
+        <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="approveForm" (ngSubmit)="nextStep()">
+          <div class="modal-footer py-1">
+            <div class="col-xl-12">
+              <div class="row no-gutters center-elem">
+                <div class="col-xl-10 d-flex align-items-center">
+                  <div class="position-relative form-group">
+                    <div>
+                      <div class="form-group form-check">
+                        <label class="form-check-label" for="exampleCustomCheckboxApprove">{{'button.confirm_checkbox' |
+                          translate}}</label>
+                        <input class="form-check-input" id="exampleCustomCheckboxApprove" type="checkbox"
+                          formControlName="confirm" (change)="changeChecboxApprove()">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-2 d-flex justify-content-end">
+                  <div class="px-1">
+                    <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+                      translate}}</button>
+                  </div>
+                  <div class="px-1">
+                    <button type="submit" class="btn btn-success mx-1" *ngIf="loan.parentId === 0">{{'button.approve'|
+                      translate }}</button>
+                    <button type="submit" (click)="updateAmount()" class="btn btn-success mx-1"
+                      [disabled]="!confirmApprove" *ngIf="loan.parentId !== 0">{{'button.ok'| translate }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #content1 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'reject.reject_loan'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'reject.reject_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifRejetsEntity of settingMotifRejetsEntitys"
+              [ngValue]="settingMotifRejetsEntity">
+              {{settingMotifRejetsEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'reject.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReject">{{'button.confirm_checkbox' |
+                translate}}</label>
+              <input class="form-check-input" id="exampleCustomCheckboxReject" type="checkbox" formControlName="confirm"
+                (change)="changeChecboxReject()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-danger">{{'button.reject' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'review.review_loan'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifReviewEntity of settingMotifReviewEntitys"
+              [ngValue]="settingMotifReviewEntity">
+              {{settingMotifReviewEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_steps'| translate }}</label>
+          <select class="form-control" formControlName="step" (change)="checkreviewalloption()">
+            <option *ngFor="let step of reviewSteps()" [ngValue]="step">
+              {{step.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'review.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="form-check-input" id="CheckboxReviewOnlySelected" type="checkbox"
+                formControlName="reviewAllPreviousSteps">
+              <label class="custom-control-label ms-2"
+                for="exampleCustomCheckboxReview">{{'review.review_all_previous_steps'|translate}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div class="form-group form-check">
+            <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+              translate}}</label>
+            <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+              (change)="changeChecboxReview()">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-warning text-white">{{'button.review' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

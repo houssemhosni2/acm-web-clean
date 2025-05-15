@@ -1,0 +1,31 @@
+<div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseProfileDetails"
+    aria-expanded="true" aria-controls="collapseProfileDetails" (click)="toggleCollapse()">
+    <div> {{ 'aml_profile_details.identity' | translate }} </div>
+    <div *ngIf="!isdPdf">
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+</div>
+<div id="collapseProfileDetails" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+    <div class="row m-1 pb-0">
+        <div class="table-responsive">
+            <table class=" mb-0 table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'aml_profile_details.profile_identity.type' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_identity.number' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of iDNumberTypesList">
+                        <td>
+                            {{ item?.IDType }}
+                        </td>
+                        <td>
+                            {{ item?.IDValue?.value }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

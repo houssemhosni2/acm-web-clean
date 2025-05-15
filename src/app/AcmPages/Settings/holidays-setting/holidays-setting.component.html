@@ -1,0 +1,136 @@
+<div class="card">
+    <div class="card-header">
+        {{'setting.holiday-setting.holiday-setting'| translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="d-inline-flex align-items-center btn btn-primary" (click)="addHoliday(modalContent)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                {{'setting.setting_configuration_product.add'| translate }} </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="btn-group" role="group" aria-label="Button group with icons">
+            <button type="button" class="btn btn-primary" (click)="setCalendarMode()">
+                <i class="vsm-icon pe-7s-date"></i> {{'setting.holiday-setting.calendar'| translate }}
+            </button>
+            <button type="button" class="btn btn-primary" (click)="setListMode()">
+                <i class="vsm-icon pe-7s-menu"></i> {{'setting.holiday-setting.list'| translate }}
+            </button>
+        </div>
+        <div *ngIf="calendarMode && holidayList" class="py-3">
+            <p-calendar class="max-w-full" [inline]="true" [showWeek]="true">
+                <ng-template pTemplate="date" let-date>
+                    <span [ngStyle]="{textDecoration: (isClosedDate(date)) ? 'line-through' : 'inherit',color: (isClosedDate(date)) ? 'grey' : 'inherit'}"
+                        [title]="getHolidayType(date)">
+                        {{date.day}}
+                    </span>
+                </ng-template>
+            </p-calendar>
+        </div>
+    </div>
+    <div *ngIf="!calendarMode">
+        <div class="py-3">
+            <div class="table-responsive">
+                <table class="mb-0 t table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{{'setting.holiday-setting.date'| translate }}</th>
+                            <th>{{'setting.holiday-setting.type'| translate }}</th>
+                            <th>{{'setting.holiday-setting.is-recurring'| translate }}</th>
+                            <th>{{'setting.closed-days-setting.branch'| translate }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let holiday of holidayList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                            <td>{{ holiday.holidayDate | date: 'dd/MM/yyyy' }}</td>
+                            <td>{{ holiday.holidayType }}</td>
+                            <td>
+                                <bSwitch [(ngModel)]="holiday.isRecurring" [switch-size]="'mini'"
+                                    [switch-handle-width]="40" [switch-animate]="true" [switch-off-color]="'danger'"
+                                    class="px-2 mb-0">
+                                </bSwitch>
+                            </td>
+                            <td>
+                                {{ holiday.branchNames}}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-warning text-white mx-1" (click)="editHoliday(modalContent,holiday)">
+                                    <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                                </button>
+                                <button class="btn btn-sm btn-danger text-white" (click)="disableHoliday(holiday)">
+                                    <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer pb-0" >
+            <div class="row no-gutters w-100">
+                <div class="col-xl-6 col-lg-6 col-md-12">
+                    <ngb-pagination [collectionSize]="holidayList?.length" [(page)]="page" [pageSize]="pageSize"
+                        size="sm" [maxSize]="3" [boundaryLinks]="true">
+                    </ngb-pagination>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12">
+                    <div class="d-flex justify-content-lg-end">
+                        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title"> {{ (action === 'update' ? 'setting.holiday-setting.update-holiday-setting' :
+                'setting.holiday-setting.add-holiday-setting') | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModale()">&times;</span>
+            </button>
+        </div>
+    </div>
+
+    <form class="form" [formGroup]='groupForm' (ngSubmit)="onSubmit()">
+        <div class="card-body">
+            <div class="position-relative pb-4">
+                <label>{{ 'setting.closed-days-setting.branch' | translate }}</label>
+                <p-multiSelect [filter]="false" [options]="branchEntities" [styleClass]="'full-width'"
+                    formControlName="branch" placeholder="{{ 'customer_management.branch_default_select' | translate }}"
+                    optionLabel="description" [required]="displayMultiSelect"></p-multiSelect>
+            </div>
+            <div class="position-relative pb-4">
+                <label>{{'setting.holiday-setting.type'| translate }}</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" formControlName="holidayType">
+                </div>
+            </div>
+            <div class="position-relative pb-4">
+                <label>{{'setting.holiday-setting.date'| translate }}</label>
+                <div class="form-group">
+                    <input type="date" class="form-control" formControlName="holidayDate">
+                </div>
+            </div>
+            <div class="position-relative pb-4">
+                <input class="form-check-input" type="checkbox" formControlName="isRecurring">
+                <label class="custom-control-label ms-2">{{'setting.holiday-setting.is-recurring'| translate }} </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModale()">{{'button.cancel'
+                | translate}}</button>
+            <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        </div>
+    </form>
+
+</ng-template>

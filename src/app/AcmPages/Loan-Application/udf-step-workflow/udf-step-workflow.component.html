@@ -1,0 +1,101 @@
+<div *ngIf="udfGroups.length > 0" class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseLoanAnalyses" aria-expanded="true"
+    aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomerAnalyses()">
+    <div>
+      <i class="lnr-magnifier text-secondary pr-2"></i>
+      {{ 'loan_management.field_analysis' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedUdf===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedUdf===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+    data-parent="#accordionExample">
+    <div class="card-body">
+      <div class="col-xl-12 d-flex justify-content-end pt-3">
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+          (click)="addUdfLoan()">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add' | translate}}
+        </button>
+      </div>
+      <form [formGroup]="udfLoanForm">
+        <div *ngFor="let udf of udfGroupsSelected, let j = index">
+          <hr class="solid" *ngIf="udf.enabled ">
+          <div class="position-relative form-group" *ngIf="udf.enabled">
+            <label>{{'udf.udf_group'| translate }} </label>
+            <div class="row">
+              <div class="col-xl-6">
+                <select class="form-control" formControlName="udfGroup{{j}}" name="udfGroup"
+                  [compareWith]="comparegroup" (change)="getUdfFiledListLoan(j, false)"
+                  [attr.disabled]="udfGroupsSelected[j].mondatory ? '': null">
+                  <option *ngFor="let udfGroup of udfGroups" [ngValue]="udfGroup">
+                    {{udfGroup.description}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-xl-6 px-3">
+                <button class="btn btn-danger" (click)="deleteGroupLoan(j)" *ngIf="!udfGroupsSelected[j].mondatory">
+                  <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="udfFieldsLoan[j]?.length > 0 && udf.enabled  && udfFormData">
+            <div class="table-responsive mt-2">
+              <div class="container">
+                <div class="row">
+                  <div class="col-xl-4 col-md-4 mb-3" *ngFor="let udfField of udfFieldsLoan[j], let i = index">
+                    <div *ngIf="!udfField.delete">
+                      <label>
+                        {{ udfField.description }}
+                        <span class="text-danger" *ngIf="udfField.mandatory"> *</span>
+                      </label>
+                    </div>
+                    <div *ngIf="!udfField.delete && udfField.fieldType === 1">
+                      <input class="form-control" type="text"
+                        [placeholder]="mascPlacHolder(udfFieldsLoan[j][i].fieldMasc)"
+                        formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        <div *ngIf="udfLoanForm.get('udfField' + j + i).touched && udfLoanForm.get('udfField' + j + i).invalid">
+                          <small class="text-danger" *ngIf="udfLoanForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                        </div>
+                    </div>
+                    <div *ngIf="!udfField.delete && udfField.fieldType === 2">
+                      <input class="form-control" type="number"
+                        [placeholder]="mascPlacHolder(udfFieldsLoan[j][i].fieldMasc)"
+                        formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        <div *ngIf="udfLoanForm.get('udfField' + j + i).touched && udfLoanForm.get('udfField' + j + i).invalid">
+                          <small class="text-danger" *ngIf="udfLoanForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                        </div>
+                    </div>
+                    <div *ngIf="!udfField.delete && udfField.fieldType === 5">
+                      <select class="form-control" [formControlName]="'udfField' + j + i" [compareWith]="compareFieldUDF"
+                        name="udfField" (change)="changeUDFField(j, i)">
+                        <option selected value>
+                          {{'udf.udf_group_code_default_select'| translate }}
+                        </option>
+                        <option *ngFor="let udfFieldListValue of udfField.fieldListValuesDTOs"
+                          [ngValue]="udfFieldListValue">
+                          {{udfFieldListValue.description}}
+                        </option>
+                      </select>
+                      <div *ngIf="udfLoanForm.get('udfField' + j + i).touched && udfLoanForm.get('udfField' + j + i).invalid">
+                        <small class="text-danger" *ngIf="udfLoanForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                      </div>
+                    </div>
+                    <div *ngIf="!udfField.delete && udfField.fieldType === 4">
+                      <input type="date" class="form-control"
+                        formControlName="udfField{{j}}{{i}}" name="udfField" />
+                        <div *ngIf="udfLoanForm.get('udfField' + j + i).touched && udfLoanForm.get('udfField' + j + i).invalid">
+                          <small class="text-danger" *ngIf="udfLoanForm.get('udfField' + j + i).errors?.required">{{'This_field_is_required' | translate}}.</small>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -1,0 +1,53 @@
+ <!--Collection Process-->
+ <div  class="card-shadow-primary profile-responsive card-border mb-1 card" style = "position: -webkit-sticky;  position: sticky; top: 50px;" >
+  <div class="dropdown-menu-header">
+    <div class="dropdown-menu-header-inner bg-danger">
+      <div class="menu-header-image" style="background-image: url('../../../../../assets/images/sidebar/city1.jpg')">
+      </div>
+      <div class="menu-header-content btn-pane-right">
+        <div class="avatar-icon-wrapper mx-2 avatar-icon-xl">
+          <div class="icon-wrapper rounded-circle">
+            <div class="icon-wrapper-bg bg-white opacity-10"></div>
+            <i class="pe-7s-way text-danger"></i>
+          </div>
+        </div>
+        <div>
+          <h5 class="menu-header-title">{{ 'generic_wf.generic-workflow-process' | translate }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="vertical-time-simple vertical-without-time vertical-timeline
+      vertical-timeline--animate vertical-timeline--one-column pt-0 ACM-process-vertical-{{translate.currentLang}}"
+      *ngFor="let itemProcess of itemProcessEntitys">
+      <div [ngClass]=" {
+                'dot-success vertical-timeline-element' : (itemProcess.orderEtapeProcess < orderProcess || item.status==5 )&&this.item.status == -1,
+                'dot-warning vertical-timeline-element': (itemProcess.orderEtapeProcess === orderProcess &&  item.status!==5 )&&this.item.status == -1,
+                'opacity-6' : ( this.item.status == '-1')
+
+                }">
+        <div>
+          <span class="vertical-timeline-element-icon bounce-in ACM-process-icon-{{translate.currentLang}}"></span>
+          <div class="row vertical-timeline-element-content ACM-process-title-{{translate.currentLang}} bounce-in">
+            <div class="col-9">
+              <p class="timeline-title font-weight-bold" [ngClass]=" {
+                'text-success' : (itemProcess.orderEtapeProcess < orderProcess || item.status==5 ),
+                'text-warning' :((itemProcess.orderEtapeProcess === orderProcess &&  item.status!==5 )),
+                'opacity-6' : ( this.item.status == -1)
+                }">
+                {{itemProcess.libelle }}
+              </p>
+            </div>
+            <!-- <div class="col-2" *ngIf="itemProcess.orderEtapeProcess === orderProcess  ">
+              <div class="badge bg-warning text-white ml-2">
+                {{ collection.availableDate | date:'dd/MM/yyyy' }}
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

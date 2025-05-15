@@ -1,0 +1,67 @@
+<app-page-title [heading]="'credit-line.credit-line-reports'| translate " [icon]="'pe-7s-id'" [status]="-1"></app-page-title>
+
+<!-- Reports -->
+<div class="card-hover-shadow-2x m-1 mb-2 card">
+  <div class="card-header d-flex justify-content-between">
+    {{ 'credit-line-account.reports' | translate }}
+  </div>
+  <div class="card-body">
+    <div class="col-xl-4 row p-2">
+      <div class="col-xl-5">
+        {{ 'credit-line-account.credit-line-summary' | translate }}
+      </div>
+      <div class="col-xl-6" style="margin-top: -12px;" (click)="generateCreditLineSummaryPdfReport()">
+        <button type="button" class="btn btn-danger m-2">
+          <span class="fa fa-file-pdf-o" style="font-size: 1.1rem;"></span>
+        </button>
+        <button type="button" class="btn btn-success " (click)="generateCreditLineSummaryExcelReport()">
+          <span class="fa fa-file-excel-o" style="font-size: 1.1rem;"></span>
+        </button>
+      </div>
+    </div>
+    <div class="col-xl-4 row p-2">
+      <div class="col-xl-5">
+        {{ 'credit-line-account.credit-line-history' | translate }}
+      </div>
+      <div class="col-xl-6" style="margin-top: -12px;">
+        <button type="button" class="btn btn-danger m-2" (click)="openReportModal(content3, 'pdf')">
+          <span class="fa fa-file-pdf-o" style="font-size: 1.1rem;"></span>
+        </button>
+        <button type="button" class="btn btn-success" (click)="openReportModal(content3, 'excel')">
+          <span class="fa fa-file-excel-o" style="font-size: 1.1rem;"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- credit line history Report parameters -->
+<ng-template #content3 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h4 class="modal-title"> {{ 'credit-line-account.credit-line-history-report' | translate }} </h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="closeReportModal()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <form [formGroup]="findCreditLineHistoryForm">
+    <div class="modal-body row">
+      <div class="col-xl-12 col-md-12">
+        <div class="position-relative form-group ">
+          <label> {{ 'credit-line-account.account-number' | translate }} </label>
+          <input type="text" class="form-control" formControlName="accountNumber">
+        </div>
+        <div class="position-relative form-group ">
+          <label> {{ 'credit-line-account.date' | translate }} </label>
+          <input type="date" class="form-control" formControlName="historyDate">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer py-1">
+      <button type="button" class="btn btn-outline-danger" (click)="closeReportModal()">{{'button.exit' | translate}}</button>
+      <button type="button" class="btn btn-success text-white" (click)="generateCreditLineHistoryReport()">{{'button.generate' | translate}}</button>
+    </div>
+  </form>
+  </div>
+</ng-template>

@@ -1,0 +1,141 @@
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header">
+
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+        (click)="openLarge(content,setting_SMS1)">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'button.add' | translate}}
+      </button>
+    </div>
+  </div>
+  <table class="mb-0 t table table-hover">
+    <thead>
+      <tr>
+        <th>{{ "setting.SMSEventCode" | translate }}</th>
+        <th>
+          {{
+          "setting.Message_Body" | translate
+          }}
+        </th>
+        <th>
+          {{
+          "setting.category" | translate
+          }}
+        </th>
+        <th>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="
+          let setting_sms of settingSMS| slice: (page-1) * pageSize : (page-1) * pageSize + pageSize;
+          let i = index 
+        ">
+        <td>{{ setting_sms.codeSMSEvent }}</td>
+        <td>{{ setting_sms.messageBody }}</td>
+        <td>{{ setting_sms.category }}</td>
+        <td>
+          <button class="btn btn-warning text-white" (click)="openLarge(content,setting_sms)">
+            <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="settingSMS.length" [(page)]="page" [pageSize]="pageSize"
+          size="sm" [maxSize]="3" [boundaryLinks]="true">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize2" [(ngModel)]="pageSize">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!--popup-->
+<ng-template #content let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form-->
+    <form [formGroup]="popupForm">
+      <div class="modal-header py-2">
+        <h4 class="modal-title" *ngIf="updateId === 0">{{'setting.add_new_sms'| translate }}
+        </h4>
+        <h4 class="modal-title" *ngIf="updateId !== 0">{{'setting.edit_sms_template'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="closeModale()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="position-relative pb-4">
+        <label> {{'setting.category'| translate }}<span class="text-danger">*</span></label>
+        <div>
+          <select formControlName="selectedCategory" 
+          class="form-control">
+            <option *ngFor="let category of categoryList" [value]="category">{{ category }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="p-2 pb-4">
+        <label> {{'setting.SMSEventCode'| translate }}<span class="text-danger">*</span></label>
+        <div>
+          <input type="text" class="form-control" formControlName="codeSMSEvent">
+        </div>
+      </div>
+      <div class="container p-3">
+        <div class="row">
+        <div class="position-relative col-8">
+          <label> {{'setting.Message_Body'| translate }} <span class="text-danger">*</span></label>
+          <div>
+            <!-- <input type="text" class="form-control" formControlName="messageBody"> -->
+            <textarea class="form-control" formControlName="messageBody" rows="20" cols="200"></textarea>
+          </div>
+        </div>
+        <div class="position-relative col-4">
+          <div class="row">
+          <label> {{'setting.keyword'| translate }}<span class="text-danger"></span></label>
+          <div class="input-group mb-2">
+            <select formControlName="selectedKeywords"  (change)="onListSelectionChange($event.target.value)"
+            class="form-control">
+              <option *ngFor="let Keyword of KeywordsList" [value]="Keyword">{{ Keyword }}</option>
+            </select>
+            </div>
+            <div>
+            <div *ngIf="selectedKeyword">
+              <!-- Contenu de la liste -->
+              <select formControlName="selectedKey" (change)="updateMessageBody($event.target.value)"
+            class="form-control">
+              <option *ngFor="let item of Keywords" [value]="item">{{ item }}</option>
+            </select>
+          </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+          translate}}</button>
+        <button class="btn btn-primary"  (click)="onSubmit()">{{'button.save'
+          |translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

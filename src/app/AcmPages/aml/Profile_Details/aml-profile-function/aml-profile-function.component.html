@@ -1,0 +1,84 @@
+<div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseProfileDetails"
+    aria-expanded="true" aria-controls="collapseProfileDetails" (click)="toggleCollapse()">
+    <div> {{ 'aml_profile_details.profile_functions.functions_list' | translate }} </div>
+    <div *ngIf="!isdPdf">
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+</div>
+<div id="collapseProfileDetails" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+    <div class="row m-1 pb-0">
+        <div class="table-responsive">
+            <table class=" mb-0 table table-hover">
+                <thead>
+                    <tr>
+                        <th colspan="4"> {{ 'aml_profile_details.profile_functions.principal_function' | translate }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>{{ 'aml_profile_details.profile_functions.category' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_functions.title' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_functions.from' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_functions.to' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let primaryFunc of primaryFunctions">
+                        <td>
+                            {{primaryFunc?.category}}
+                        </td>
+                        <td>
+                            {{primaryFunc?.value}}
+                        </td>
+                        <td>
+                            <span *ngIf="primaryFunc?.SinceDay"> {{ primaryFunc?.SinceDay }} </span>
+                            <span *ngIf="primaryFunc?.SinceMonth"> / {{ primaryFunc?.SinceMonth }}
+                            </span>
+                            <span *ngIf="primaryFunc?.SinceYear"> / {{ primaryFunc?.SinceYear }}
+                            </span>
+                        </td>
+                        <td>
+                            <span *ngIf="primaryFunc?.ToDay"> {{ item?.ToDay }} </span>
+                            <span *ngIf="primaryFunc?.ToMonth"> / {{ item?.ToMonth }} </span>
+                            <span *ngIf="primaryFunc?.ToYear"> / {{ item?.ToYear }} </span>
+                        </td>
+                    </tr>
+                </tbody>
+                <thead>
+                    <tr>
+                        <th colspan="4">{{ 'aml_profile_details.profile_functions.history' | translate }}</th>
+                    </tr>
+                    <tr>
+                        <th>{{ 'aml_profile_details.profile_functions.category' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_functions.title' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_functions.from' | translate }}</th>
+                        <th>{{ 'aml_profile_details.profile_functions.to' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let previousRole of previousRoles">
+                        <td>
+                            {{previousRole?.category}}
+                        </td>
+                        <td>
+                            {{previousRole?.value}}
+                        </td>
+                        <td>
+                            <span *ngIf="previousRole?.SinceDay"> {{ previousRole?.SinceDay }}
+                            </span>
+                            <span *ngIf="previousRole?.SinceMonth"> / {{ previousRole?.SinceMonth }}
+                            </span>
+                            <span *ngIf="previousRole?.SinceYear"> / {{ previousRole?.SinceYear }}
+                            </span>
+                        </td>
+                        <td>
+                            <span *ngIf="previousRole?.ToDay"> {{ previousRole?.ToDay }} </span>
+                            <span *ngIf="previousRole?.ToMonth"> / {{ previousRole?.ToMonth }}
+                            </span>
+                            <span *ngIf="previousRole?.ToYear"> / {{ previousRole?.ToYear }} </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

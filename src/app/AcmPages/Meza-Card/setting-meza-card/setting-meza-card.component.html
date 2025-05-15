@@ -1,0 +1,45 @@
+<app-page-title [heading]=" 'meza_card.meza_card'| translate " [icon]="'pe-7s-credit'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="card">
+  <div class="card-header">
+    <i class="lnr-file-empty px-2"> </i>
+    {{'meza_card.upload_file'| translate }}
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-xl-3">
+        <p-fileUpload  #uploadFile name="file" customUpload="true" (onSelect)="onUpload($event)" accept=".xlsx,.csv,.xls"
+          [showUploadButton]="false" [showCancelButton]="false">
+        </p-fileUpload>
+      </div>
+      <div class="col-xl-9 px-3">
+        <div class="row d-flex justify-content-center">
+          <div class="col-xl-3">
+            <bSwitch [(ngModel)]="enabled" [switch-size]="'small'" [switch-animate]="true" [switch-off-color]="'danger'"
+              class="px-2 mb-0 " (click)="EnableProduct()"></bSwitch>
+            <label class="pt-2 px-3">{{'meza_card.send_all'| translate }}</label>
+          </div>
+          <div class="col-xl-9 px-3">
+            <form class="form" [formGroup]="formSendAll" (ngSubmit)="onSubmit(uploadFile)">
+              <div class="row px-3">
+                <div class="col-xl-9">
+                  <select class="form-control" formControlName="branch" [attr.disabled]="!enabled ?'':null">
+                    <option [ngValue]="null">{{'customer_management.branch_default_select'| translate }}</option>
+                    <option [ngValue]="branchEntity" *ngFor="let branchEntity of branchEntitys">
+                      {{branchEntity.description}}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-xl-3 d-flex justify-content-end">
+                  <button class="btn btn-primary" type="submit">{{'meza_card.upload_cards'| translate }}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-setting-meza-card-activate></app-setting-meza-card-activate>

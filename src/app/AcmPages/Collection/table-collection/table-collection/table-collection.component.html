@@ -1,0 +1,132 @@
+<div class="main-card card" [ngStyle]="{ 'margin-bottom': fromOfflineSetting ? '7.5rem' : '1.5rem' }">
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="collectionPaginationEntity?.resultsCollections"
+      (onLazyLoad)="reloadCollectionsList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="collectionPaginationEntity.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+      [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [showCurrentPageReport]="true"
+      [(selection)]="currentSelection" [selectionMode]='fromOfflineSetting ? "multiple": "single"'>
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <!-- actions button -->
+          <th class="ACM_Customer_Search_void_Col" *ngIf="fromOfflineSetting"></th>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+
+            <th style='width: 40px;'></th>
+          </tr>
+          <tr>
+            <th class="ACM_Customer_Search_void_Col" *ngIf="fromOfflineSetting">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th *ngFor="let col of columns" [ngSwitch]="col.field">
+              <select *ngSwitchCase="'typeCustomer'" class="form-control ACM-Dashbord-customertype-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option value="INDIV">{{'category_loan.individual' | translate}}</option>
+                <option value="ORG">{{'category_loan.organisation' | translate}}</option>
+                <option value="GRP">{{'category_loan.groupe' | translate}}</option>
+              </select>
+              <input *ngSwitchCase="'accountNumber'" class="form-control placeholder" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <select *ngSwitchCase="'productDescription'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let product of products" value="{{product.value}}">{{product.label}}</option>
+              </select>
+              <input *ngSwitchCase="'customerName'" class="form-control ACM-Dashbord-customername-col" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'branchDescription'" class="form-control ACM-Dashbord-branchName-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let branch of branches" value="{{branch.value}}">{{branch.value}}</option>
+              </select>
+              <input *ngSwitchCase="'amount'" class="form-control" type="number" min="0" step="50"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'loanOfficer'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'ownerName'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'dateInsertion'" class="form-control ACM-Dashbord-Date-col" type="date"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+             <div *ngIf="collectionType!=='PROSPECTION'">
+              <input *ngSwitchCase="'firstUnpaidInstallment'" class="form-control" type="date"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'unpaidAmount'" class="form-control" type="number" min="0" step="50"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'lateDays'" class="form-control" type="number" min="0" step="1"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'numberOfUnpaidInstallment'" class="form-control" type="number" min="0" step="1"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              </div>
+              <input *ngSwitchCase="'subWorkFlowStatus'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <select *ngSwitchCase="'statutLibelle'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let state of statusList" value="{{state.value}}">{{state.value}}</option>
+                 </select>
+
+
+            </th>
+            <th style='width: 40px;'></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-collections let-rowData let-columns="columns">
+          <tr [pSelectableRow]="rowData">
+            <td *ngIf="fromOfflineSetting">
+              <div (click)="$event.stopPropagation()">
+              <p-tableCheckbox  [value]="rowData"></p-tableCheckbox>
+              </div>
+            </td>
+            <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+              <div *ngSwitchCase="'typeCustomer'">
+                <div *ngIf="rowData[col.field] === 'INDIV'">
+                  <i class="lnr-user"> </i>
+                </div>
+                <div *ngIf="rowData[col.field] === 'ORG'">
+                  <i class="lnr-users"> </i>
+                </div>
+                <div *ngIf="rowData[col.field] === 'GRP'">
+                  <i class="lnr-apartment"> </i>
+                </div>
+              </div>
+              <div *ngSwitchCase="'accountNumber'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'productDescription'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'customerName'" class="ACM-Dashbord-customernametd-col">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'branchDescription'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'amount'">
+                {{rowData[col.field] | number : this.devToolsServices.getDecimalPlaces(collections.currencyDecimalPlaces):'fr'}}
+                {{ collections?.currencySymbol }} </div>
+                <div *ngSwitchCase="'loanOfficer'">{{rowData[col.field]}}</div>
+                <div *ngSwitchCase="'ownerName'">{{rowData[col.field]}}</div>
+                <div *ngSwitchCase="'dateInsertion'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+                <div *ngIf="collectionType!=='PROSPECTION'">
+                <div *ngSwitchCase="'firstUnpaidInstallment'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+                <div *ngSwitchCase="'unpaidAmount'">
+                    {{rowData[col.field]  | number : this.devToolsServices.getDecimalPlaces(collections.currencyDecimalPlaces):'fr'}}
+                    {{ collections?.currencySymbol }} </div>
+              <div *ngSwitchCase="'lateDays'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'numberOfUnpaidInstallment'">{{rowData[col.field]}}</div>
+            </div>
+            <div *ngSwitchCase="'subWorkFlowStatus'">
+              <div *ngIf="rowData[col.field]" class="badge ACM-badge-notification bg-info">{{rowData[col.field]}}</div>
+            </div>
+              <div *ngSwitchCase="'statutLibelle'">
+                <div class="badge ACM-badge-notification bg-primary ">
+                  <div class="px-1">{{sharedService.getPendingCollectionInstance(rowData)?.pendingCollectionInstance?.libelle}}</div>
+                  </div>
+              </div>
+            </td>
+            <td *ngIf="!fromOfflineSetting" >
+              <button (click)='collectionDetails(rowData)' pButton type='button' icon='fa fa-edit'></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>

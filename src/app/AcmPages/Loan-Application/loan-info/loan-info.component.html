@@ -1,0 +1,197 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne"
+         data-target="#collapseSchedule" aria-expanded="true" aria-controls="collapseSchedule"
+         (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-file-empty text-secondary px-2"></i>
+        {{'loan.loan_details'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseSchedule" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+      <div class="card-body row px-4">
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.loan_product'| translate }}</div>
+                <div class="widget-subheading">{{ loan.productDescription }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.interest_rate'| translate }}</div>
+                <div class="widget-subheading">{{ loan.productRate }}%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.issue_date'| translate }}</div>
+                <div class="widget-subheading">{{ loan.issueDate | date: 'dd/MM/yyyy'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.repay_freq'| translate }}</div>
+                <div class="widget-subheading">{{ loan.paymentFreq| translate }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.loan_amount'| translate }}</div>
+                <div class="widget-subheading">{{ loan.applyAmountTotal | number : this.decimalPlaces:'fr'}}
+                  {{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading"> {{'approval_history.Approved_Amount'| translate }}</div>
+                <div class="widget-subheading">{{ loan.approvelAmount| number : this.decimalPlaces:'fr'}}
+                  {{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.term'| translate }}</div>
+                <div class="widget-subheading">{{ loan.termPeriodNum }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan.apply_date'| translate }}</div>
+                <div class="widget-subheading">{{ loan.dateInsertion | date: 'dd/MM/yyyy'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="loan?.loanApplicationStatus === 'TOPUP'" class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'loan_management.calculators.closing_balance'| translate }}</div>
+                <div class="widget-subheading"> {{(loan.applyAmountTotal + loan.openingBalance) | number : this.decimalPlaces}}{{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'apr'|translate}}</div>
+                <div class="widget-subheading">{{ loan.apr}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'totalFees'|translate}}</div>
+                <div class="widget-subheading">{{ loan.acmIssueFees | number : this.decimalPlaces}}{{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'schedule.balance'|translate}}</div>
+                <div class="widget-subheading">{{ loan.drAmount - loan.crAmount | number : this.decimalPlaces}}{{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'supplier.status'|translate}}</div>
+                <div class="widget-subheading">
+                  <div class="badge bg-warning"
+                         *ngIf="loan.statut  == '1'">{{'customer_account.status_1'| translate }}</div>
+                    <div class="badge bg-success"
+                         *ngIf="loan.statut == '2'">{{'customer_account.status_2'| translate }}</div>
+                    <div class="badge bg-success"
+                         *ngIf="loan.statut == '4'">{{'customer_account.status_4'| translate }}</div>
+                    <div class="badge bg-primary" 
+                        *ngIf="loan.statut == '8'"> {{ loan.issuedStatut }} </div>
+                    <div class="badge bg-danger"
+                         *ngIf="loan.statut == '16'">{{'customer_account.status_16'| translate }}</div>
+                    <div class="badge bg-primary"
+                         *ngIf="loan.statut == '32'">{{'customer_account.status_32'| translate }}</div>
+                    <div class="badge bg-danger"
+                         *ngIf="loan.statut == '64'">{{'customer_account.status_64'| translate }}</div>
+                    <div class="badge bg-info"
+                         *ngIf="loan.statut == '128'">{{'customer_account.status_128'| translate }}</div>
+                    <div class="badge bg-info"
+                         *ngIf="loan.statut == '256'">{{'customer_account.status_256'| translate }}</div>
+                    <div class="badge bg-info"
+                        *ngIf="loan.statut == '512'">{{'customer_account.status_512'| translate }}</div>
+                    <div class="badge bg-info"
+                        *ngIf="loan.statut == '1024'">{{'customer_account.status_1024'| translate }}</div>
+                    <div class="badge bg-info"
+                        *ngIf="loan.statut == '2048'">{{'customer_account.status_2048'| translate }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'principal'|translate}}</div>
+                <div class="widget-subheading">{{ loan.approvelAmount | number : this.decimalPlaces}}{{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content p-0 col-md-3">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left">
+                <div class="widget-heading">{{'interset'|translate}}</div>
+                <div class="widget-subheading">{{ lastLine?.interestRepayment | number : this.decimalPlaces }}{{ loan?.currencySymbol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

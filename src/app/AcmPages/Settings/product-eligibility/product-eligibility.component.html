@@ -1,0 +1,127 @@
+<div class="card">
+    <ngx-loading [show]="loading"
+        [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+    </ngx-loading>
+    <div class="card-header"> {{'setting.setting_product_eligibility.product_eligibility' | translate}} </div>
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="eligibilityForm" (ngSubmit)="onSubmit()">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-xl-3 col-md-3">
+                    <label>{{'setting.setting_product_eligibility.gender'| translate}}</label>
+                </div>
+                <div class="form-group col-xl-3 col-md-3">
+                    <bSwitch [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'"
+                        [(ngModel)]="settingProductEligibility.genderStatus" [ngModelOptions]="{standalone: true}"
+                        (click)="enableDisable('genderStatus')" [switch-handle-width]="40" class="px-2 mb-0">
+                    </bSwitch>
+                </div>
+                <div class="form-group col-xl-4 col-md-4">
+                    <div class="d-flex flex-row bd-highlight mb-3">
+                        <mat-checkbox formControlName="isMale">{{ 'customer_management.male' | translate
+                            }}</mat-checkbox>
+                        <mat-checkbox formControlName="isFemale">{{ 'customer_management.female' | translate
+                            }}</mat-checkbox>
+                    </div>
+                    <div *ngIf="submitted && eligibilityForm.hasError('requireCheckboxes')">
+                        <mat-error style="color: red;"> {{ 'setting.setting_product_eligibility.checkbox' | translate }} </mat-error>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xl-3 col-md-3 mt-3">
+                    <label>{{'setting.setting_product_eligibility.risk_indicator'| translate}}</label>
+                </div>
+                <div class="form-group col-xl-3 col-md-3 mt-3">
+                    <bSwitch [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'"
+                        [(ngModel)]="settingProductEligibility.riskIndicatorsStatus"
+                        [ngModelOptions]="{standalone: true}" (click)="enableDisable('riskIndicatorsStatus')"
+                        [switch-handle-width]="40" class="px-2 mb-0">
+                    </bSwitch>
+                </div>
+                <div class="form-group ACM-image-client col-xl-1 col-md-1 mt-3">
+                    <label> {{ 'topup.max_continuous_late_days' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 p-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="maxContinuousLateDays" type="number" min="0">
+                    </div>
+                </div>
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'topup.max_separate_late_days' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="maxSeparateLateDays" type="number" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xl-3 col-md-3">
+                    <label>{{'setting.setting_product_eligibility.region'| translate}}</label>
+                </div>
+                <div class="form-group col-xl-3 col-md-3">
+                    <bSwitch [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'"
+                        [(ngModel)]="settingProductEligibility.regionStatus" [ngModelOptions]="{standalone: true}"
+                        (click)="enableDisable('regionStatus')" [switch-handle-width]="40" class="px-2 mb-0">
+                    </bSwitch>
+                </div>
+                <div class="form-group col-xl-4 col-md-4">
+                    <ngx-select-dropdown tabindex="0" formControlName="region" [multiple]="true" [options]="regionList">
+                    </ngx-select-dropdown>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xl-3 col-md-3 mt-3">
+                    <label>{{'setting.setting_product_eligibility.min_personal_contribution'| translate}}</label>
+                </div>
+                <div class="form-group col-xl-3 col-md-3 mt-3">
+                    <bSwitch [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'"
+                        [(ngModel)]="settingProductEligibility.personalContributionStatus"
+                        [ngModelOptions]="{standalone: true}" (click)="enableDisable('personalContributionStatus')"
+                        [switch-handle-width]="40" class="px-2 mb-0">
+                    </bSwitch>
+                </div>
+                <div class="form-group ACM-image-client col-xl-1 col-md-1 mt-3">
+                    <label> {{ 'setting.setting_product_eligibility.amount' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 p-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="minFixedLoanAmount" type="number" min="0">
+                    </div>
+                </div>
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'setting.setting_product_eligibility.amount_percentage' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="minLoanAmountPercantage" type="number"
+                            min="0">&nbsp; %
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="position-relative form-group col-xl-3 col-md-3">
+                    <label>{{'setting.setting_product_eligibility.min_number_of_previously_issued_loans'|
+                        translate}}</label>
+                </div>
+                <div class="form-group col-xl-3 col-md-3">
+                    <bSwitch [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'"
+                        [(ngModel)]="settingProductEligibility.loansNumberStatus" [ngModelOptions]="{standalone: true}"
+                        (click)="enableDisable('loansNumberStatus')" [switch-handle-width]="40" class="px-2 mb-0">
+                    </bSwitch>
+                </div>
+                <div class="form-group col-xl-4 col-md-4">
+                    <div class="input-group">
+                        <input class="form-control col-md-4" formControlName="minPreviouslyIssuedLoansNumber"
+                            type="number">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer" *ngIf="isEditMode">
+            <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                <button type="submit" class=" btn btn-primary text-white">{{'button.save' | translate}}</button>
+            </div>
+        </div>
+    </form>
+</div>

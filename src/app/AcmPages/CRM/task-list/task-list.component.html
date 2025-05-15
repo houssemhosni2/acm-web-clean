@@ -1,0 +1,214 @@
+<app-page-title [heading]="'sidebar.task_list' | translate " [icon]="'pe-7s-search'" [account]="''"
+    [status]="-1"></app-page-title>
+<div class="card-header-tab card-header">
+    <div class="d-flex flex-row  position-relative form-group col-4  mt-2">
+        <mat-radio-group labelPosition="after" class="d-flex flex-row bd-highlight mb-3"
+            (change)="optionChange($event)">
+            <mat-radio-button class="pt-2 px-3 bd-highlight" value="1" [checked]="true"> {{'dashboard.task'|translate}}
+            </mat-radio-button>
+            <mat-radio-button class="pt-2 px-3 bd-highlight" value="2"> {{'dashboard.teams_tasks'|translate}}
+            </mat-radio-button>
+        </mat-radio-group>
+        <div *ngIf="teamOptionSelected" class="col-6 mt-1">
+            <ngx-select-dropdown (change)="teamMemberChanged($event)" tabindex="0" [multiple]="true"
+                [options]="teamUsers" [config]="configTeams"></ngx-select-dropdown>
+        </div>
+    </div>
+    <div class="btn-actions-pane-right">
+        <button class="d-inline-flex align-items-center btn btn-primary" (click)="addEvent()">
+            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+            <span *ngIf="!teamOptionSelected"> {{'button.create' | translate}} </span>
+            <span *ngIf="teamOptionSelected"> {{'button.assign_event' | translate}} </span>
+        </button>
+    </div>
+</div>
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <p-table #dt [responsive]="true" [autoLayout]=true [value]="eventsPaginationEntity.resultsEvents"
+            sortMode="multiple" (onLazyLoad)="reloadEventsList($event)" [lazy]="true" [lazyLoadOnInit]="false"
+            [totalRecords]="eventsPaginationEntity.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+            [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [showCurrentPageReport]="true"
+            [(selection)]="eventsEntity" selectionMode="single">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <!-- actions button -->
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                        <div class="text-center center-elem "> {{col.header | translate}} <p-sortIcon
+                                [field]="col.field" class="pl-1"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style='width: 40px;'></th>
+                </tr>
+                <tr>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                      <input *ngSwitchCase="'customerName'" class="form-control ACM-Dashbord-customername-col"
+                      type="text" (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+                        <select *ngSwitchCase="'category'" class="form-control"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')">
+                            <option value="">{{ 'category_loan.all' | translate }}</option>
+                            <option value="COLLECTION">{{ 'collections.collection' | translate }}</option>
+                            <option value="LEGAL">{{ 'legal.legal' | translate }}</option>
+                            <option value="LOAN">{{ 'upload_document.Loan' | translate }}</option>
+                            <option value="PROSPECT">{{'category_customer.prospect' | translate}}</option>
+                            <option value="GENERIC">{{'category_customer.generic-wf' | translate}}</option>
+                            <option value="CLAIM">{{'setting.claim.claims' | translate}}</option>
+                            <option value="PROSPECTION">{{'task.prospecting' | translate}}</option>
+
+                        </select>
+                        <input *ngSwitchCase="'libelleEvent'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                            <input *ngSwitchCase="'userFullName'" class="form-control" type="text"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'dateDebut'" class="form-control ACM-Dashbord-Date-col" type="date"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'dateFin'" class="form-control ACM-Dashbord-Date-col" type="date"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <select *ngSwitchCase="'statut'" class="form-control"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')">
+                            <option value="">{{ 'category_loan.all' | translate }}</option>
+                            <option value="NEW">{{'status.new' | translate}}</option>
+                            <option value="CLOSED">{{ 'status.closed' | translate }}</option>
+                        </select>
+                    </th>
+                    <th style='width: 40px;'></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-collections let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+                      <div *ngSwitchCase="'customerName'" class="ACM-Dashbord-customernametd-col">{{rowData[col.field]}}</div>
+
+                        <div *ngSwitchCase="'category'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'libelleEvent'">{{rowData[col.field]}}</div>
+                          <div *ngSwitchCase="'userFullName'">{{rowData[col.field]}}</div>
+                          <div *ngSwitchCase="'dateDebut'">{{rowData[col.field]| date: 'dd/MM/yyyy'}}</div>
+                          <div *ngSwitchCase="'dateFin'">{{rowData[col.field]| date: 'dd/MM/yyyy'}}</div>
+
+                        <div *ngSwitchCase="'statut'">{{rowData[col.field] }}</div>
+                    </td>
+                    <td>
+                        <button class="btn btn-success" (click)="updateEvent(rowData)">
+                            <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title" *ngIf="eventsEntity.id === undefined">{{ 'task.new_event' | translate }} </h5>
+            <h5 class="modal-title" *ngIf="eventsEntity.id !== undefined"> {{ 'task.modif_event' | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="card-body">
+            <form class="form" [formGroup]="eventForm" (change)="changeForm()">
+                <div class="position-relative">
+                    <label> {{'task.title'| translate }}</label>
+                    <span class="text-danger">*</span>
+                    <div>
+                        <input type="text" class="form-control" formControlName="title">
+                    </div>
+                </div>
+                <div *ngIf="eventsEntity.category || eventsEntity.customerName" class="position-relative">
+                    <label> {{'task.category'| translate }}</label>
+                    <div class="input-group">
+                        <input disabled type="text" class="form-control"
+                            [value]="eventsEntity.category !== '' ? eventsEntity.category : 'PROSPECTING'">
+                    </div>
+                </div>
+                <div *ngIf="teamOptionSelected" class="position-relative">
+                    <label> {{'task.user'| translate }}</label>
+                    <span class="text-danger">*</span>
+                    <ngx-select-dropdown [ngClass]="(emptyUser===true)?'ACM-responsible-error':''" tabindex="0"
+                        [multiple]="false" [options]="teamUsers" formControlName="user"
+                        [config]="configTeams"></ngx-select-dropdown>
+                </div>
+                <div class="position-relative">
+                    <label> {{'task.customer'| translate }}</label>
+                    <p-autoComplete [suggestions]="customerPaginationEntity.resultsCustomers"
+                        (completeMethod)="filterCustomerName($event)" formControlName="customer"
+                        placeholder="{{'upload_document.Customer_Name'| translate }}" field="customerNameNoPipe"
+                        id="user-autocomplete" [size]="30" [minLength]="1" [forceSelection]="true"
+                        [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+                        <ng-template let-filteredCustomer pTemplate="item"> {{filteredCustomer.customerNameNoPipe}}
+                            ({{filteredCustomer.customerNumber}}) </ng-template>
+                    </p-autoComplete>
+                </div>
+                <br>
+                <br>
+                <div class="position-relative">
+                    <label> {{'task.start_date'| translate }}</label>
+                    <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <div class="col-6">
+                          <input type="date" class="form-control" [min]="minDate" formControlName="startDate"
+                            (change)="dateChanged()">
+                        </div>
+                        <div class="col-6">
+                          <input type="time" class="form-control" formControlName="hourDate">
+                        </div>
+                      </div>
+                </div>
+                <br>
+                <div class="position-relative">
+                    <label> {{'task.end_date'| translate }}</label>
+                    <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <div class="col-6">
+                          <input type="date" class="form-control" [min]="eventForm.controls.startDate.value"
+                            formControlName="endDate" (change)="dateChanged()">
+                        </div>
+                        <div class="col-6">
+                          <input type="time" class="form-control" formControlName="hourEndDate">
+                        </div>
+                      </div>
+                </div>
+                <div class="position-relative ">
+                    <label>{{'task.participant'| translate }}</label>
+                    <ngx-select-dropdown tabindex="0" formControlName="participant" [multiple]="true"
+                        [options]="participants" [config]="configParticipants"
+                        (change)="participantMethod()"></ngx-select-dropdown>
+                </div>
+                <br>
+                <div class="position-relative">
+                    <label> {{'task.location'| translate }}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" formControlName="location">
+                    </div>
+                </div>
+                <br>
+                <div class="position-relative">
+                    <label> {{'task.description'| translate }}</label>
+                    <div class="input-group">
+                        <textarea rows="3" cols="20" pInputTextarea class="form-control" formControlName="description">
+          </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer py-1">
+                    <button class="mb-2 mx-2 btn btn-outline-danger" type="reset" (click)="reset()">{{'button.cancel' |
+                        translate}}</button>
+                    <button class="mb-2 btn btn-primary" (click)="onSubmit()">{{'button.save' | translate}}</button>
+                    <button class="mb-2 mx-2 btn btn-outline-primary"
+                        *ngIf="eventsEntity?.category === collectionCategory" (click)="collectionDetails()">
+                        {{'collections.open_collection' |translate}}</button>
+                    <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventsEntity?.category === loanCategory"
+                        (click)="loanDetails()">{{'task.open_loan' | translate}}</button>
+                    <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventsEntity?.idCustomerExtern !== null
+                          && eventsEntity?.idCustomerExtern !== undefined "
+                        (click)="clientDetails()">{{'button.Go_to_costumer' | translate}}</button>
+
+                        <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventsEntity?.category === workflowCategory|| eventsEntity?.category === genericWorkflowCategory"
+                        (click)= "itemDetails()">{{'button.Go_to_Wf' | translate}}</button>
+                    <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventsEntity?.category === legalCategory"
+                        (click)="collectionDetails()"> {{'collections.open_legal_collection' |translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

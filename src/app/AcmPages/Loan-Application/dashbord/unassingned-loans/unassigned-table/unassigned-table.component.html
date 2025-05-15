@@ -1,0 +1,235 @@
+<div class="main-card mb-3 card">
+    <div class="card-body">
+      <p-table #dt [responsive]="true" [autoLayout]=true [value]="loanPaginationEntity.resultsLoans"
+        (onLazyLoad)="reloadLoansList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+        [totalRecords]="loanPaginationEntity.totalElements"
+        [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns"
+        [showCurrentPageReport] = "true"
+        [(selection)]="loan" selectionMode="single">
+
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <!-- actions button -->
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+              <div class="center-elem text-center">
+                {{col.header | translate}}
+                <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+              </div>
+            </th>
+
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
+            <th *ngFor="let col of columns" [ngSwitch]="col.field" >
+              <select *ngSwitchCase="'customerType'" class="form-control ACM-Dashbord-customertype-col"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="null">{{'category_loan.all' | translate}}</option>
+              <option value="INDIV">{{'category_loan.individual' | translate}}</option>
+              <option value="ORG">{{'category_loan.organisation' | translate}}</option>
+              <option value="GRP">{{'category_loan.groupe' | translate}}</option>
+            </select>
+              <input *ngSwitchCase="'accountNumber'" class="form-control placeholder" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'productDescription'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let product of products" value="{{product.value}}">{{product.label}}</option>
+              </select>
+              <input *ngSwitchCase="'customerNameNoPipe'" class="form-control ACM-Dashbord-customername-col" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'applyAmountTotal'" class="form-control" type="number" min="0" step="50"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'applyDate'" class="form-control ACM-Dashbord-Date-col" type="date"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'portfolioDescription'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'etapeWorkflow'" class="form-control"
+                (change)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="null">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let statu of status" value="{{statu.label}}">                 
+                  <div *ngIf="statu.value == undefined">{{statu.label | uppercase}}</div>
+                </option>
+              </select>
+
+              <input *ngSwitchCase="'dateLastUpdate'" class="form-control ACM-Dashbord-Date-col" type="date"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+            </th>
+            <th></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+          <tr [pSelectableRow]="rowData">
+            <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+              <div *ngSwitchCase="'customerType'">
+                <div *ngIf="rowData[col.field] === 'INDIV'">
+                  <i class="lnr-user" > </i>
+                </div>
+                <div *ngIf="rowData[col.field] === 'GRP'">
+                  <i class="lnr-users"> </i>
+                </div>
+                <div *ngIf="rowData[col.field] === 'ORG'">
+                  <i class="lnr-apartment"> </i>
+                </div>
+             </div>
+              <div *ngSwitchCase="'accountNumber'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'productDescription'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'customerNameNoPipe'" class="ACM-Dashbord-customernametd-col">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'applyAmountTotal'">
+                {{rowData[col.field] | number : this.devToolsServices.getDecimalPlaces(loans.currencyDecimalPlaces):'fr' }}
+                {{ loans?.currencySymbol }} </div>
+              <div *ngSwitchCase="'applyDate'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+              <div *ngSwitchCase="'portfolioDescription'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'etapeWorkflow'">
+              <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] > 23 && rowData['statut'] !== 4">
+                <div class="px-1">{{rowData['statutLibelle']}}</div>
+                <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+              </div>
+              <div class="badge ACM-badge-notification bg-success" *ngIf="rowData[col.field] > 23 && rowData['statut'] === 4">
+                <div class="px-1">{{rowData['statutLibelle']}}</div>
+                <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+              </div>
+                <!-- Draft Badge: WARNING -->
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 1">
+                  <div class="px-1">{{'process.initial_check' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 2">
+                  <div class="px-1">{{'process.field_visit' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 3">
+                  <div class="px-1">{{'process.guarantor' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 4">
+                  <div class="px-1">{{'process.collateral' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 5">
+                  <div class="px-1">{{'process.add_documents' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 6">
+                  <div class="px-1">{{'process.financial_analysis' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 18">
+                  <div class="px-1">{{'process.Screening' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 19">
+                  <div class="px-1">{{'process.Audit' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 20">
+                  <div class="px-1">{{'process.Risk' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 21">
+                  <div class="px-1">{{'process.Complete_Loan_Data' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+
+                <!-- Approval Lvl + Review Badge: WARNING -->
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 7">
+                  <div class="px-1">{{'process.approval_L1' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 8">
+                  <div class="px-1">{{'process.approval_L2' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 9">
+                  <div class="px-1">{{'process.approval_L3' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-primary " *ngIf="rowData[col.field] === 10">
+                  <div class="px-1">{{'process.approval_L4' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-warning " *ngIf="rowData[col.field] === 16">
+                  <div class="px-1">{{'process.Review' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <!-- Approved Badge: SUCCESS -->
+                <div class="badge ACM-badge-notification bg-success" *ngIf="rowData[col.field] === 11">
+                  <div class="px-1">{{'process.customer_decision' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-success" *ngIf="rowData[col.field] === 12">
+                  <div class="px-1">{{'process.upload_Agreements' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-success" *ngIf="rowData[col.field] === 23">
+                  <div class="px-1">{{'process.central_revision' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-success" *ngIf="rowData[col.field] === 13">
+                  <div class="px-1">{{'process.Disbursement' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-success" *ngIf="rowData[col.field] === 22">
+                  <div class="px-1">{{'process.issued' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <!-- Rejected/Cancelled/Decline Badge: Danger -->
+                <div class="badge ACM-badge-notification bg-danger" *ngIf="rowData[col.field] === 14">
+                  <div class="px-1">{{'process.Rejected' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-danger" *ngIf="rowData[col.field] === 15">
+                  <div class="px-1">{{'process.Cancelled' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+                <div class="badge ACM-badge-notification bg-danger" *ngIf="rowData[col.field] === 17">
+                  <div class="px-1">{{'process.Decline' | translate}}</div>
+                  <span *ngIf="rowData['category'] === 'ALERT'" class="ACM_badge bg-danger badge-pulse"></span>
+                  <span *ngIf="rowData['category'] === 'WARNING'" class="ACM_badge bg-warning badge-pulse"></span>
+                </div>
+              </div>
+              <div *ngSwitchCase="'dateLastUpdate'">
+                {{rowData[col.field] | date: 'dd/MM/yyyy'}} </div>
+            </td>
+            <td class="pl-0">
+                <i *ngIf="rowData['assignCustomer'] === true"
+                   ngbTooltip="{{'assign_customer.assign_customer'| translate }}"
+                   class="pe-7s-user ACM-icon-assign-customer text-success"></i>
+            </td>
+            <td>
+              <button (click)='assignLoan(rowData)' pButton type='button' icon='fa fa-edit'></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="text-center opacity-6 pt-1 pb-0">
+       <b> {{'dashboard.total' | translate}}  {{loanPaginationEntity.totalElements}} </b>
+   </div>
+    </div>
+  </div>

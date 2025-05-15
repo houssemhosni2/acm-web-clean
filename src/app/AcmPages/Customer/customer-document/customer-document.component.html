@@ -1,0 +1,192 @@
+<div class="accordion mb-2" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseListDocument"
+      aria-expanded="true" aria-controls="collapseListDocument" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-file-empty px-2"></i>
+        {{'upload_document.customer_document'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseListDocument" [ngClass]="(expanded===true)?'collapse show mb-1':'collapse mb-1'"
+      aria-labelledby="headingOne">
+      <div *ngIf="documents.length === 0 && listdocuments.length > 0 && listdocuments[0].acmDocumentsDTOs.length > 0">
+        <div class="card-body">
+          <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+        </div>
+      </div>
+      <div *ngIf="documents.length > 0">
+        <div>
+          <ngx-loading [show]="loading"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Title'| translate }}</th>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Name'| translate }}</th>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Description'| translate }}</th>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Date'| translate }}</th>
+                <th class="ACM-document-table-column-button" scope="col">{{'button.details' | translate }}</th>
+                <th class="ACM-document-table-column-button" scope="col">{{ 'upload_document.version-history' | translate }}
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let document of documents">
+                <td scope="row">{{document.titre}}</td>
+                <td>{{document.name}}</td>
+                <td>{{document.description}}</td>
+                <td>{{document.dateCreation | date: 'dd/MM/yyyy'}}</td>
+                <td>
+                  <button class="btn btn-warning" (click)="view(document.idDocumentGED)">
+                    <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+                </td>
+                <td >
+                  <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                  (click)="openLargePupupHistoryDoc(contentHistory,document, 'CUSTOMER')">
+                    <i class="pe-7s-folder btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div
+        *ngIf="documents.length === 0 && (listdocuments.length === 0 || listdocuments[0].acmDocumentsDTOs.length === 0)">
+        <div class="card-body">
+          <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- documents by loans -->
+<div *ngIf="listdocuments.length > 0">
+  <div class="card mt-1">
+    <div class="card-header d-flex justify-content-between" (click)="toggleCollapseForDocumentsByLoan()">
+      <div>
+        <i class="lnr-file-empty px-2"></i>
+        {{ 'upload_document.documents_by_loan' | translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedDocumentsByLoan===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="expandedDocumentsByLoan">
+    <div *ngFor="let loan of listdocuments">
+      <div >
+        <div class="card mb-1">
+          <h5 class="px-3 mb-3 ACM-taskdate mt-3">{{'loan.loan_id'| translate }} {{loan.accountNumberExtern}}</h5>
+
+          <div *ngIf="loan.acmDocumentsDTOs.length === 0">
+            <div class="card-body">
+              <h6 style="color: red;" class="pt-3">{{ 'customer-360.no_documents' | translate }}</h6>
+            </div>
+          </div>
+          <table class="table" *ngIf="loan.acmDocumentsDTOs.length > 0">
+            <thead>
+              <tr>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Title'| translate }}</th>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Name'| translate }}</th>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Description'| translate }}</th>
+                <th class="ACM-document-table-column" scope="col">{{'upload_document.Date'| translate }}</th>
+                <th class="ACM-document-table-column-button" scope="col"> {{'button.details' | translate }} </th>
+                <th class="ACM-document-table-column-button" scope="col">{{ 'upload_document.version-history' | translate }}
+              </tr>
+            </thead>
+            <tbody *ngFor="let document of loan.acmDocumentsDTOs">
+              <tr>
+                <td scope="row">{{document.titre}}</td>
+                <td>{{document.name}}</td>
+                <td>{{document.description}}</td>
+                <td>{{document.dateCreation | date: 'dd/MM/yyyy'}}</td>
+                <td>
+                  <button class="btn btn-warning" (click)="view(document.idDocumentGED)">
+                    <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+                </td>
+                <td >
+                  <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                    (click)="openLargePupupHistoryDoc(contentHistory,document,'LOAN')">
+                    <i class="pe-7s-folder btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!------------->
+
+<ng-template #contentHistory let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new note-->
+    <form>
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'upload_document.document-history'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="c(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <!--Date-->
+        <div class="table-responsive">
+          <table class="align-middle mb-0 table table-hover">
+            <thead>
+              <tr>
+                <th class="text-center ACM-document-table-column">{{'upload_document.Name'| translate }}</th>
+                <th class="text-center ACM-document-table-column">{{'upload_document.Date'| translate }}</th>
+                <th class="text-center ACM-document-table-column">{{'customer_decision.addedBy'| translate }}
+                </th>
+                <th class="text-center ACM-document-table-column-button"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let hd of historyDocuments; let i = index">
+                <td>
+                  <div class="text-center">
+                    {{hd.name}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    {{hd.dateCreation | date : 'dd/MM/yyyy hh:mm a'}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    {{hd.insertBy}}
+                  </div>
+                </td>
+                <td class="text-center px-0">
+                  <button class="btn btn-warning" (click)="view(hd.idDocumentGED)">
+                    <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="resetPupupHistoryDoc()">{{'button.cancel' |
+          translate}}</button>
+
+      </div>
+    </form>
+  </div>
+</ng-template>

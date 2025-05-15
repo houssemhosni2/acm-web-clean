@@ -1,0 +1,552 @@
+<app-page-title [heading]="'credit-line.credit-line-accounts'| translate " [icon]="'pe-7s-id'"
+  [syncCreditLineAccounts]="0" *ngIf="!assignmentMode"></app-page-title>
+
+<app-page-title [heading]="'credit-line.credit-line-accounts'| translate " [icon]="'pe-7s-id'"
+[status]="-1" *ngIf="assignmentMode"></app-page-title>
+
+<!-- Advanced Search -->
+<div class="card-hover-shadow-2x m-1 mb-2 card" *ngIf="!assignmentMode && formLoaded">
+  <div class="card-header d-flex justify-content-between">
+    {{ 'credit-line-account.filter' | translate }}
+  </div>
+  <form [formGroup]="advancedSearchForm">
+      <div class="card-body">
+        <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ "loan_management.calculators.product" | translate }}</label>
+              <p-multiSelect [filter]="false" [options]="productEntitys" [styleClass]="'full-width'"
+                formControlName="product"
+                placeholder="{{ 'loan_management.calculators.product_code_default_select' | translate }}"
+                [required]="displayMultiSelect" (change)="advancedSearch()"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.loan-amount-from' | translate }}</label>
+              <input type="number" class="form-control" formControlName="loanAmountFrom" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.loan-amount-to' | translate }}</label>
+              <input type="number" class="form-control" formControlName="loanAmountTo" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.loan-tenure' | translate }}</label>
+              <input type="number" class="form-control" formControlName="loanTenure" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.issue-date-from' | translate }}</label>
+              <input type="date" class="form-control" formControlName="issueDateFrom" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.issue-date-to' | translate }}</label>
+              <input type="date" class="form-control" formControlName="issueDateTo" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.account-status' | translate }}</label>
+              <select class="form-control" formControlName="accountStatus" (change)="advancedSearch()">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option value="Active" *ngIf="!automaticAssignmentMode">Active</option>
+                <option value="Early settlement" *ngIf="!automaticAssignmentMode">Early settlement</option>
+                <option value="Paid" *ngIf="!automaticAssignmentMode">Paid</option>
+                <option value="Write Off" *ngIf="!automaticAssignmentMode">Write Off</option>
+                <option value="Adjustment" *ngIf="!automaticAssignmentMode">Adjustment</option>
+                <option value="Charge Off" *ngIf="!automaticAssignmentMode">Charge Off</option>
+                <option value="1" *ngIf="automaticAssignmentMode">{{'dashboard.new' | translate}}</option>
+                <option value="2" *ngIf="automaticAssignmentMode">{{'dashboard.drafts' | translate}}</option>
+                <option value="3" *ngIf="automaticAssignmentMode">{{'dashboard.awaiting_approval' | translate}}</option>
+                <option value="4" *ngIf="automaticAssignmentMode">{{'dashboard.approved' | translate}}</option>
+                <option value="5" *ngIf="automaticAssignmentMode">{{'dashboard.rejected' | translate}}</option>
+                <option value="6" *ngIf="automaticAssignmentMode">{{'dashboard.cancelled' | translate}}</option>
+                <option value="7" *ngIf="automaticAssignmentMode">{{'dashboard.review' | translate}}</option>
+                <option value="8" *ngIf="automaticAssignmentMode">{{'dashboard.issued' | translate}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.gender' | translate }}</label>
+              <select class="form-control" formControlName="gender" (change)="advancedSearch()">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option value="Female">{{ 'credit-line-account.female' | translate }}</option>
+                <option value="Male">{{ 'credit-line-account.male' | translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 row no-gutters" *ngIf="showAdvancedSearch">
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.national-id' | translate }}</label>
+              <input type="number" class="form-control" formControlName="nationalId" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.outstanding' | translate }}</label>
+              <input type="number" class="form-control" formControlName="outstanding" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.delinquent-days' | translate }}</label>
+              <input type="number" class="form-control" formControlName="delinquentDays" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.remaining-installments' | translate }}</label>
+              <input type="number" class="form-control" formControlName="remainingInstallments"
+                (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.issued-interest' | translate }}</label>
+              <input type="number" class="form-control" formControlName="issuedInterest" (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.outstanding-interest' | translate }}</label>
+              <input type="number" class="form-control" formControlName="outstandingInterest"
+                (change)="advancedSearch()">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group d-flex flex-row">
+              <div style="padding-right: 2px !important;">
+                <label>{{ 'credit-line-account.age-from' | translate }}</label>
+                <input type="number" class="form-control" formControlName="ageFrom" (change)="advancedSearch()">
+              </div>
+              <div>
+                <label>{{ 'credit-line-account.age-to' | translate }}</label>
+                <input type="number" class="form-control" formControlName="ageTo" (change)="advancedSearch()">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.education-level' | translate }}</label>
+              <p-multiSelect [filter]="false" [options]="educationLevelList" [styleClass]="'full-width'"
+                formControlName="educationLevel" [required]="displayMultiSelect"
+                (change)="advancedSearch()"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.social-status' | translate }}</label>
+              <p-multiSelect [filter]="false" [options]="familySituationList" [styleClass]="'full-width'"
+                formControlName="socialStatus" [required]="displayMultiSelect"
+                (change)="advancedSearch()"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.sector' | translate }}</label>
+              <p-multiSelect [filter]="false" [options]="sectorList" [styleClass]="'full-width'"
+                formControlName="sector" [required]="displayMultiSelect" (change)="advancedSearch()"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line-account.geographic-area' | translate }}</label>
+              <p-multiSelect [filter]="false" [options]="geographicAreaList" [styleClass]="'full-width'"
+                formControlName="geographicArea" [required]="displayMultiSelect"
+                (change)="advancedSearch()"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label> {{ 'credit-line.fund-name' | translate}} </label>
+              <p-multiSelect [filter]="false" [options]="creditLineList" [styleClass]="'full-width'"
+                formControlName="creditLine" [required]="displayMultiSelect"
+                (change)="advancedSearch()"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="position-relative form-group">
+              <label>{{'credit-line-account.status' | translate }} </label>
+              <select class="form-control" formControlName="assignmentStatus" (change)="advancedSearch()">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option value="ASSIGNED">{{ 'credit-line-account.assigned' | translate }}</option>
+                <option value="UNASSIGNED">{{ 'credit-line-account.unassigned' | translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </form>
+  <div class="col-xl-12 col-sm-12 row mb-2 no-gutters">
+    <a type="button" (click)="toggleShowAdvancedSearch()" class="custom-link"
+      style="display: flex; justify-content: end;">{{ 'credit-line-account.advanced-search' | translate }}</a>
+  </div>
+</div>
+
+<!-- Import Assignment file -->
+<div class="card-hover-shadow-2x m-1 mb-2 card" *ngIf="assignmentMode">
+  <div class="card-header d-flex justify-content-between">
+    {{ 'credit-line-account.assignment-import' | translate }}
+  </div>
+  <div class="row  m-2">
+    <div class="col-xl-12">
+      <p-fileUpload  #uploadFile name="file" customUpload="true" (onSelect)="onUpload($event)" accept=".xlsx,.csv,.xls"
+        [showUploadButton]="false" [showCancelButton]="false">
+      </p-fileUpload>
+    </div>
+  </div>
+</div>
+
+<!-- Data -->
+<div class="card-hover-shadow-2x m-1 row card">
+  <div class="card-header d-flex justify-content-between">
+    {{ 'credit-line.credit-line-accounts' | translate }}
+
+    <div class="d-flex flex-end">
+      <div class="d-inline-block" ngbDropdown (openChange)="saveUserScreenPreferences($event)">
+        <button type="button" ngbDropdownToggle class="m-2 btn btn-info">
+          <i class="pe-7s-config" style="font-size: 1.2rem;"></i></button>
+        <div ngbDropdownMenu class="dropdown-menu-hover-primary">
+          <div class="flex ">
+            <div class="flex flex-column justify-content-center">
+              <div *ngFor="let col of cols">
+                <div class="custom-checkbox custom-control m-2">
+                  <label class="custom-control-label m-2">
+                    <input class="custom-control-input m-2" type="checkbox" [checked]="colExists(col)"
+                      (change)="changeTableColumns($event, col)" />
+                    {{ col.header | translate }}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-inline-block" *ngIf="!assignmentMode">
+        <button class=" m-2 btn btn-info" (click)="exportexcel()">
+          <i class="pe-7s-download btn-icon-wrapper" style="font-size: 1.5rem;"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body row">
+    <div class="col-md-12 col-xl-12">
+      <p-table #dt [responsive]="true" [autoLayout]=true sortMode="multiple"
+        [value]="creditLineAccountPaginationEntity.resultsCreditLineAccounts" [lazy]="true" [lazyLoadOnInit]="false"
+        (onLazyLoad)="!assignmentMode ? reloadCreditLineAccountList($event): null"
+        [totalRecords]="creditLineAccountPaginationEntity.totalElements"
+        [rowsPerPageOptions]="!assignmentMode ? [5,10,20,50,100] : null"
+        [paginator]="!assignmentMode" [pageLinks]="!assignmentMode ? 5 : null"
+        [rows]="!assignmentMode ? 10 : null" [columns]="selectedColumns"
+        [(selection)]="selectedCreditLineAccount" selectionMode="multiple">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th style="width: 4rem">
+              <p-tableHeaderCheckbox (click)="onSelectAllChange()"></p-tableHeaderCheckbox>
+            </th>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="assignmentMode" class="text-center">
+              <div class="center-elem text-center">
+                {{col.header | translate}}
+                <p-sortIcon *ngIf="!assignmentMode" [field]="col.field" class="pl-1"></p-sortIcon>
+              </div>
+            </th>
+          </tr>
+          <tr *ngIf="!assignmentMode" >
+            <th></th>
+            <th *ngFor="let col of columns" [ngSwitch]="col.field"  >
+              <input *ngSwitchCase="'accountNumber'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'accountStatus'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option value="Active" *ngIf="!automaticAssignmentMode">Active</option>
+                <option value="Early settlement" *ngIf="!automaticAssignmentMode">Early settlement</option>
+                <option value="Paid" *ngIf="!automaticAssignmentMode">Paid</option>
+                <option value="Write Off" *ngIf="!automaticAssignmentMode">Write Off</option>
+                <option value="Adjustment" *ngIf="!automaticAssignmentMode">Adjustment</option>
+                <option value="Charge Off" *ngIf="!automaticAssignmentMode">Charge Off</option>
+                <option value="1" *ngIf="automaticAssignmentMode">{{'dashboard.new' | translate}}</option>
+                <option value="2" *ngIf="automaticAssignmentMode">{{'dashboard.drafts' | translate}}</option>
+                <option value="3" *ngIf="automaticAssignmentMode">{{'dashboard.awaiting_approval' | translate}}</option>
+                <option value="4" *ngIf="automaticAssignmentMode">{{'dashboard.approved' | translate}}</option>
+                <option value="5" *ngIf="automaticAssignmentMode">{{'dashboard.rejected' | translate}}</option>
+                <option value="6" *ngIf="automaticAssignmentMode">{{'dashboard.cancelled' | translate}}</option>
+                <option value="7" *ngIf="automaticAssignmentMode">{{'dashboard.review' | translate}}</option>
+                <option value="8" *ngIf="automaticAssignmentMode">{{'dashboard.issued' | translate}}</option>
+              </select>
+              <select *ngSwitchCase="'active'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value> {{ "category_loan.all" | translate }}</option>
+                <option value="true">{{ "setting.on" | translate }}</option>
+                <option value="false">{{ "setting.off" | translate }}</option>
+              </select>
+              <select *ngSwitchCase="'adjustment'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value> {{ "category_loan.all" | translate }}</option>
+                <option value="true">{{ "setting.on" | translate }}</option>
+                <option value="false">{{ "setting.off" | translate }}</option>
+              </select>
+              <input *ngSwitchCase="'customerId'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'fullName'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'age'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'geographicArea'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option *ngFor="let geographicArea of geographicAreaList" [ngValue]="geographicArea">
+                  {{geographicArea}}
+                </option>
+              </select>
+              <input *ngSwitchCase="'issueDate'" class="form-control" type="date"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'issueAmount'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'loanTenure'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'outstanding'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'product'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option *ngFor="let product of productEntitys" [ngValue]="product">
+                  {{product}}
+                </option>
+              </select>
+              <input *ngSwitchCase="'branchName'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'nationalId'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'gender'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option value="Female">{{ 'credit-line-account.female' | translate }}</option>
+                <option value="Male">{{ 'credit-line-account.male' | translate }}</option>
+              </select>
+              <select *ngSwitchCase="'educationLevel'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option *ngFor="let eduactionLevel of educationLevelList" [ngValue]="eduactionLevel">
+                  {{eduactionLevel}}
+                </option>
+              </select>
+              <select *ngSwitchCase="'socialStatus'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option *ngFor="let familySituation of familySituationList" [ngValue]="familySituation">
+                  {{familySituation}}
+                </option>
+              </select>
+              <select *ngSwitchCase="'sector'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option *ngFor="let sector of sectorList" [ngValue]="sector">
+                  {{sector}}
+                </option>
+              </select>
+              <input *ngSwitchCase="'rating'" class="form-control" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'lastPaymentDueDate'" class="form-control" type="date"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'remainingInstallments'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'delinquentDays'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'issuedInterest'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'outstandingInterest'" class="form-control" type="number"
+                (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'creditLineAssignments'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option *ngFor="let creditline of creditLineList" [ngValue]="creditline">
+                  {{creditline}}
+                </option>
+              </select>
+              <select *ngSwitchCase="'assignmentStatus'" class="form-control ACM-Dashbord-productDescription-col"
+                (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                <option value="null"> {{ "category_loan.all" | translate }}</option>
+                <option value="ASSIGNED">{{ 'credit-line-account.assigned' | translate }}</option>
+                <option value="UNASSIGNED">{{ 'credit-line-account.unassigned' | translate }}</option>
+              </select>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+          <tr [pSelectableRow]="rowData">
+            <td>
+              <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+            </td>
+            <td *ngFor="let col of columns" [ngSwitch]="col.field">
+              <div *ngSwitchCase="'accountStatus'">
+                <div *ngIf="!automaticAssignmentMode">{{rowData[col.field]}}</div>
+                <div *ngIf="automaticAssignmentMode">{{ getLabelForValue(rowData[col.field]) | translate }}</div>
+              </div>
+              <div *ngSwitchCase="'accountNumber'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'customerId'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'active'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'fullName'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'issueDate'">{{rowData[col.field] | date:'dd/MM/yyyy' }}</div>
+              <div *ngSwitchCase="'issueAmount'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'loanTenure'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'outstanding'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'branchName'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'nationalId'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'gender'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'lastPaymentDueDate'">{{rowData[col.field] | date:'dd/MM/yyyy' }}</div>
+              <div *ngSwitchCase="'rating'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'delinquentDays'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'remainingInstallments'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'adjustment'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'age'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'geographicArea'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'issuedInterest'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'educationLevel'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'socialStatus'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'sector'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'outstandingInterest'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'product'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'creditLineAssignments'"><!-- {{rowData[col.field][0]?.creditLine?.fundName}} -->
+                <div *ngFor="let assignment of rowData[col.field]">
+                  <span class="badge bg-info">
+                    {{assignment?.creditLine?.fundName}}
+                  </span>
+                </div>
+              </div>
+              <div *ngSwitchCase="'assignmentStatus'">{{rowData[col.field]}}</div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <div class="card-footer" style="display: block;">
+    <div class="text-end" *ngIf="!sharedService.habilitationButton('CREDIT_LINE_ASSIGNMENT',credit_line_accounts_path)">
+      <button type="button" class="btn btn-info m-2" (click)="openModal(content)">{{ 'credit-line-account.assign' |
+        translate }}</button>
+      <button type="button" class="btn btn-info m-2" (click)="openDialog()">{{ 'credit-line-account.unassign' | translate }}</button>
+      <button type="button" class="btn btn-info m-2" (click)="bulkAssign()" *ngIf="!assignmentMode">{{ 'credit-line-account.bulk-assign' | translate }}</button>
+      <button class="mx-2 btn btn-outline-danger" type="button" (click)="exit()" *ngIf="assignmentMode">{{'button.exit' | translate}}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assign to credit line -->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h4 class="modal-title">{{ 'credit-line-account.assignment' | translate }}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body row">
+      <div class="col-xl-12 col-md-12">
+        <div class="position-relative form-group ">
+          <label>{{ 'credit-line.fund-name' | translate }}</label>
+          <span class="text-danger">*</span>
+          <select class="form-control" [(ngModel)]="creditLine">
+            <option selected value="null"> -- {{ 'credit-line.select-fund-name' | translate }} -- </option>
+            <option *ngFor="let creditLine of creditLineAssignList" [ngValue]="creditLine">
+              {{creditLine.fundName}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer py-1">
+      <button type="button" class="btn btn-outline-danger" (click)="close()">{{'button.exit' | translate}}</button>
+      <button type="button" class="btn btn-success text-white" (click)="assignProcess()">{{'button.complete' |
+        translate}}</button>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- Assignment Result -->
+<ng-template #content1 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2 text-end">
+      <h4 class="modal-title" *ngIf="!unassignMode &&(assignmentProcessResponse.status === 'NOT_FOUND' || assignmentProcessResponse.status === 'ERROR')">
+        {{ 'credit-line-account.assignment-process-error' | translate }}
+      </h4>
+      <h4 class="modal-title" *ngIf="unassignMode &&(assignmentProcessResponse.status === 'NOT_FOUND' || assignmentProcessResponse.status === 'ERROR')">
+        {{ 'credit-line-account.unassignment-process-error' | translate }}
+      </h4>
+      <h4 class="modal-title" *ngIf="assignmentProcessResponse.status === 'WARNING'">
+        {{ 'credit-line-account.assignment-process-warning' | translate }}
+      </h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body row">
+      <div class="col-xl-12 col-md-12">
+        <div *ngIf="assignmentProcessResponse.status === 'NOT_FOUND'">
+          <p-messages severity="error">
+            <ng-template pTemplate>
+              <div class="ml-2">{{'credit-line-account.not-found' | translate}}</div>
+            </ng-template>
+          </p-messages>
+        </div>
+        <div *ngIf="assignmentProcessResponse.status === 'ERROR'">
+          <p-messages severity="error">
+            <ng-template pTemplate>
+              <div class="ml-2" *ngIf="!unassignMode">{{'credit-line-account.previously-assigned' | translate}}</div>
+              <div class="ml-2" *ngIf="unassignMode">{{ 'credit-line-account.previously-unassigned' | translate }}</div>
+            </ng-template>
+          </p-messages>
+        </div>
+        <div *ngIf="assignmentProcessResponse.status === 'NOT_PREVIOUSLY_ASSIGNED'">
+          <p-messages severity="error">
+            <ng-template pTemplate>
+              <div class="ml-2" *ngIf="unassignMode">{{ 'credit-line-account.not-previously-assigned' | translate }}</div>
+            </ng-template>
+          </p-messages>
+        </div>
+        <div *ngIf="assignmentProcessResponse.status === 'WARNING'">
+          <p-messages severity="warn">
+            <ng-template pTemplate>
+              <div class="ml-2">{{'credit-line-account.warning_msg_assign' | translate}}</div>
+            </ng-template>
+          </p-messages>
+        </div>
+        <div>
+          <p-table [value]="assignmentProcessResponse.creditLineAccounts">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'credit-line-account.account-number' | translate}}</th>
+                <th *ngIf="!unassignMode && assignmentProcessResponse.status === 'ERROR'">{{ 'credit-line.fund-name' | translate }}</th>
+                <th *ngIf="!unassignMode && assignmentProcessResponse.status === 'WARNING'">{{ 'credit-line-account.account-status' |
+                  translate }}</th>
+                <th *ngIf="!unassignMode && assignmentProcessResponse.status === 'WARNING'">{{ 'credit-line-account.adjustment' |
+                  translate }} </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-account>
+              <tr>
+                <td>{{ account.accountNumber }}</td>
+                <td *ngIf="!unassignMode && assignmentProcessResponse.status === 'ERROR'">{{ account.creditLines[0]?.fundName}}</td>
+                <td *ngIf="!unassignMode && assignmentProcessResponse.status === 'WARNING'">{{ account.accountStatus}}</td>
+                <td *ngIf="!unassignMode && assignmentProcessResponse.status === 'WARNING'">{{ account.adjustment}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

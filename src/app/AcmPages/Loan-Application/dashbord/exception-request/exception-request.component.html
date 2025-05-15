@@ -1,0 +1,62 @@
+<app-page-title [heading]="'sidebar.exception_request' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<div class="row mr-30">
+  <div class="col-xl-12">
+    <mat-tab-group class="page-mat-tabs" (selectedTabChange)="changeTabs($event)">
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-muted"> {{count.countNew}} </span>
+            <span class="control-label"> {{ 'dashboard.new' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-exception-request-table  (update)="loadCount()" [exceptionRequestEntityList]="exceptionRequestEntityList" [statut]='0'>
+        </app-exception-request-table>
+      </mat-tab>
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-success"> {{count.countAccepted}} </span>
+            <span class="control-label">{{ 'online_application.accepted' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-exception-request-table  (update)="loadCount()" [exceptionRequestEntityList]="exceptionRequestEntityList" [statut]='1'>
+        </app-exception-request-table>
+      </mat-tab>
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-danger"> {{count.countRejected}} </span>
+            <span class="control-label"> {{ 'process.Rejected' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-exception-request-table  (update)="loadCount()" [exceptionRequestEntityList]="exceptionRequestEntityList" [statut]='-1'>
+        </app-exception-request-table>
+      </mat-tab>
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-info">  {{count.countCancelled}}</span>
+            <span class="control-label"> {{ 'process.Cancelled' | translate }} </span>
+          </div>
+        </ng-template>
+        <app-exception-request-table  (update)="loadCount()" [exceptionRequestEntityList]="exceptionRequestEntityList" [statut]='-2'>
+        </app-exception-request-table>
+      </mat-tab>
+
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-primary"> {{count.countClosed}} </span>
+            <span class="control-label"> {{ 'loan_management.request_exception.closed' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-exception-request-table  (update)="loadCount()" [exceptionRequestEntityList]="exceptionRequestEntityList" [statut]='2'>
+        </app-exception-request-table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

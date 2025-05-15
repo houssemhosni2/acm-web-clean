@@ -1,0 +1,131 @@
+<div class="main-card mb-3" >
+    <div class="card-body card mr-b" >
+        <p-table #dt [responsive]="true" [autoLayout]=true [value]="exceptionRequestEntityList.result"
+            (onLazyLoad)="reloadRequestsList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+            [totalRecords]="exceptionRequestEntityList.totalElements"
+            [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10"
+            [columns]="selectedColumns" [showCurrentPageReport]="true"
+            selectionMode="single">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <!-- actions button -->
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                        <div class="center-elem text-center">
+                            {{col.header | translate}}
+                            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                </tr>
+                <tr>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+
+                        <input *ngSwitchCase="'makerName'" class="form-control placeholder" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'customerName'" class="form-control ACM-Dashbord-customername-col"
+                            type="text" (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'allowedAmount'" class="form-control" type="number" min="0" step="50"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'requestedAmount'" class="form-control ACM-Dashbord-Date-col"
+                            type="number" (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'dateInsertion'" class="form-control ACM-Dashbord-Date-col" type="date"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'ownerUsername'" class="form-control ACM-Dashbord-customername-col"
+                            type="text" (input)="dt.filter($event.target.value, col.field, 'contains')">
+                            <input *ngSwitchCase="'dateLastUpdate'" class="form-control ACM-Dashbord-Date-col" type="date"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'rejectNote'" class="form-control"
+                            type="text" (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+                        </th>
+
+                    <th style='width: 40px;'  ></th>
+                    <th style='width: 40px;'  ></th>
+                    <th style='width: 40px;'  ></th>
+                </tr>
+            </ng-template>
+
+
+
+            <ng-template pTemplate="body" let-exceptionRequest let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+                        <div *ngSwitchCase="'makerName'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'customerName'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'allowedAmount'"> {{rowData[col.field] | number : this.decimalPlaces:'fr'}} </div>
+                        <div *ngSwitchCase="'requestedAmount'"> {{rowData[col.field]| number : this.decimalPlaces:'fr'}} </div>
+                        <div *ngSwitchCase="'ownerUsername'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'dateInsertion'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+                        <div *ngSwitchCase="'dateLastUpdate'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+                        <div *ngSwitchCase="'rejectNote'">{{rowData[col.field]}}</div>
+                    </td>
+                    <td> <button (click)='modal(refModel, rowData, "ACCEPTED")' type='button' class="btn btn-success"
+                            *ngIf="((rowData.statut === 0 && !sharedService.habilitationButton('APPROVE',currentPath)) || sharedService.getAuthorized())">
+                            {{'button.accept' |translate}}</button></td>
+                    <td> <button (click)='modal(refModel, rowData, "REJECT")' type='button' class="btn btn-danger"
+                            *ngIf="((rowData.statut === 0 &&  !sharedService.habilitationButton('REJECT',currentPath)) || sharedService.getAuthorized())">
+                            {{'button.reject' |translate}}</button> </td>
+                    <td> <button (click)='updateStatus(rowData , -2)' type='button' class="btn btn-outline-danger"
+                            *ngIf="rowData.statut === 0 && currentUser.login === rowData['makerUsername']">
+                            {{'button.cancel' |translate}}</button> </td>
+                    <td>
+                        <button class="btn btn-warning" (click)="customerDetails(rowData)">
+                            <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<ng-template #refModel let-d="dismiss">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-right': translate.currentLang === 'ar'}">
+      <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="updateStatus(exceptionRequest,popupStatut )">
+        <div class="modal-header py-2">
+          <h4 *ngIf="popupStatut === -1" class="modal-title">{{'reject.reject_exception_request'| translate }}</h4>
+          <h4 *ngIf="popupStatut === 1" class="modal-title">{{'accept.accept_exception_request'| translate }}</h4>
+
+          <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+            (click)="close()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body form-row">
+          <div class="position-relative col-xl-12 col-md-12">
+            <label *ngIf="popupStatut === -1">{{'reject.reject_reason'| translate }}</label>
+            <label *ngIf="popupStatut === 1">{{'accept.accept_reason'| translate }}</label>
+
+            <select class="form-control" formControlName="reason">
+              <option selected value> </option>
+              <option *ngFor="let settingMotifRejetsEntity of settingMotifRejetsEntitys"
+                [ngValue]="settingMotifRejetsEntity">
+                {{settingMotifRejetsEntity.libelle}}
+              </option>
+            </select>
+          </div>
+          <div class="position-relative col-xl-12 col-md-12">
+            <label> {{'reject.note'| translate }} </label>
+            <textarea class="form-control" formControlName="note"></textarea>
+          </div>
+          <div class="position-relative form-group">
+            <div>
+              <div class="custom-checkbox custom-control">
+                <input class="custom-control-input" id="exampleCustomCheckboxReject" type="checkbox"
+                  formControlName="confirm" >
+                <label class="custom-control-label ms-2" for="exampleCustomCheckboxReject">{{'button.confirm_checkbox' |
+                  translate}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-outline-danger" (click)="close()">{{'button.close' |
+            translate}}</button>
+          <button *ngIf="popupStatut === -1" type="submit" class="btn btn-danger">{{'button.reject' | translate}}</button>
+          <button *ngIf="popupStatut === 1" type="submit" class="btn btn-success">{{'button.accept' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

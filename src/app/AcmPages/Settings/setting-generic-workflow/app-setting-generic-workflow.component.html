@@ -1,0 +1,507 @@
+<div class="card">
+  <div class="p-3 d-flex justify-content-end">
+    <button class="btn-icon btn btn-success" (click)="addStep('GENERIC_WORKFLOW')">
+      <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+      {{ "add_new_step" | translate }}
+    </button>
+    <button class="btn-icon btn btn-warning" style="margin-left: 18px;"
+      (click)="duplicateStep(content,'GENERIC_WORKFLOW')">
+      <i class="pe-7s-photo-gallery btn-icon-wrapper"></i>
+      {{ 'setting.setting_configuration_product.duplicate' | translate }}
+    </button>
+  </div>
+  <div class="card-body">
+    <div cdkDropList class="example-list-without-overflow" (cdkDropListDropped)="drop($event, 'GENERIC_WORKFLOW')">
+      <h6 class="text-danger p-4 m-0" *ngIf="genericWfSteps.length === 0">
+        {{'setting.setting_level.no_level_process_for_this_product'|translate}}
+      </h6>
+      <div class="example-box" *ngFor="let genericWfStep of genericWfSteps; let i = index" cdkDrag>
+        <div class="card col-12">
+          <div class="card-header" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <div class="px-3">
+              <p class="text-primary m-0">
+                {{ "step" | translate }} {{ i + 1 }}
+              </p>
+            </div>
+            <div class="col-9 row px-3">
+              <input type="text" [ngClass]="{'form-control': true,'input-error': !genericWfStep.stepName}"
+                [(ngModel)]="genericWfStep.stepName" />
+            </div>
+            <span class="text-danger"> * </span>
+            <div class="mx-auto row">
+              <div>
+                <mat-checkbox class="m-2"
+                [(ngModel)]="genericWfStep.automaticStep"
+                (change)="showInputsMethod($event.checked,genericWfStep)">
+                  {{"automatic_step"|translate}}
+                </mat-checkbox>
+                <button
+                  [ngStyle]="genericWfStep.order==0 ? {'margin': '0px 0px 0px 17px'} : {'margin': '0px 0px 0px 0px'}"
+                  class="btn-icon btn-icon-only btn-outline-2x btn btn-outline-danger ml-2" (click)="deleteStep(i)"
+                  style="margin-left: 10px;">
+                  <i class="lnr-trash btn-icon-wrapper"></i>
+                </button>
+                <button *ngIf="genericWfStep.order==0" style="margin-left: 15px;"
+                  class="btn-icon btn-icon-only btn-outline-2x btn btn-outline-primary"
+                  (click)="openPlaning(contentPlaning, genericWfStep.order,genericWfStep)">
+                  <i class="lnr-calendar-full btn-icon-wrapper"></i>
+                </button>
+              </div>
+
+
+
+            </div>
+
+            <div class="mx-auto" (click)="toggleCollapse(i, 'GENERIC_WORKFLOW')">
+              <i [ngClass]="
+            newGenericWfExpands[i] === true
+                  ? 'lnr-chevron-up text-secondary'
+                  : 'lnr-chevron-down text-secondary'
+              "></i>
+            </div>
+          </div>
+          <div [ngClass]="
+        newGenericWfExpands[i] === true ? 'collapse show' : 'collapse'
+          " aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body row">
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "step_assgin" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{
+                'form-control': true,
+                'input-error': !genericWfStep.stepType
+              }" [(ngModel)]="genericWfStep.stepType" (change)="stepTypeChanged('GENERIC_WORKFLOW',i)">
+                  <option [ngValue]="'group'">{{ "Assign_to_Group" | translate }}</option>
+                  <option [disabled]="genericWfStep.order==0" [ngValue]="'link'">{{ "Assign_to_User" | translate }}</option>
+                  <option [disabled]="genericWfStep.order==0" [ngValue]="'customer'">{{ "Assign_to_Customer" | translate }}</option>
+                </select>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2"
+                *ngIf="genericWfStep.stepType === 'group'">
+                <label>{{ "group_users" | translate }}:</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{'form-control': true,'input-error': !genericWfStep.groupSetting
+                }" [(ngModel)]="genericWfStep.groupSetting" [compareWith]="compareGroup">
+                  <option *ngFor="let groupEntity of groupEntities" [ngValue]="groupEntity">
+                    {{ groupEntity.libelle }}
+                  </option>
+                </select>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2"
+                *ngIf="genericWfStep.stepType === 'link'">
+                <label>{{ "user-step-link" | translate }}:</label>
+                <span class="text-danger"> * </span>
+                <select required [ngClass]="{
+                  'form-control': true,
+                  'input-error': !genericWfStep.previousStep
+                }" [(ngModel)]="genericWfStep.previousStep">
+                  <option *ngFor="let userLink of userLinks" [value]="userLink.linkValue"
+                    [disabled]="genericWfStep.order===0 && (userLink.linkValue==-1 || userLink.linkValue==-2)"
+                    [ngClass]="{ 'disabled-option': genericWfStep.order === 0 && (userLink.linkValue === -1 || userLink.linkValue === -2) }">
+                    {{ userLink.LinkName }}
+                  </option>
+                  <option *ngFor="let previousStep of previousSteps(genericWfSteps, i)"
+                    [value]="previousStep.order">
+                    {{ previousStep.stepName }}
+                  </option>
+                </select>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "screen_steps" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{
+                'form-control': true,
+                'input-error': !genericWfStep.screen
+              }" [(ngModel)]="genericWfStep.screen">
+                  <option *ngFor="let root of ihmRoot" [value]="root.ihmRoute">
+                    {{ root.description }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{
+                  "collections.collection-dashboard.documents"
+                  | translate
+                  }}:</label>
+
+                <p-multiSelect [options]="settingDocumentsType" [(ngModel)]="genericWfStep.documentTypes"
+                  optionLabel="libelle"></p-multiSelect>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "step_tab" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{'form-control': true,'input-error': !genericWfStep.codeStatutLoan}"
+                  [(ngModel)]="genericWfStep.codeStatutLoan"
+                  (change)="checkBoxCheckers(genericWfStep)">
+                  <option *ngFor="let tap of stepTap" [value]="tap.tapValue" [disabled]="tap.tapName=='New'" >
+                    {{ tap.tapName }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="position-relative form-group col-4 col-md-4 mt-3"
+                *ngIf="genericWfStep.codeStatutLoan == stepTap[3].tapValue">
+                <mat-checkbox
+                  [disabled]="approvalConditionCheckedForLoanApp && !genericWfStep.approvalConditions"
+                  [(ngModel)]="genericWfStep.approvalConditions"
+                  (change)="changeApprovalConditions($event,newApplicationProcess)">{{
+                  'loan_workflow_setting.conditions-approval' | translate }} </mat-checkbox>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 mt-3">
+                <mat-checkbox [(ngModel)]="genericWfStep.generationTask">{{
+                  'loan_workflow_setting.generation_task' | translate }} </mat-checkbox>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "setting.workflow.participants" | translate }}</label>
+                <div class="">
+                  <p-multiSelect [filter]="false" [options]="listThirdPartyOptions"
+                    [(ngModel)]="genericWfStep.selectedGenericWorkFlowParticipants" (onChange)="getListOfThirdParty($event, i)"
+                    optionLabel="label"></p-multiSelect>
+                </div>
+              </div>
+
+              <!-- risque -->
+              <div class="row">
+
+
+                <div class="position-relative form-group col-sm-6 ">
+                  <app-udf-step-workflow-setting [idWorkflowStep]="genericWfStep.idWorkFlowStep"
+                    [workflowStepUdfGroupe]="genericWfStep.workflowStepUdfGroupe"
+                    type="4"></app-udf-step-workflow-setting>
+                </div>
+
+
+
+                <div class="position-relative form-group col-sm-6  ">
+                  <div class="card-header d-flex ">
+                    <h6 class="text-primary text-uppercase px-4 pt-3">
+                      <span class="vertical-align-middle">{{ 'generic-wf.risk' | translate }}</span>
+                    </h6>
+
+                      <hr class="hr" />
+
+                  </div>
+
+
+                  <div >
+
+                    <div>
+                      <table class="mb-0 t table table-hover">
+                        <tbody>
+                          <!-- [(ngModel)]="selectedTypeRisk"  -->
+                           <td class="col-sm-5">
+
+                          </td>
+
+
+                          <!-- <td class="col-sm-5">
+                            <div class="input-group">
+                              <bSwitch [switch-size]="'small'" [switch-animate]="true" [switch-off-color]="'danger'"
+                                class="px-2 mb-0" [(ngModel)]="editable" [switch-handle-width]="40">
+                              </bSwitch>
+                            </div>
+                          </td> -->
+
+                          <!-- <td> -->
+
+                          <!-- </td> -->
+                        </tbody>
+
+                      </table>
+                      <div class="col-xl-12 d-flex justify-content-end pt-3" style="margin: 12px 0px 32px 0px;">
+
+                          <select class="form-control" [(ngModel)]="genericWfStep.selectedTypeRisk">
+                            <option *ngFor="let l of riskTypeList" [ngValue]="l">{{l.label}}</option>
+                          </select>
+
+                          <bSwitch [switch-size]="'big'" [switch-animate]="true" [switch-off-color]="'danger'"
+                          class="px-2 mb-0" [(ngModel)]="genericWfStep.editable" [switch-handle-width]="40" [value]="false">
+                        </bSwitch>
+
+                        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary"
+                        style="margin-left: 250px;"
+                          (click)="addRisk(i,genericWfStep)">
+                          <fa-icon [icon]="library.getIconDefinition('fas', 'plus')"
+                           class="mx-2"></fa-icon>
+                          {{ 'button.add' | translate }}
+                        </button>
+                      </div>
+
+                        <hr class="solid" />
+
+                      <table class="mb-0 t table table-hover" >
+                        <thead *ngIf="genericWfStep.listRiskSetting">
+                          <tr>
+                            <th>{{'setting.label'| translate }}</th>
+                            <th>{{'setting.editable'| translate }}</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- *ngFor="let risk of productStep.typeRiskSettingWorkFlow" -->
+                          <tr *ngFor="let risk of genericWfStep.listRiskSetting;let k = index">
+                            <td class="col-sm-5">
+                              <div class="input-group">
+                                {{risk.labelRisk}}
+
+
+                              </div>
+                            </td>
+                            <td *ngIf="risk.isEditable===true" class="col-sm-5">
+                              <div class="input-group">
+                                OUI
+                              </div>
+                            </td>
+                            <td *ngIf="risk.isEditable!=true" class="col-sm-5">
+                              <div class="input-group">
+                                NON
+                              </div>
+                            </td>
+                            <td>
+                              <div class="row d-flex justify-content-end px-3">
+                                <div class="px-2">
+                                  <button class="btn btn-danger" (click)="deleteRiskType(i,k)">
+                                    <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+
+                        </tbody>
+                      </table>
+
+                    </div>
+
+
+
+
+                  </div>
+
+                </div>
+
+              <!-- end risque -->
+
+
+            </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="btn btn-primary text-white" (click)="saveProcess('GENERIC_WORKFLOW')">
+        {{ "button.save" | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" (ngSubmit)="onSubmit()" [formGroup]="duplicateGroup">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{ 'setting.duplicate-setting' | translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'setting.product' | translate}}</label>
+          <select class="form-control" id="selectedValue" formControlName="productValues"
+            [(ngModel)]="productEntityForDuplicate" required>
+            <option [value]="null" default disabled>{{'setting.select_product' | translate}}</option>
+            <option *ngFor="let productEntity of productEntitys" [ngValue]="productEntity">
+              {{productEntity.name}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <input class="form-check-input" id="exampleCustomCheckboxReject" type="checkbox" formControlName="confirm"
+                (change)="changeChecboxReject()">
+              <label class="form-check-label" for="exampleCustomCheckboxReject">{{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-success text-white">{{ 'button.validate' | translate
+          }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+<ng-template #contentPlaning let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">Occurence</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative">
+
+          <div class="input-group ">
+            <label class="custom-control-label pt-2 " style="
+            margin-right: 15px;
+        "> Répéter chaque</label>
+
+            <select class="form-control" id="selectedValueTypeOfPlaning" name="category" style=" margin-right: 15px; "
+              (change)="changeToMonthValue($event.target.value)" [(ngModel)]="planingDto.category" required>
+
+              <option *ngFor="let type of typePlan" [ngValue]="type">
+                {{type}}
+              </option>
+
+            </select>
+            <select class=" form-control " id="selectedValueNumberOfDay" name="dayRep" [(ngModel)]="planingDto.dayRep"
+              required>
+              <option *ngFor="let day of nbrDay" [ngValue]="day">
+                {{day}}
+              </option>
+            </select>
+          </div>
+
+          <div class="select-size center-div" *ngIf="!checkMonth">
+            <input type="checkbox" [checked]="selectedDayLu" (change)="fillListOfDay('LU') " name="s-size" id="LU" />
+            <input type="checkbox" [checked]="selectedDayMa" (change)="fillListOfDay('MA')" name="s-size" id="MA" />
+            <input type="checkbox" [checked]="selectedDayMe" (change)="fillListOfDay('ME')" name="s-size" id="ME" />
+            <input type="checkbox" [checked]="selectedDayJe" (change)="fillListOfDay('JE')" name="s-size" id="JE" />
+            <input type="checkbox" [checked]="selectedDayVe" (change)="fillListOfDay('VE')" name="s-size" id="VE" />
+            <input type="checkbox" [checked]="selectedDaySa" (change)="fillListOfDay('SA')" name="s-size" id="SA" />
+            <input type="checkbox" [checked]="selectedDayDi" (change)="fillListOfDay('DI')" name="s-size" id="DI" />
+
+
+
+            <label class="label custom-check-box" for="LU">L</label>
+            <label class="label custom-check-box" for="MA">M</label>
+            <label class="label custom-check-box" for="ME">M</label>
+            <label class="label custom-check-box" for="JE">J</label>
+            <label class="label custom-check-box" for="VE">V</label>
+            <label class="label custom-check-box" for="SA">S</label>
+            <label class="label custom-check-box" for="DI">D</label>
+
+
+
+          </div>
+          <div class="input-group  " *ngIf="checkMonth">
+
+            <mat-radio-group labelPosition="after" [(ngModel)]="planingDto.beginOrEndMonth" name="beginOrEndMonth"
+              (change)="changeRdio()" style="
+  margin: 16px;
+">
+              <div class="input-group  " style="margin-bottom : 5px;">
+                <mat-radio-button class="example-margin px-2" style="margin: 14px 1px 0px 0px;" value="DR">
+                  <label class="custom-control-label pt-2 " style=" margin-right: 15px;">le</label>
+                </mat-radio-button>
+                <input type="number" [(ngModel)]="planingDto.dateOfMonth" name="dateOfMonth" class="form-control"
+                  style="margin: 5px; width: 183px" [disabled]="planingDto.beginOrEndMonth!='DR'">
+
+                <select *ngIf="checkAn" class="form-control" id="month1" name="month1" style="margin: 5px;width: 93px;"
+                  [disabled]="planingDto.beginOrEndMonth!='DR'" [(ngModel)]="monthForAn" required>
+                  <option disabled></option>
+                  <option *ngFor="let m of listOfMonth" [ngValue]="m">
+                    {{m}}
+                  </option>
+
+                </select>
+
+
+
+              </div>
+              <div class="input-group">
+                <mat-radio-button class="example-margin px-2 " style="margin-top: 9px;" value="TR">
+                  <label class="custom-control-label pt-2 " style=" margin-right: 15px;">le</label>
+
+
+                </mat-radio-button>
+                <div class="form-group" style="
+                display: flex;
+            ">
+                  <select class="form-control " style="margin-right: 8px;" id="selectedValueDayCreteria"
+                    name="dayCreteria" [(ngModel)]="planingDto.nbrMonth" [disabled]="planingDto.beginOrEndMonth!='TR'"
+                    required>
+                    <option disabled></option>
+
+                    <option *ngFor="let nbrMonth of numberOfMonth" [ngValue]="nbrMonth">
+                      {{nbrMonth}}
+                    </option>
+
+                  </select>
+
+                  <select class="form-control mr-3" id="selectedValueMonthCreteria" name="monthCreteria"
+                    [disabled]="planingDto.beginOrEndMonth!='TR'" [(ngModel)]="planingDto.selectedDay" required>
+                    <option disabled></option>
+                    <option *ngFor="let d of days" [ngValue]="d">
+                      {{d}}
+                    </option>
+
+                  </select>
+                  <label style="margin: 9px;" *ngIf="checkAn">de </label>
+
+                  <select *ngIf="checkAn" class="form-control mr-3" id="month" name="month"
+                    [disabled]="planingDto.beginOrEndMonth!='TR'" [(ngModel)]="planingDto.month" required>
+                    <option disabled></option>
+                    <option *ngFor="let m of listOfMonth" [ngValue]="m">
+                      {{m}}
+                    </option>
+
+                  </select>
+
+                </div>
+              </div>
+
+            </mat-radio-group>
+
+
+
+
+
+
+
+
+          </div>
+
+
+
+        </div>
+
+
+      </div>
+      <div class="modal-footer py-1">
+        <div class=" form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="custom-control-input" id="exampleCustomCheckboxReview" name="comfirmStatus" type="checkbox"
+                [(ngModel)]="comfirmStatus">
+              <label class="custom-control-label ms-2" for="exampleCustomCheckboxReview">{{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-danger" (click)="d('Cross click')">{{'button.close' |
+          translate}}</button>
+        <button (click)="confirmPlaning()" class="btn btn-success text-white" [disabled]="comfirmStatus==false">{{
+          'button.validate' | translate
+          }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

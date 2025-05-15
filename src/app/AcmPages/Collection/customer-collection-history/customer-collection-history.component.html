@@ -1,0 +1,72 @@
+<div class="accordion mb-1" id="accordionExample">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseListDocument"
+            aria-expanded="true" aria-controls="collapseListCollections" (click)="toggleCollapse()">
+            <div>
+                <i class="lnr-file-empty px-2"></i>
+                {{'collections.collection-dashboard.collection_history' | translate}}
+            </div>
+            <div>
+                <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+            </div>
+        </div>
+        <div id="collapseListCollections" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+            aria-labelledby="headingOne">
+            <div *ngIf="customerCollections.length > 0">
+                <div >
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{'collections.identifier'|translate}}</th>
+                                <th>{{'collaterol.type'|translate}}</th>
+                                <th> {{'collections.collection-dashboard.account_number' | translate}}</th>
+                                <th> {{'collections.collection-dashboard.product' | translate}}   </th>
+                                <th>{{'collections.collection-dashboard.loan_officer' | translate}}   </th>
+                                <th> {{'collections.collection-dashboard.creation_date' | translate}}   </th>
+                                <th>  {{'collections.collection-dashboard.last_update_date' | translate}}    </th>
+                                <th>  {{'collections.collection-dashboard.status' | translate}}   </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let collection of customerCollections">
+                                <td *ngIf="collection.collectionType === 'COLLECTION'">{{collection.id|number:'9.0':'fr'}}</td>
+                                <td *ngIf="collection.collectionType === 'LEGAL'" >{{collection.idParentCollection|number:'9.0':'fr'}}</td>
+                                <td>{{collection.collectionType}}</td>
+                                <td>{{collection.accountNumber}}</td>
+                                <td>{{collection.productDescription }}</td>
+                                <td>{{collection.loanOfficer}}</td>
+                                <td>{{collection.dateInsertion | date: 'dd/MM/yyyy'}}</td>
+                                <td>{{collection.dateLastUpdate | date: 'dd/MM/yyyy'}}</td>
+
+                                <td>
+                                    <div class="badge ACM-bg-notification bg-primary" *ngIf="collection.status == 0" >
+                                    <div class="px-1"> {{'collections.collection-dashboard.active' | translate}}   </div>
+                                   </div>
+
+                                   <div class="badge ACM-bg-notification bg-success" *ngIf="collection.status == -1" >
+                                    <div class="px-1"> {{'collections.collection-dashboard.closed' | translate}}   </div>
+                                   </div>
+
+                                   <div class="badge ACM-bg-notification bg-warning" *ngIf="collection.status == 1" >
+                                    <div class="px-1"> {{'collections.collection-dashboard.completed' | translate}}   </div>
+                                   </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning mx-2" (click)='collectionDetails(collection)'>
+                                        <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="customerCollections.length === 0">
+                <div class="card-body">
+                    <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

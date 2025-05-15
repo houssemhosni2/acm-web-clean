@@ -1,0 +1,17 @@
+<app-page-title [heading]="'sidebar.unassigned_loans' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<div class="row mr-30">
+    <div class="col-xl-12">
+      <mat-tab-group class="page-mat-tabs">
+        <mat-tab class="col-xl-2">
+          <ng-template matTabLabel>
+            <div class="col-xl-2">
+              <span class="loans-lenght text-muted"> {{loansStatut.unassignedLoans}} </span>
+              <span class="control-label">{{'sidebar.unassigned_loans' |translate}} </span>
+            </div>
+          </ng-template>
+          <app-unassigned-table [loanPaginationEntity]="loanPaginationEntity" [status]="status" [products]="products"></app-unassigned-table>
+        </mat-tab>
+       </mat-tab-group>
+    </div>
+</div>

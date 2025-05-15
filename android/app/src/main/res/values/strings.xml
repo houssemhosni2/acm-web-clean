@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">acm-web</string>
+    <string name="title_activity_main">acm-web</string>
+    <string name="package_name">com.talys.acm</string>
+    <string name="custom_url_scheme">com.talys.acm</string>
+</resources>

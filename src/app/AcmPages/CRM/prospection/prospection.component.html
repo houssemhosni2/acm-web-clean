@@ -1,0 +1,30 @@
+
+<app-page-title  [heading]="'sidebar.prospection_dashboard' | translate " [icon]="'lnr-history'" [account]="''" [status]="0"></app-page-title>
+<div  class="row mr-30">
+    <div class="col-xl-12">
+        <mat-tab-group class="page-mat-tabs" (selectedTabChange)="changeTabs($event)">
+
+            <mat-tab class="col-xl-2">
+                <ng-template matTabLabel>
+                  <div class="col-xl-2">
+                   <span class="loans-lenght text-info fa fa-hourglass-start icon-size-fa ng-star-inserted"></span>
+                    <span class="size-text">{{ 'collections.collection-dashboard.active' | translate }}</span>
+                  </div>
+                </ng-template>
+                <app-table-collection [collectionPaginationEntity]="collectionPaginationEntity" [statusTab]="0" [products]="products" [branches]="branches" [statusList]="statusList"  [collectionType]="type">
+                </app-table-collection>
+            </mat-tab>
+            <mat-tab class="col-xl-2">
+                <ng-template matTabLabel>
+                  <div class="col-xl-2">
+                   <span class="loans-lenght text-success fa fa-check-circle icon-size-fa ng-star-inserted"></span>
+                    <span class="size-text">{{ 'prospection.closed' | translate }}</span>
+                  </div>
+                </ng-template>
+                <app-table-collection [collectionPaginationEntity]="collectionPaginationEntity" [statusTab]="1" [products]="products" [branches]="branches" [statusList]="statusList"  [collectionType]="type">
+                </app-table-collection>
+            </mat-tab>
+        </mat-tab-group>
+
+    </div>
+</div>

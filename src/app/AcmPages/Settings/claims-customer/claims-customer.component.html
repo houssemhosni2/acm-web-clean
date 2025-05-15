@@ -1,0 +1,133 @@
+<div class="card">
+  <div class="card-header">
+    {{ 'setting.setting_claims' | translate }}
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addMotif(modalContent)">
+        <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+       {{ 'setting.setting_claim.add' | translate }}
+      </button>
+    </div>
+  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{'setting.category'| translate }}</th>
+            <th>{{'setting.setting_claim.subject'| translate }}</th>
+            <th>{{'setting.setting_claim.assignement'| translate }}</th>
+            <th>{{'setting.claim.periority'| translate }}</th>
+            <th>{{'setting.setting_claim.processing_timelines'| translate }}</th>
+
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let SettingMotifRejetsEntity of settingClaimsEntitys | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+            <td>{{SettingMotifRejetsEntity.category}}</td>
+            <td>{{SettingMotifRejetsEntity.subject }}</td>
+            <td>{{ SettingMotifRejetsEntity.assignement }}</td>
+            <td>{{ SettingMotifRejetsEntity.pripority }}</td>
+            <td>{{ SettingMotifRejetsEntity.processingTimeLine }}</td>
+
+            
+            <td>
+              <button class="btn btn-warning text-white" (click)="updateMotif(modalContent, SettingMotifRejetsEntity)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="settingClaimsEntitys.length" [(page)]="page" [pageSize]="pageSize"
+          size="sm" [maxSize]="3" [boundaryLinks]="true">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'setting.setting_claim.update_claims'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='groupForm' (ngSubmit)="onSubmit()">
+      <div class="card-body">
+        <div class="position-relative pb-4">
+          <label>{{'setting.category'| translate }}</label>
+          <div>
+            <select (change)="onChange($event)" type="text" class="form-control form-group" formControlName="category">
+              <option *ngFor="let type of customerType" value="{{type}}">{{type}}</option>
+            </select>
+          </div>
+        </div>
+
+
+
+
+
+
+      <div class="position-relative pb-4">
+        <label>{{ "setting.setting_claim.assignement" | translate }}:</label>
+        <div>
+        <select class="form-control form-group" formControlName="assignement"
+        >
+          <option *ngFor="let groupEntity of groupEntities" [ngValue]="groupEntity.libelle">
+            {{ groupEntity.libelle }}
+          </option>
+        </select>
+      </div>
+      </div>
+        <div class="position-relative pb-4">
+         <label>{{'setting.setting_claim.subject'| translate }}</label>
+          <div>
+            <input type="text" class="form-control" formControlName="subject" >
+
+          </div>
+        </div>
+       
+        <div class="position-relative pb-4">
+          <label>{{'setting.claim.periority'| translate }}</label>
+          <div class="input-group form-group">
+            <div>
+              <select  type="text" class="form-control form-group" formControlName="pripority">
+                <option *ngFor="let priority of prioritys" value="{{priority}}">{{priority}}</option>
+              </select>
+          </div>
+        </div>
+      </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.setting_claim.processing_timelines'| translate }}</label>
+          <div class="input-group">
+            <input type = "number" class="form-control" formControlName="processingTimeLine"/>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+          translate}}</button>
+        <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

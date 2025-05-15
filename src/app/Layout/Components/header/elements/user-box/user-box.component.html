@@ -1,0 +1,99 @@
+<div class="d-flex">
+  <div class="header-btn-lg pr-0 ml-0">
+    <div class="widget-content p-0">
+      <div class="widget-content-wrapper">
+        <div class="widget-content-left">
+          <div class="btn-group" ngbDropdown placement="{{ngbDropdownMenu.placement}}">
+            <button type="button" class="btn btn-link p-0 mr-2 text-white" ngbDropdownToggle>
+              <span>
+                <div class="icon-wrapper icon-wrapper-alt rounded-circle">
+                  <img width="42" height="42" src="./assets/images/avatars/user.jpg" alt="" class="rounded-circle">
+                </div>
+              </span>
+            </button>
+            <div ngbDropdownMenu>
+              <div class="dropdown-menu-header">
+                <div class="dropdown-menu-header-inner bg-info">
+                  <div class="menu-header-image opacity-2 dd-header-bg-6"></div>
+                  <div class="menu-header-content text-left">
+                    <div class="widget-content p-0">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left mr-3">
+                          <img width="50" height="50" src="./assets/images/avatars/user.jpg" alt=""
+                               class="rounded-circle">
+                        </div>
+                        <div class="widget-content">
+                          <div class="widget-heading">{{ user?.login }}</div>
+                          <div class="widget-subheading opacity-8">
+                            {{ user?.groupes[0]?.libelle }}</div>
+                          <div class="widget-subheading opacity-8">
+                            SUP : {{ user?.responsableId }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <perfect-scrollbar [autoPropagation]="true" class="px-2">
+                <div [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+                  <ul class="nav flex-column row no-gutters">
+                    <li class="nav-item row no-gutters center-elem ml-0" *ngIf="loanSharedService.habilitationPath('IHM_SETTING')">
+                      <div class="col-xl-1-align-right ml-2 pr-2 ">
+                        <i class="lnr-cog text-primary"></i>
+                        <button
+                          class="mb-2 mr-2 border-0 btn-transition btn btn-outline-primary" [routerLink]="['/settings/setting']" routerLinkActive="Active">{{'user_box.settings'| translate }}
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                  <ul class="nav flex-column row no-gutters">
+                    <li class="nav-item row no-gutters center-elem ml-0">
+                      <div class="col-xl-1-align-right ml-2 pr-2 ">
+                        <i class="lnr-lock text-primary"></i>
+                        <button class="border-0 btn-transition btn btn-outline-primary" (click)="changePwdComponent()">
+                          {{'login.change_password'| translate }} </button>
+                      </div>
+                    </li>
+                  </ul>
+                  <ul class="nav flex-column row no-gutters">
+                    <li class="nav-item row no-gutters center-elem ml-0">
+                      <div class="col-xl-1-align-right ml-2 pr-2 ">
+                        <i class="lnr-exit text-primary"></i>
+                        <button class="mb-2 mr-2 border-0 btn-transition btn btn-outline-primary" (click)="logout()">
+                          {{'user_box.logout'| translate }} </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <hr>
+                <div [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+                  <div class="col-xl-12">
+                    <a>{{'user_box.choose_language'| translate }}</a>
+                  </div>
+                  <div class="col-xl-12">
+                    <button class="mb-2 mr-2 border-0 btn-transition btn btn-outline-primary" (click)="langFR()"
+                            [disabled]="translate.currentLang === 'fr'">Français
+                    </button>
+                  </div>
+                  <div class="col-xl-12">
+                    <button class="mb-2 mr-2 border-0 btn-transition btn btn-outline-primary" (click)="langEN()"
+                            [disabled]="translate.currentLang === 'en'">English
+                    </button>
+                  </div>
+                  <div class="col-xl-12">
+                    <button class="mb-2 mr-2 border-0 btn-transition btn btn-outline-primary" (click)="langAR()"
+                            [disabled]="translate.currentLang === 'ar'">عربية
+                    </button>
+                  </div>
+                </div>
+              </perfect-scrollbar>
+            </div>
+          </div>
+        </div>
+        <div class="widget-content-left ml-3 header-user-info">
+          <div class="ACM_widget-heading">{{ user?.fullName }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

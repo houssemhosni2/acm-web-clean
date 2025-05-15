@@ -1,0 +1,87 @@
+<div class="accordion mb-1" id="accordionExample">
+    <div class="card">
+        <ngx-loading [show]="loading"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+        <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerAccount"
+            aria-expanded="true" aria-controls="collapseCustomerAccount" (click)="toggleCollapse()">
+            <div>
+                <i class="lnr-chart-bars text-secondary px-2"></i>
+                {{ 'transactions.transactions' | translate}}
+            </div>
+            <div>
+                <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+            </div>
+        </div>
+        <div class="p-2" id="collapseCustomerAccount" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+            aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div *ngFor="let loan of loansTransactionsList; let i = index">
+                <div class="card-header d-flex justify-content-between" id="headingOne-{{i}}"
+                    (click)="toggleLoanExpand(i, loan.loanId)">
+                    <div>
+                        <h5 class="px-3 mb-3 ACM-taskdate mt-3">{{'loan.loan_id'| translate }} {{loan.loanId}}</h5>
+                    </div>
+                    <div>
+                        <i
+                            [ngClass]="(expandedLoans[i] === true) ? 'lnr-chevron-up text-secondary' : 'lnr-chevron-down text-secondary'"></i>
+                    </div>
+                </div>
+                <div class="p-2" [ngClass]="(expandedLoans[i] === true) ? 'collapse show' : 'collapse'"
+                    id="collapseCustomerAccount-{{i}}">
+                    <div class="card mb-1">
+                        <div *ngIf="loan.transactions.length == 0">
+                            <div class="card-body">
+                                <h6 style="color: red;" class="pt-3">{{ 'transactions.no-transaction' | translate }}
+                                </h6>
+                            </div>
+                        </div>
+                        <div *ngIf="loan.transactions.length > 0">
+                            <div class="card-body">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="mb-0 t table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>{{'transactions.receipt-number'| translate }}</th>
+                                                    <th>{{'transactions.transaction-type'| translate }}</th>
+                                                    <th>{{'transactions.amount'| translate }}</th>
+                                                    <th>{{'transactions.value-date'| translate }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let transaction of loan.transactions | slice: (loan.page-1) * loan.pageSize : (loan.page-1) * loan.pageSize + loan.pageSize; let i = index ">
+                                                    <td>{{ transaction.receiptNumber }}</td>
+                                                    <td>{{ transaction.transactionType }} <span *ngIf="transaction?.label != null">:</span> {{ transaction?.label }}</td>
+                                                    <td>{{ transaction.amount | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }}</td>
+                                                    <td>{{ transaction.dateInsertion | date: 'dd/MM/yyyy'}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer pb-0">
+                                    <div class="row no-gutters w-100">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <ngb-pagination [collectionSize]="loan.transactions?.length" [(page)]="loan.page" [pageSize]="loan.pageSize"
+                                                size="sm" [maxSize]="3" [boundaryLinks]="true">
+                                            </ngb-pagination>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="d-flex justify-content-lg-end">
+                                                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="loan.pageSize">
+                                                    <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                                                    <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                                                    <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                                                    <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

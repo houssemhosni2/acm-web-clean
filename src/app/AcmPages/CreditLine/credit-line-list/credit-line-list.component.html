@@ -1,0 +1,76 @@
+<app-page-title [heading]="'credit-line.creditLine'| translate " [icon]="'pe-7s-id'"
+[status]="-1"></app-page-title>
+<div class="card">
+  <div class="card-header">
+    {{ 'credit-line.creditLine' | translate }}
+
+  </div>
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="creditLinePaginationEntity.resultsCreditLine"
+      (onLazyLoad)="reloadCreditLineList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="creditLinePaginationEntity.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+      [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [(selection)]="creditLineEntity"
+      selectionMode="single">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{ col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'thirdParty'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'fundName'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'description'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'balance'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'fundPriority'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'issueDate'" class="form-control" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'expiryDate'" class="form-control" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <select *ngSwitchCase="'controlBalance'" class="form-control ACM-Dashbord-productDescription-col"
+              (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+              <option value="null"> {{ "category_loan.all" | translate }}</option>
+              <option value="true">{{ "setting.on" | translate }}</option>
+              <option value="false">{{ "setting.off" | translate }}</option>
+            </select>
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+
+      </ng-template>
+      <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" [ngSwitch]="col.field">
+            <div *ngSwitchCase="'thirdParty'">{{rowData[col.field].firstName}} {{rowData[col.field].lastName}}</div>
+            <div *ngSwitchCase="'fundName'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'balance'">{{rowData[col.field] | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr'}}</div>
+            <div *ngSwitchCase="'fundPriority'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'issueDate'">{{rowData[col.field] | date:'dd/MM/yyyy' }}</div>
+            <div *ngSwitchCase="'expiryDate'">{{rowData[col.field] | date:'dd/MM/yyyy' }}</div>
+            <div *ngSwitchCase="'controlBalance'">
+              <bSwitch [(ngModel)]="rowData[col.field]" [switch-size]="'mini'" [switch-animate]="true"
+                [switch-off-color]="'danger'" [switch-handle-width]="40" class="px-2 mb-0" disabled>
+              </bSwitch>
+            </div>
+          </td>
+          <td>
+            <button *ngIf="!sharedService.habilitationButton('UPDATE',currentPath)" class="btn btn-success" (click)="creditLineUpdate(rowData)">
+              <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

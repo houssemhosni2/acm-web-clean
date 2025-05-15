@@ -1,0 +1,169 @@
+<div class="card">
+  <div class="card-header">
+    {{'setting.setting_configuration_product.setting_configuration_product' | translate}}
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addConfiguration(modalContent)">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'setting.setting_configuration_product.add' | translate}}
+      </button>
+    </div>
+  </div>
+  <div>
+    <ngx-loading [show]="loading"
+                 [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="position-relative">
+      <div class="table-responsive">
+        <table class="align-middle mb-0 table table-hover">
+          <thead>
+          <tr>
+            <th>{{'setting.amount_min'| translate }}</th>
+            <th>{{'setting.amount_max'| translate }}</th>
+            <th>{{'setting.term_min'| translate }}</th>
+            <th>{{'setting.term_max'| translate }}</th>
+            <th>{{'setting.term_type'| translate }}</th>
+            <th>{{'setting.setting_configuration_product.greenRate'| translate }}</th>
+            <th>{{'setting.setting_configuration_product.orangeRate'| translate }}</th>
+            <th>{{'setting.setting_configuration_product.redRate'| translate }}</th>
+
+
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let productDetailsEntity  of productDetailsEntitys, let i = index ">
+            <td>{{productDetailsEntity.minimumAmount}}</td>
+            <td>{{productDetailsEntity.maximumAmount}}</td>
+            <td>{{productDetailsEntity.minimumTerm}}</td>
+            <td>{{productDetailsEntity.maximumTerm}}</td>
+            <td>{{productDetailsEntity.termType}}</td>
+            <td>{{productDetailsEntity.greenRate}}</td>
+            <td>{{productDetailsEntity.orangeRate}}</td>
+            <td>{{productDetailsEntity.redRate}}</td>
+            <td>
+              <ng-container *ngIf="isEditMode; else localUpdate">
+                <button class="btn btn-warning text-white ms-2" [style]="{marginRight:'1rem'}"
+                        (click)="updateConfiguration(modalContent, productDetailsEntity)">
+                  <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                </button>
+              </ng-container>
+              <ng-template #localUpdate>
+                <button #localUpdate class="btn btn-warning text-white ms-2" [style]="{marginRight:'1rem'}"
+                      (click)="switchUpdateMode(modalContent, i)">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+              </ng-template>
+              <button class="btn btn-danger" (click)="remove(productDetailsEntity,i)">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #modalContent let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'setting.setting_configuration_product.configuration_product'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+      <form class="form" [formGroup]='productDetailsForm'>
+      <div class="card-body">
+        <div class="position-relative pb-2">
+          <label>{{'setting.amount_min'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="amountMin">
+          </div>
+        </div>
+        <div class="position-relative pb-2">
+          <label>{{'setting.amount_max'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="amountMax">
+          </div>
+        </div>
+        <div class="position-relative pb-2">
+          <label>{{'setting.term_min'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="termMin">
+          </div>
+        </div>
+        <div class="position-relative pb-2">
+          <label>{{'setting.term_max'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="termMax">
+          </div>
+        </div>
+
+        <div class="position-relative pb-2">
+          <label>{{'setting.setting_configuration_product.greenRate'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="greenRate">
+          </div>
+        </div>
+
+        <div class="position-relative pb-2">
+          <label>{{'setting.setting_configuration_product.orangeRate'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="orangeRate">
+          </div>
+        </div>
+
+        <div class="position-relative pb-2">
+          <label>{{'setting.setting_configuration_product.redRate'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="number" class="form-control" formControlName="redRate">
+          </div>
+        </div>
+
+        <div class="position-relative pb-2">
+          <label>{{'setting.setting_configuration_product.deferred_period_types'| translate }}  </label>
+          <ngx-select-dropdown tabindex="0"   [multiple]="true" formControlName="deferredPeriodTypes"
+             [options]="allDeferredPeriodTypeEntities"
+            [config]="configDeferredPeriodType" (change)="deferredPeriodTypeMethode()"></ngx-select-dropdown>
+        </div>
+        
+        <div class="position-relative row pb-2">
+          <div class="col-xl-8 col-md-8">
+          <label> {{'setting.setting_configuration_product.penalty_charge_fee'| translate }} </label>
+          <select type="text" class="form-control form-group" formControlName="panaltyFee">
+            <option (value)="null"></option>
+            <option *ngFor="let item of penaltyChargeFees" [value]="item.id"> {{item.label }}
+            </option>
+          </select>
+        </div>
+          <div class="col-xl-4 col-md-4">
+            <label>{{'setting.setting_configuration_product.penalty_grace_period'| translate }}</label>
+            <div class="input-group form-group">
+              <input type="number" class="form-control" formControlName="penaltyGracePeriod">
+            </div>
+          </div>
+        </div>
+        
+        <div class="position-relative pb-2">
+          <label>{{'setting.setting_configuration_product.payout_charge_fee'| translate }}  </label>
+          <select type="text" class="form-control form-group" formControlName="payoutFee">
+            <option (value)="null"></option>
+            <option *ngFor="let item of payoutChargeFees" [value]="item.id"> {{item.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="position-relative pb-2">
+          <label>{{'setting.setting_configuration_product.disbursement-fees'| translate }}  </label>
+          <p-multiSelect [filter]="false" [options]="normalChargeFees" [styleClass]="'full-width'"
+          formControlName="disbursementFees"
+          optionLabel="label"></p-multiSelect>
+        </div>
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger"
+                  (click)="closeModale()">{{'button.cancel' | translate}}</button>
+          <button class="mb-1 btn btn-primary" (click)="onSubmit()">{{'button.save' | translate}}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

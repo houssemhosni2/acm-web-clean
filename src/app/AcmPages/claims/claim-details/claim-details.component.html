@@ -1,0 +1,172 @@
+<app-page-title [heading]=" 'sidebar.claim'| translate " [icon]="'pe-7s-note2'"
+   [claimStatut]="claim.status">
+</app-page-title>
+
+
+<div class="row">
+    <div class="col-md-12 col-xl-12 px-1">
+      <div class="mb-1 card">
+        <div class="card-header-tab card-header">
+          <div class="card-header-title font-size-lg text-capitalize fw-normal">
+            <i class="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
+          </div>
+        </div>
+        <div class="g-0 row">
+          <div class="col-sm-6 col-md-4 col-xl-4">
+            <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-10 bg-primary"></div>
+                <i class="lnr-clock text-white opacity-8"></i>
+              </div>
+              <div class="widget-chart-content">
+                <div class="widget-subheading"> {{'setting.claim.Estimation'|translate}}</div>
+                <div class="widget-numbers">{{claimRecord.estimation}} 
+                </div>
+              </div>
+            </div>
+            <div class="divider m-0 d-md-none d-sm-block"></div>
+          </div>
+          <div class="col-sm-6 col-md-4 col-xl-4">
+            <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-9 bg-warning"></div>
+                <i class="lnr-list text-white"></i>
+              </div>
+              <div class="widget-chart-content">
+                <div class="widget-subheading">{{'setting.claim.dueDate'|translate}}
+                </div>
+                <div class="widget-numbers"><span>{{claimRecord.dueDate | date: 'dd/MM/yyyy' }}</span></div>
+              </div>
+            </div>
+            <div class="divider m-0 d-md-none d-sm-block"></div>
+          </div>
+          <div class="col-sm-12 col-md-4 col-xl-4">
+            <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+              <div class="icon-wrapper rounded-circle">
+                <div class="icon-wrapper-bg opacity-9 bg-danger"></div>
+                <i class="pe-7s-credit text-white"></i>
+              </div>
+              <div class="widget-chart-content">
+                <div class="widget-subheading">{{'setting.claim.periority'|translate}}</div>
+                <div class="widget-numbers"><span>{{claimRecord.priority}}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div style="margin-bottom: 1%;" >
+        <div class="card">
+            <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+                aria-expanded="true" aria-controls="collapseCustomerNote" >
+                <div>
+                    <i class="lnr-book text-secondary px-2"></i>
+                   {{ 'claim.subject' | translate }}
+                </div>
+            </div>
+            <!-- <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'" -->
+            <div id="collapseCustomerNote"
+
+                aria-labelledby="headingOne">
+
+                <div>
+                    <div>
+
+
+
+
+                      <div class="claim-div">
+                        <div style="padding: 20px 40px;    DISPLAY: flex;
+                        flex-direction: column;
+                        gap: 20px;">
+                            <!-- <i class='bx bx-note' style="font-size: 20px;" ></i> -->
+
+                         <div style="font-weight: 600;">
+                          {{claimRecord.subject}}
+                         </div>
+
+                        </div>
+                         <div style="padding: 20px 40px;    DISPLAY: flex;
+                         flex-direction: column;
+                         gap: 20px;">
+                        <div>
+                            <span style="font-weight: 600;"> {{ 'claim.Description' | translate }}</span>
+                        </div>
+                       <div>
+                        {{claim.body}}
+                       </div>
+                    </div>
+                    </div>
+
+
+
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+      <app-customer [category]="category"  [expanded]="true" [collection]="'inCollection'"></app-customer>
+      <!-- <app-loan-info [expanded]="true"></app-loan-info> -->
+      <!-- <app-loan-provider-article [mode]="view"> </app-loan-provider-article> -->
+      <!-- <app-customer-account-360 [expanded]="true"></app-customer-account-360> -->
+      <!-- <app-loan-guarantors [expanded]="false"></app-loan-guarantors> -->
+      <!-- <app-list-documents [expanded]="true"></app-list-documents> -->
+      <!-- <app-screening [expandedCustomerScreening]="false" [expandedGuanatorsScreening]="false" [loanApproval]="true">
+      </app-screening> -->
+
+      <app-customer-notes [expanded]="true" [source]="'CLAIM'"></app-customer-notes>
+      <!-- <app-customer-collection-history [activeCollection]="collection.id"
+        [expanded]="true"></app-customer-collection-history> -->
+      <!-- <app-collections-documents [category]="categoryCollection" [expanded]="true"></app-collections-documents> -->
+      <!-- <app-collection-note [category]="'CLAIM'" [showAddButton]="true" [expanded]="true"
+        [collectionId]="claim.id"></app-collection-note> -->
+      <!-- <app-setting-collection-validation *ngIf="!completeButtonDisabled" [expanded]="false"
+        [saveFilesAction]="saveFilesAction" (completeAction)="actionCompleted()"
+        [originSource]="originSource"></app-setting-collection-validation> -->
+      <app-event-table [expanded]="true" [source]="'CLAIM'"></app-event-table>
+      <!-- <app-udf [expanded]="true" [show]="true" [category]="'COLLECTION'" [stepId]="collection.idAcmCollectionStep" >
+      </app-udf> -->
+    </div>
+    <!-- <div class="col-md-3 col-xl-3 px-1">
+      <app-collection-process></app-collection-process>
+    </div> -->
+
+  </div>
+  <div class="row" *ngIf="action">
+    <div class="col-xl-12 col-md-12 pr-0 mt-2">
+      <div class="d-block text-end card-footer p-2">
+        <button class="mx-2 btn btn-outline-danger" (click)="exit()">
+          {{'button.exit' | translate}}
+        </button>
+        <!-- <button [disabled]="completeButtonDisabled" class="mx-2 mx-2 btn btn-primary" (click)="save()">
+          {{'button.save'| translate }}
+        </button> -->
+        <button *ngIf="claim.status =='CLOSED'" class="mx-2 mx-2 btn btn-warning" (click)="actionReoppen()">
+          {{'button.reopen'| translate }}
+        </button>
+
+        <button *ngIf="claim.status =='NEW'"  class="mx-2 mx-2 btn btn-info" (click)="actionInProgress()">
+            {{'button.accept'| translate }}
+          </button>
+
+          <button *ngIf="claim.status =='IN PROGRESS'"  class="mx-2 mx-2 btn btn-success" (click)="actionCompleted()">
+            {{'button.complete'| translate }}
+          </button>
+      </div>
+    </div>
+  </div>
+

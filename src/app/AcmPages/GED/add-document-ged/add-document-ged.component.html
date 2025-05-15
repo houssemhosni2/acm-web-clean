@@ -1,0 +1,445 @@
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon"><i class="icon pe-7s-drawer icon-gradient bg-happy-itmeo"></i></div>
+      <div>{{'upload_document.Upload_document'| translate }}</div>
+    </div>
+  </div>
+</div>
+<!--form-->
+<div class="main-card mt-2 mb-2 card">
+  <ngx-loading [show]="loading"
+    [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+  </ngx-loading>
+  <div class="card-body">
+    <h5 class="card-title">{{'upload_document.Upload_new_document'| translate }}</h5>
+    <div class="container">
+      <mat-radio-group labelPosition="after" [(ngModel)]="selectedValue" class="d-flex flex-row bd-highlight mb-3"
+        (change)="reset()">
+        <mat-radio-button class="p-2 bd-highlight" value="customer">{{'upload_document.Customer'| translate }}
+        </mat-radio-button>
+        <mat-radio-button class="p-2 bd-highlight" value="loan">{{'upload_document.Loan'| translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="selectedValue === 'loan'" class="container">
+      <div class="row mb-3">
+        <div class="col-sm-5 d-flex flex-column">
+          <label>{{'upload_document.Customer_Name'| translate }} :</label>
+          <p-autoComplete *ngIf="loanselectedInput === false"
+            placeholder="{{'upload_document.Customer_Name'| translate }}" [(ngModel)]="customerName" name="customer"
+            (onSelect)="selectLoanByCustomer()" [suggestions]="customerPaginationEntity.resultsCustomers"
+            (completeMethod)="filterCustmorname($event)" field="customerNameNoPipe" [size]="30" [minLength]="1"
+            [forceSelection]="true" [style]="{'width':'100%'}" [inputStyle]="{'width': '100%'}">
+            <ng-template let-filteredCustomer pTemplate="item">
+              {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+            </ng-template>
+          </p-autoComplete>
+          <input *ngIf="loanselectedInput === true" type="text" class="form-control"
+            placeholder="{{'upload_document.Customer_Name'| translate }}" aria-label="Customer"
+            aria-describedby="basic-addon1" [value]="customerName" (change)="selectLoanByCustomer()">
+        </div>
+        <div class="col-sm-5 d-flex flex-column">
+          <label>{{'upload_document.Loan_Account'| translate }} :</label>
+          <p-autoComplete *ngIf="cutomerselectedInput === false"
+            placeholder="{{'upload_document.Loan_Account'| translate }}" [(ngModel)]="accountNumber" name="account"
+            (onSelect)="select()" [suggestions]="filteredLoanSingle" (completeMethod)="filterLoanSingle($event)"
+            field="accountNumber" [size]="30" [minLength]="1" [forceSelection]="true" [style]="{'width':'100%'}"
+            [inputStyle]="{'width': '100%'}">
+          </p-autoComplete>
+          <select *ngIf="cutomerselectedInput === true" [(ngModel)]="accountNumber" class="form-control" id="selectloan"
+            name="selectloan" (ngModelChange)="selectAccountNumber()">
+            <option *ngIf="loanFound">{{'upload_document.account'| translate }}</option>
+            <option *ngIf="!loanFound">{{'upload_document.noAccount'| translate }}</option>
+            <option *ngFor="let l of loanByCustomer">{{l.accountNumber}}</option>
+          </select>
+        </div>
+      </div>
+
+      <form [formGroup]="searchForm">
+
+        <div class="row mb-3">
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'upload_document.customer_number'| translate }} :</label>
+            <input placeholder="{{'upload_document.customer_number'| translate }}" formControlName="customerNumber"
+              (change)="selectLoanByCustomer()" name="customerNumber" type="text" class="form-control" />
+          </div>
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'upload_document.customer_identity'| translate }} :</label>
+            <input placeholder="{{'upload_document.customer_identity'| translate }}" formControlName="customerIdentity"
+              name="customerIdentity" type="text" class="form-control" (change)="selectLoanByCustomer()" />
+
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'customer.telephone'| translate }} :</label>
+            <input placeholder="{{'customer.telephone'| translate }}" formControlName="telephone" name="telephone"
+              type="text" class="form-control" (change)="selectLoanByCustomer()" />
+
+          </div>
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'upload_document.Product'| translate }} :</label>
+            <input type="text" class="form-control" placeholder="{{'upload_document.Product'| translate }}"
+              aria-label="product" aria-describedby="basic-addon1" [value]="productDescription" disabled>
+          </div>
+        </div>
+      </form>
+
+
+    </div>
+    <div *ngIf="selectedValue === 'customer'" class="container">
+      <form [formGroup]="searchForm">
+
+        <div class="row mb-3">
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'upload_document.Customer_Name'| translate }} :</label>
+            <p-autoComplete [(ngModel)]="customerName" formControlName="customerName"
+              [suggestions]="customerPaginationEntity.resultsCustomers" (completeMethod)="filterCustmorname($event)"
+              placeholder="{{'upload_document.Customer_Name'| translate }}" field="customerNameNoPipe"
+              id="user-autocomplete" [size]="30" [minLength]="1" [forceSelection]="true" [style]="{'width':'100%'}"
+              [inputStyle]="{'width': '100%'}">
+              <ng-template let-filteredCustomer pTemplate="item">
+                {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+              </ng-template>
+            </p-autoComplete>
+
+          </div>
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'upload_document.customer_identity'| translate }} :</label>
+            <input placeholder="{{'upload_document.customer_identity'| translate }}" formControlName="customerIdentity"
+              name="customerIdentity" type="text" class="form-control" />
+
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'upload_document.customer_number'| translate }} :</label>
+            <input placeholder="{{'upload_document.customer_number'| translate }}" formControlName="customerNumber"
+              name="customerNumber" type="text" class="form-control" />
+          </div>
+          <div class="col-sm-5 d-flex flex-column">
+            <label>{{'customer.telephone'| translate }} :</label>
+            <input placeholder="{{'customer.telephone'| translate }}" formControlName="telephone" name="telephone"
+              type="text" class="form-control" />
+
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+  <div class="d-block text-end card-footer p-2 ">
+    <button class="btn btn-light mx-2" (click)="reset()">
+      <i class="pe-7s-refresh-2 btn-icon-wrapper"></i>
+      {{'upload_document.refresh'| translate }}</button>
+    <button *ngIf="selectedValue === 'customer'" class="btn btn-primary "
+      (click)="getAllDocumentsByCustomer()">{{'upload_document.search'| translate }}</button>
+  </div>
+</div>
+
+<!--all customer document table-->
+<div class="main-card mb-2 card" *ngIf="((selectedValue ==='customer')&&(this.customerDocuments.length>0)) ">
+  <div class="card-header">
+    <div class="card-header-title">
+      <i class="lnr-file-empty pr-2"> </i>
+      {{'upload_document.All_documents'| translate }}
+    </div>
+    <div class="btn-actions-pane-right">
+      <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+        (click)="openPopupCustomer(content6)">
+        <fa class="mx-2" name="plus">
+          <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+        </fa>
+        {{'button.add' | translate}}
+      </button>
+    </div>
+  </div>
+  <div>
+    <div class="table-responsive" *ngIf="customerDocuments.length!=0">
+      <table class="align-middle mb-0 table table-hover">
+        <thead>
+          <tr>
+            <th class="text-left">{{'upload_document.document_type'| translate }}</th>
+            <th class="text-center">{{'upload_document.Name'| translate }}</th>
+            <th class="text-center">{{'upload_document.Description'| translate }}</th>
+            <th class="text-center">{{'upload_document.Date'| translate }}</th>
+            <th class="text-center">{{'upload_document.Upload_new_version'| translate }}</th>
+            <th class="text-center ACM-document-table-column-button">{{ 'upload_document.version-history' | translate }}
+            <th class="text-center"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let document of customerDocuments">
+            <td>
+              <div class="widget-content p-0">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left flex2">
+                    <div class="widget-heading">{{document.title}}</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                {{document.name}}
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                {{document.description}}
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                {{document.date}}
+              </div>
+            </td>
+            <td class="text-center">
+              <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                (click)="fileInput.click()">
+                <i class="pe-7s-cloud-upload btn-icon-wrapper"></i>
+                <input #fileInput type="file" [name]="'file'+document.title" (change)="addDocuments($event,document)"
+                  style="display:none;">
+              </button>
+            </td>
+            <td class="text-center">
+              <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                (click)="openLargePupupHistoryDoc(contentHistory,document)">
+                <i class="pe-7s-folder btn-icon-wrapper"></i>
+              </button>
+            </td>
+
+            <td class="text-center">
+              <button class="btn btn-warning">
+                <i class="pe-7s-look btn-icon-wrapper text-white"
+                  (click)="view(document.file,document.idfile,document.name)"></i>
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!--all loan documents -->
+<div class="main-card mb-2 card" *ngIf="((selectedValue ==='loan')&&(this.loanDocuments.length>0))">
+  <div class="card-header">
+    <div class="card-header-title">
+      <i class="lnr-file-empty pr-2"> </i>
+      {{'upload_document.All_documents'| translate }}
+    </div>
+    <div class="btn-actions-pane-right">
+      <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+        (click)="openPopupLoan(content6)">
+        <fa class="mx-2" name="plus">
+          <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+        </fa>
+        {{'button.add' | translate}}
+      </button>
+    </div>
+  </div>
+  <div>
+    <div class="table-responsive" *ngIf="loanDocuments.length!=0">
+      <table class="align-middle mb-0 table table-hover">
+        <thead>
+          <tr>
+            <th class="text-left">{{'upload_document.document_type'| translate }}</th>
+            <th class="text-center">{{'upload_document.Name'| translate }}</th>
+            <th class="text-center">{{'upload_document.Description'| translate }}</th>
+            <th class="text-center">{{'upload_document.Date'| translate }}</th>
+            <th class="text-center">{{'upload_document.Upload_new_version'| translate }}</th>
+            <th class="text-center ACM-document-table-column-button">{{ 'upload_document.version-history' | translate }}
+
+            <th class="text-center"></th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let document of loanDocuments">
+            <td>
+              <div class="widget-content p-0">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left flex2">
+                    <div class="widget-heading">{{document.title}}</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                {{document.name}}
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                {{document.description}}
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                {{document.date}}
+              </div>
+            </td>
+            <td class="text-center">
+              <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                (click)="fileInput.click()">
+                <i class="pe-7s-cloud-upload btn-icon-wrapper"></i>
+                <input #fileInput type="file" [name]="'file'+document.title" (change)="addDocuments($event,document)"
+                  style="display:none;">
+              </button>
+            </td>
+            <td class="text-center">
+              <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+                (click)="openLargePupupHistoryDoc(contentHistory,document)">
+                <i class="pe-7s-folder btn-icon-wrapper"></i>
+              </button>
+            </td>
+
+            <td class="text-center">
+              <button class="btn btn-warning">
+                <i class="pe-7s-look btn-icon-wrapper text-white"
+                  (click)="view(document.file,document.idfile,document.name)"></i>
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <button class="my-2 mx-1 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button *ngIf="((customerDocuments.length!=0) || (loanDocuments.length!=0))" type="button"
+    [disabled]="selectedloan.statutWorkflow === '22'" class="my-2 mx-1 btn btn-primary "
+    (click)="onsave()">{{'button.save' | translate}}</button>
+</div>
+
+
+<!--popup-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new document-->
+    <form [formGroup]="popupForm" (ngSubmit)="d(addNewDocument())">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'upload_document.Upload'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('close')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <div class="d-flex flex-row align-items-center">
+          <!--input title-->
+          <div class="col-sm-12">
+            <label for="title">{{'upload_document.Title'| translate }}
+              <span class="text-danger"> *</span></label>
+            <div class="row no-gutters align-items-center">
+              <div class="col-xl-12 col-sm-12">
+                <select *ngIf="selectedValue ==='customer'" class="form-control" id="title" name="title"
+                  formControlName="title">
+                  <option disabled selected value>{{'upload_document.default_select'| translate }}</option>
+                  <option *ngFor="let type of settingDocTypeMltipleCustomer">{{type.libelle}}</option>
+                </select>
+                <select *ngIf="selectedValue ==='loan'" class="form-control" name="title" formControlName="title">
+                  <option disabled selected value>{{'upload_document.default_select'| translate }}</option>
+                  <option *ngFor="let type of settingDocTypeMltipleLoan">{{type.libelle}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 pl-12 mb-3 mt-3">
+          <p-fileUpload name="file" customUpload="true" (uploadHandler)="onUpload($event)"
+            accept="{{sharedService.geTypeMimes()}}" maxFileSize="{{sharedService.getMaxSizeFileUpload()}}"
+            [auto]="true" [showUploadButton]="false" [showCancelButton]="false" (onRemove)="onRemove()">
+          </p-fileUpload>
+        </div>
+        <div class="col-sm-12">
+          <!--input file name-->
+          <label for="fileName">{{'upload_document.Name'| translate }}
+            <span class="text-danger"> *</span>
+          </label>
+          <input id="fileName" type="text" formControlName="fileName" name="fileName" class="form-control">
+          <!--input description-->
+          <label for="description">{{'upload_document.Description'| translate }}</label>
+          <textarea id="description" type="text" formControlName="description" name="description"
+            class="form-control"></textarea>
+        </div>
+      </div>
+
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="popupForm.invalid">{{'button.add' |
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #contentHistory let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new note-->
+    <form>
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'upload_document.document-history'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="c(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <!--Date-->
+        <div class="table-responsive">
+          <table class="align-middle mb-0 table table-hover">
+            <thead>
+              <tr>
+                <th class="text-center ACM-document-table-column">{{'upload_document.Name'| translate }}</th>
+                <th class="text-center ACM-document-table-column">{{'upload_document.Date'| translate }}</th>
+                <th class="text-center ACM-document-table-column">{{'customer_decision.addedBy'| translate }}
+                </th>
+                <th class="text-center ACM-document-table-column-button"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let hd of historyDocuments; let i = index">
+                <td>
+                  <div class="text-center">
+                    {{hd.name}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    {{hd.dateCreation | date : 'dd/MM/yyyy hh:mm a'}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    {{hd.insertBy}}
+                  </div>
+                </td>
+                <td class="text-center px-0">
+                  <button class="btn btn-warning" (click)="view(hd.file,hd.idDocumentGED)">
+                    <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="resetPupupHistoryDoc()">{{'button.cancel' |
+          translate}}</button>
+
+      </div>
+    </form>
+  </div>
+</ng-template>

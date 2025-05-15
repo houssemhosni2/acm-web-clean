@@ -1,0 +1,155 @@
+<!--Setting Document Type-->
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header">
+    <i class="lnr-cog px-2"> </i>
+    {{'setting.setting_document_type.setting_document_type'| translate }}
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+          (click)="openLarge(content6)">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add' | translate}}
+        </button>
+    </div>
+  </div>
+  <div>
+    <div class="card-body">
+      <p-table #sdt [autoLayout]=true [responsive]="true"
+        [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10"
+        [value]="settingDocumentTypes" [lazy]="false" [lazyLoadOnInit]="false">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{'setting.code'| translate }}</th>
+            <th>{{'setting.label'| translate }}</th>
+            <th>{{'setting.description'| translate }}</th>
+            <th>{{'setting.category'| translate }}</th>
+            <th class="text-center">{{'setting.setting_document_type.uniqueness'| translate }}</th>
+            <th>{{'setting.setting_document_type.date_debut'| translate }}</th>
+            <th>{{'setting.status'| translate }}</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-settingDocumentType let-rowIndex="rowIndex">
+          <tr>
+            <th>{{settingDocumentType.code}}</th>
+            <td>{{settingDocumentType.libelle}}</td>
+            <td>{{settingDocumentType.description}}</td>
+            <td>{{'document_type_categories.' + settingDocumentType.categorie| translate }}</td>
+            <td class="text-center">
+              <div class="custom-checkbox custom-control">
+                <input class="custom-control-input" id="eCheckbox1" type="checkbox" [checked]="settingDocumentType.uniqueness"
+                  disabled>
+                <label class="custom-control-label" for="eCheckbox1"></label>
+              </div>
+            </td>
+            <td>{{settingDocumentType.dateDebut| date:'dd/MM/yyyy '}}</td>
+            <td>
+              <bSwitch [(ngModel)]="settingDocumentType.enabled" [switch-size]="'mini'" [switch-animate]="true" [switch-handle-width]="40"
+                [switch-off-color]="'danger'" class="px-2 mb-0" (changeState)="toggleStatus(settingDocumentType)"></bSwitch>
+            </td>
+            <td>
+              <button class="btn btn-warning" (click)="editDocumentType(content6,settingDocumentType)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+<!-- bloc synchronize -->
+<div class="py-1">
+  <div class="card">
+    <div class="card-header">
+      {{'setting.save_ged_documents' | translate}}
+    </div>
+    <div class="card-body">
+      <div class="row">
+        {{'setting.ged_document' | translate}} : {{countEnabledDocuments}}
+        <button [disabled]="countEnabledDocuments === 0"
+          class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button" (click)="synchronize()">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.synchronize' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--popup-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form-->
+    <form [formGroup]="popupForm">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'setting.setting_document_type.document_type'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <div class="position-relative pb-4">
+          <label> {{'setting.code'| translate }}</label>
+          <div>
+            <input type="text" class="form-control" formControlName="code" disabled>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.label'| translate }} <span class="text-danger">*</span></label>
+          <div>
+            <input type="text" class="form-control" formControlName="libelle" (change)="changeCode()">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.description'| translate }}</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="description">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.category'| translate }}<span class="text-danger">*</span></label>
+          <div>
+            <select formControlName="category" class="form-control" (change) = "getSelectedCategory()">
+              <option disabled selected value>{{'setting.setting_document_type.default_select'| translate }}</option>
+              <option *ngFor="let category of documentTypeCategories" [ngValue]="category.value">
+                {{'document_type_categories.' + category.key| translate }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="position-relative pb-4"  *ngIf="selectedCategeory =='GENERIC_WOKFLOW' ">
+          <label> {{'setting_document_product.report_name' | translate}} <span class="text-danger">*</span></label>
+          <div>
+            <input type="text" class="form-control" formControlName="reportName">
+          </div>
+        </div>
+
+        <div class="position-relative pb-4">
+          <label> {{'setting.setting_document_type.uniqueness'| translate }}</label>
+          <div class="input-group">
+            <bSwitch [switch-size]="'small'" [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0"
+              formControlName="uniqueness" [switch-handle-width]="40"></bSwitch>
+          </div>
+        </div>
+        <div *ngIf ="selectedCategeory =='SUPPLIER'|| selectedCategeory =='THIRD_PARTY' || selectedCategeory =='GENERIC_WOKFLOW' || selectedCategeory =='CONVENTION'"  class="position-relative pb-4">
+          <label> {{'setting.setting_document_type.mandatory'| translate }}</label>
+          <div class="input-group">
+            <bSwitch [switch-size]="'small'" [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0"
+              formControlName="mandatory" [switch-handle-width]="40"></bSwitch>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.setting_document_type.date_debut'| translate }}</label>
+          <div class="input-group">
+            <input type="date" class="form-control" formControlName="date_debut">
+          </div>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="d(reset())">{{'button.cancel' | translate}}</button>
+        <button (click)="d(onSubmit())" class="btn btn-primary" [disabled]="popupForm.invalid">{{'button.save' |translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

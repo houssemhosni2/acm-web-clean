@@ -1,0 +1,293 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between">
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addType()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'button.add_type' | translate}}
+      </button>
+    </div>
+  </div>
+
+  <p-table #dt [responsive]="true" [autoLayout]=true [value]="addressListValue"
+      addressForm [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      
+      [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="settingValueSelectedColumns">
+  
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" style="text-align: center; vertical-align: middle;" >
+            <div style="text-align: center; vertical-align: middle;">
+              {{col.header | translate}}
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-groupes let-rowData let-columns="columns">
+        <tr *ngFor="let col of addressType"  class="text-center">
+          <td style="text-align: center; vertical-align: middle;">
+            <div >{{col.name}}</div>
+          </td>
+          <td style="text-align: center; vertical-align: middle;">
+            <input class="custom-control-input mx-1" type="checkbox" [checked]="col.primaryAddressType === 1" >
+          </td>
+          <td >
+      <bSwitch [(ngModel)]="col.enabled" [switch-size]="'mini'" [switch-animate]="true"
+      [switch-off-color]="'danger'" class="px-2 mb-0" [switch-handle-width]="40" (click)="enableDisableType(col)">
+    </bSwitch>
+          </td>
+
+          <td>
+            <button class="btn btn-warning text-white" (click)="editType(col)">
+              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+            </button>
+
+        
+          </td> 
+        </tr>
+      </ng-template>
+    </p-table>
+</div>
+
+<br>
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <div>
+        <i class="lnr-paw text-secondary pr-2"></i>
+        {{'setting.address-setting'| translate }}
+      </div>
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="d-inline-flex align-items-center btn btn-primary" (click)="addAddress()">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add_address' | translate}}
+        </button>
+      </div>
+    </div>
+  
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="addressListValue"
+      addressForm [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      
+      [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns">
+  
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <select *ngSwitchCase="'Country'" class="form-control" [(ngModel)]="selectedCountry" (change)="loadList(selectedCountry, 'Country')">
+              <option [ngValue]="null" disabled selected>{{'setting.SelectCountry'| translate }}</option>  
+              <ng-container *ngFor="let country of addressListValue[0]">
+                  <option [ngValue]="country" *ngIf="country?.addressListID === addressListEntity[0]?.addressListID">
+                    {{ country.name }}
+                  </option>
+                </ng-container>
+              </select>
+              
+              <select *ngSwitchCase="'Region'" class="form-control" [(ngModel)]="selectedRegion" (change)="loadList(selectedRegion , 'Region')">
+                <option [ngValue]="null" disabled selected>{{'setting.SelectRegion'| translate }}</option>
+                <ng-container *ngFor="let region of addressListValue[0]">
+                  <option [ngValue]="region" *ngIf="region.addressListID === addressListEntity[1].addressListID && region.parentAddressListValueID === selectedCountry?.addressListValueID ">
+                    {{ region.name }}
+                  </option>
+                </ng-container>
+              </select>
+              
+              <select *ngSwitchCase="'City'" class="form-control" [(ngModel)]="selectedCity" (change)="loadList(selectedCity, 'City')">
+                <option [ngValue]="null" disabled selected> {{'setting.SelectCity'| translate }}</option>
+                <ng-container *ngFor="let city of addressListValue[0]">
+                  <option [ngValue]="city" *ngIf="city.addressListID === addressListEntity[2].addressListID  && city.parentAddressListValueID === selectedRegion?.addressListValueID ">
+                    {{ city.name }}
+                  </option>
+                </ng-container>
+              </select>
+              
+              <select *ngSwitchCase="'District'" class="form-control" [(ngModel)]="selectedDistrict" (change)="loadList(selectedDistrict)">
+                <option [ngValue]="null" disabled selected>{{'setting.SelectDistrict'| translate }}</option>
+                <ng-container *ngFor="let district of addressListValue[0]">
+                  <option [ngValue]="district" *ngIf="district.addressListID === addressListEntity[3].addressListID && district.parentAddressListValueID === selectedCity?.addressListValueID ">
+                    {{ district.name }}
+                  </option>
+                </ng-container>
+              </select>
+              
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-groupes let-rowData let-columns="columns">
+        <tr *ngFor="let col of getFilteredList()"  class="text-center">
+          <td >
+            <div >{{col.nameCountry}}</div>
+            
+          </td>
+          <td >
+            <div >{{col.nameRegion}}</div>
+          </td>
+          <td >
+            <div >{{col.nameCity}}</div>
+          </td>
+          <td >
+            <div >{{col.nameDistrict}}</div>
+          </td>
+          <td>
+            <div 
+        (click)="enableDisable()"
+        [style.width]="'60px'"
+        [style.height]="'30px'"
+        [style.border-radius]="'15px'"
+        [style.background-color]="col.isEnabled ? 'green' : 'red'"
+        [style.color]="'white'"
+        [style.display]="'flex'"
+        [style.align-items]="'center'"
+        [style.justify-content]="'center'"
+        [style.cursor]="'pointer'"
+        [style.font-weight]="'bold'"
+        [style.transition]="'background-color 0.3s ease'"
+      >
+        <span>{{ col.isEnabled ? 'ON' : 'OFF' }}</span>
+      </div>
+          </td>
+
+          <td>
+            <button class="btn btn-warning text-white" (click)="editAddress(col)">
+              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+            </button>
+
+        
+          </td> 
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" *ngIf="!update"> {{'button.add_address' | translate}}</h5>
+        <h5 class="modal-title" *ngIf="update"> {{'button.update_address' | translate}}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  
+      <div class="card-body">
+
+        <div class="position-relative pb-4" style="display: flex; justify-content: center; gap: 30px;">
+          <mat-radio-group [(ngModel)]="selectedLevel" (change)="onSelectionChange($event.value)" style="display: flex; justify-content: center;">
+            <mat-radio-button value="Country" style="margin-right: 20px;" [disabled]="update">{{'setting.Country' | translate }}</mat-radio-button>
+            <mat-radio-button value="Region" style="margin-right: 20px;" [disabled]="update">{{'setting.Region' | translate }}</mat-radio-button>
+            <mat-radio-button value="City" style="margin-right: 20px;" [disabled]="update">{{'setting.City' | translate }}</mat-radio-button>
+            <mat-radio-button value="District" style="margin-right: 20px;" [disabled]="update">{{'setting.District' | translate }}</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        
+        
+
+            <div class="position-relative pb-4" *ngIf="selectedLevel === 'Region' || selectedLevel === 'City' || selectedLevel === 'District'">
+                <label> {{'setting.Country'| translate }}</label>
+                <div>
+                    <select  class="form-control" [(ngModel)]="selectedCountry" (change)="loadList(selectedCountry, 'Country')">
+                        <ng-container *ngFor="let country of addressListValue[0]">
+                          <option [ngValue]="country" *ngIf="country?.addressListID === addressListEntity[0]?.addressListID">
+                            {{ country.name }}
+                          </option>
+                        </ng-container>
+                      </select>
+                </div>
+              </div>
+
+
+              <div class="position-relative pb-4" *ngIf="selectedLevel === 'City' || selectedLevel === 'District'">
+                <label> {{'setting.Region'| translate }}</label>
+                <div>
+                    <select  class="form-control" [(ngModel)]="selectedRegion" (change)="loadList(selectedRegion , 'Region')">
+                        <ng-container *ngFor="let region of addressListValue[0]">
+                          <option [ngValue]="region" *ngIf="region.addressListID === addressListEntity[1].addressListID && region.parentAddressListValueID === selectedCountry?.addressListValueID ">
+                            {{ region.name }}
+                          </option>
+                        </ng-container>
+                      </select>
+                </div>
+              </div>
+  
+              <div class="position-relative pb-4" *ngIf=" selectedLevel === 'District'">
+                <label> {{'setting.City'| translate }}</label>
+                <div>
+                    <select  class="form-control" [(ngModel)]="selectedCity" (change)="loadList(selectedCity, 'City')">
+                        <ng-container *ngFor="let city of addressListValue[0]">
+                          <option [ngValue]="city" *ngIf="city.addressListID === addressListEntity[2].addressListID  && city.parentAddressListValueID === selectedRegion?.addressListValueID ">
+                            {{ city.name }}
+                          </option>
+                        </ng-container>
+                      </select>
+                </div>
+              </div>
+
+              <form class="form" [formGroup]="addressForm" (ngSubmit)="onSubmit()">   
+
+          <div class="position-relative pb-4" *ngIf="selectedLevel">
+            <label *ngIf=" selectedLevel === 'District'"> {{'setting.District'| translate }}</label>
+            <label *ngIf=" selectedLevel === 'City'"> {{'setting.City'| translate }}</label>
+            <label *ngIf=" selectedLevel === 'Region'"> {{'setting.Region'| translate }}</label>
+            <label *ngIf=" selectedLevel === 'Country'"> {{'setting.Country'| translate }}</label>
+            <div>
+                <input class="form-control" formControlName="name">
+            </div>
+          </div>
+          <div class="modal-footer py-1">
+            <button class="mb-2 mx-2 btn btn-outline-danger" type="reset"
+              (click)="reset()">{{'button.cancel' | translate}}</button>
+            <button class="mb-2 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #modalTypeContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" *ngIf="!update"> {{'button.add_type' | translate}}</h5>
+        <h5 class="modal-title" *ngIf="update"> {{'button.update_type' | translate}}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  
+      <div class="card-body">
+
+              <form class="form" [formGroup]="typeForm" (ngSubmit)="onSubmitType()">   
+
+          <div class="position-relative pb-4">
+            <label > {{'setting.name'| translate }}</label>
+            <div>
+                <input class="form-control" formControlName="name">
+            </div>
+          </div>
+
+
+
+          <div class="position-relative pb-4">
+            <label class="form-check-label me-3"> {{'setting.Primary' |
+              translate}}</label>
+             <input  type="checkbox" class="form-check-input" formControlName="primaryAddressType"> 
+              </div>
+
+          <div class="modal-footer py-1">
+            <button class="mb-2 mx-2 btn btn-outline-danger" type="reset"
+              (click)="resetType()">{{'button.cancel' | translate}}</button>
+            <button class="mb-2 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+  

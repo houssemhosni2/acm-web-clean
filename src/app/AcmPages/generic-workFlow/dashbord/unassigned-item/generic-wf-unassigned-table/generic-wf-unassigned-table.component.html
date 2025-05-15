@@ -1,0 +1,96 @@
+<div class="main-card mb-3">
+  <div class="card-body card mr-b">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="itemEntityList.result"
+      (onLazyLoad)="reloadItemList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="itemEntityList.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+      [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [showCurrentPageReport]="true"
+      selectionMode="single">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <!-- actions button -->
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'id'" class="form-control placeholder" type="number"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+            <input *ngSwitchCase="'description'" class="form-control placeholder" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+            <input *ngSwitchCase="'insertBy'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+            <select *ngSwitchCase="'genericWorkFlowObject'" class="form-control ACM-Dashbord-productDescription-col"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="null">{{'category_loan.all' | translate}}</option>
+              <option *ngFor="let object of objects" value="{{object.id}}">{{object.name}}</option>
+            </select>
+            <input *ngSwitchCase="'dateInsertion'" class="form-control ACM-Dashbord-customername-col" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'dateLastUpdate'" class="form-control ACM-Dashbord-Date-col" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'ownerName'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'groupOwner'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'groupOwnerName'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+
+              <select *ngSwitchCase="'category'" class="form-control ACM-Dashbord-Date-col" type="text"
+                (input)="dt.filter($event.target.value, col.field, 'equals')">
+                <option value="DOUBTFUL,SCAN">{{'category_loan.all' | translate}}</option>
+                <option *ngFor="let category of categories" value="{{category}}">{{category}}</option>
+                 </select>
+
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+
+
+
+
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-exceptionRequest let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" [ngSwitch]="col.field">
+            <div *ngSwitchCase="'id'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'insertBy'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'genericWorkFlowObject'"> {{rowData[col.field].name}} </div>
+            <div *ngSwitchCase="'dateInsertion'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+            <div *ngSwitchCase="'dateLastUpdate'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+            <div *ngSwitchCase="'ownerName'">{{rowData[col.field] }}</div>
+            <div *ngSwitchCase="'category'">{{rowData[col.field] }}</div>
+            <div *ngSwitchCase="'groupOwner'">{{rowData[col.field] }}</div>
+            <div *ngSwitchCase="'groupOwnerName'">{{rowData[col.field] }}</div>
+
+
+
+          </td>
+
+
+          <td>
+
+              <button (click)="assignItem(rowData)" pButton type='button' icon='fa fa-edit'></button>
+
+          </td>
+          <td style='width: 40px;'></td>
+          <td style='width: 40px;'></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+

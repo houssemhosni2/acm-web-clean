@@ -1,0 +1,83 @@
+<app-page-title [heading]=" 'meza_card.activate_Meza_Card'| translate " [icon]="'pe-7s-credit'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="card">
+  <div class="card-header">
+    {{'meza_card.activate_Meza_Card'| translate }}
+  </div>
+  <div  >
+    <table class="align-middle mb-0 table table-hover">
+      <thead>
+      <tr>
+      <th>
+        <input class="form-control-lg" type="checkbox" [(ngModel)]="allSelection" (change)="selectAll()">
+      </th>
+      <th>{{'meza_card.merchant_id'| translate }}</th>
+      <th>{{'meza_card.card_type'| translate }}</th>
+      <th>{{'meza_card.card_number'| translate }}</th>
+      <th>{{'meza_card.account'| translate }}</th>
+      <th>{{'meza_card.expiry_date'| translate }}</th>
+      <th>{{'meza_card.activity_Date'| translate }}</th>
+      <th>{{'meza_card.embossed_name'| translate }}</th>
+      <th>{{'meza_card.status'| translate }}</th>
+      <th>{{'meza_card.branch_name'| translate }}</th>
+    </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let card of mezaCards.resultsAcmMezaCards, let i=index">
+        <td>
+          <input class="form-control-lg" type="checkbox" [(ngModel)]="selectCardsIndex[i]">
+        </td>
+        <td>
+          {{card.merchantID}}
+        </td>
+        <td>
+          {{card.cardType}}
+        </td>
+        <td>
+          {{card.cardNumber}}
+        </td>
+        <td>
+          {{card.account}}
+        </td>
+        <td>
+          {{card.expirtyDate | date: 'dd/MM/yyyy'}}
+        </td>
+        <td>
+          {{card.activityDate | date: 'dd/MM/yyyy'}}
+        </td>
+        <td>
+          {{card.embossedName}}
+        </td>
+        <td *ngIf = "card.status === 'UPLOAD'"> {{'meza_card.uploaded'| translate }} </td>
+        <td *ngIf = "card.status === 'SENT'">{{'meza_card.meza_sent'| translate | uppercase }} </td>
+        <td *ngIf = "card.status === 'ACTIVATE'">{{'meza_card.activated'| translate }}</td>
+        <td>
+          {{card.branchName}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="col-xl-12 col-md-12 px-0 mx-0 row">
+      <div class="col-xl-9 col-md-9">
+        <ngb-pagination [collectionSize]="totalElements" [(page)]="pageNumber" [pageSize]="pageSize" size="sm"
+                        [maxSize]="3" [boundaryLinks]="true" (pageChange)="reloadPage(pageNumber)">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-3 col-md-3 px-0 d-flex justify-content-end">
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize"
+                (ngModelChange)="reloadPage(pageNumber)">
+          <option [ngValue]="1">1</option>
+          <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+          <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+          <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+          <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer d-flex justify-content-end">
+    <button class="btn btn-primary" (click)="updateCards()">
+      {{'meza_card.activate'| translate }}
+    </button>
+  </div>
+</div>

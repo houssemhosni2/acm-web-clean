@@ -1,0 +1,76 @@
+<app-page-title [heading]="'sidebar.loan_application_home' | translate " [icon]="'lnr-home'" [account]="''"
+                [status]="0">
+</app-page-title>
+<div class="row mr-30">
+  <div class="col-xl-12">
+    <mat-tab-group class="page-mat-tabs" (selectedTabChange)="changeTabs($event)">
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <div class="col-xl-2">
+            <span class="loans-lenght text-muted fa fa-list icon-size-fa"></span>
+            <span class="size-text">{{ 'dashboard.task' | translate }}</span>
+          </div>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'0'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-primary fa fa-newspaper-o icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.new' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'1'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-danger fa fa-pencil-square-o icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.drafts' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'2'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+
+          <span class="loans-lenght text-warning fa fa-check-square-o icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.review' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'7'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class=" loans-lenght text-info fa fa-hourglass-start icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.awaiting_approval' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'3'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-success fa fa-check-circle icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.approved' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'4'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-danger fa fa-times-circle icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.rejected' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'5'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght fa fa-ban icon-size-fa"></span>
+          <span class="size-text">{{ 'dashboard.cancelled' | translate }}</span>
+        </ng-template>
+        <app-dabshbord-table [loanPaginationEntity]="loanPaginationEntity" [statusTab]="'6'" [status]="status"
+                             [products]="products" [branches]="branches"></app-dabshbord-table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

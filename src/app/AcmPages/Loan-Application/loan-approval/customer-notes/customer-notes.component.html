@@ -1,0 +1,212 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+      aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-book text-secondary px-2"></i>
+        {{'customer_decision.customer_note'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne">
+      <div *ngIf="loanNoteHistoryArray.length > 0 || claimNotesList.length > 0" >
+        <div class="card-body">
+          <ngx-loading [show]="loading"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+          </ngx-loading>
+          <!-- bouton popup-->
+          <div class="page-title-actions mb-3 d-flex justify-content-end">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+              (click)="openLarge(content6)">
+              <fa class="mx-2" name="plus" _nghost-gyt-c2="" ng-reflect-name="plus">
+                <i _ngcontent-gyt-c2="" aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"
+                  ng-reflect-ng-class=""></i>
+              </fa>
+              {{'button.add' | translate}}
+            </button>
+          </div>
+        </div>
+        <!-- tableau notes -->
+        <div class="table-responsive">
+          <table class="mb-0 table green">
+            <thead>
+              <tr>
+                <th>{{'customer_decision.Date'| translate }}</th>
+                <th>{{'customer_decision.addedBy'| translate }}</th>
+                <th  *ngIf="source !=='CLAIM'" class="text-center">{{'customer_decision.Decision'| translate }}</th>
+                <th *ngIf="source ==='CLAIM'" style="width: 30%;" class="text-center">{{'note.visibility'| translate }}</th>
+                <th>{{'customer_decision.Note'| translate }}</th>
+                <th class="text-center">{{'button.details'| translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let loanNoteHistory of loanNoteHistoryArray | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                <td class="ACM-table-historyNote-td-1">{{loanNoteHistory.actionDate | date : 'dd/MM/yyyy hh:mm a'}}
+                </td>
+
+                <td class="ACM-table-historyNote-td-2" *ngIf="loanNoteHistory.typeNote === 'NOTE'">
+                  {{loanNoteHistory.insertBy}}</td>
+                <td class="ACM-table-historyNote-td-2" *ngIf="loanNoteHistory.typeNote === 'APPROVEL'">
+                  {{loanNoteHistory.approvedBy}}</td>
+
+                <td class="ACM-table-historyNote-td-3 text-center" *ngIf="loanNoteHistory.typeNote === 'NOTE'">
+                  <div *ngIf="loanNoteHistory.statusId === 3" class="badge bg-success ng-star-inserted">
+                    {{loanNoteHistory.statusLibelle}}</div>
+                  <div *ngIf="loanNoteHistory.statusId === 1" class="badge bg-warning ng-star-inserted">
+                    {{loanNoteHistory.statusLibelle}}</div>
+                  <div *ngIf="loanNoteHistory.statusId === 2" class="badge bg-danger ng-star-inserted">
+                    {{loanNoteHistory.statusLibelle}}</div>
+                  <div *ngIf="loanNoteHistory.statusId === 4" class="badge bg-info ng-star-inserted">
+                    {{loanNoteHistory.statusLibelle}}</div>
+                  <div *ngIf="loanNoteHistory.statusId === 5" class="badge bg-warning ng-star-inserted">
+                    {{loanNoteHistory.statusLibelle}}</div>
+                </td>
+                <td class="ACM-table-historyNote-td-3 text-center" *ngIf="loanNoteHistory.typeNote === 'APPROVEL'">
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 1" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-warning ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalDesicionLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 3" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-danger ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalLevelLabel!==null?loanNoteHistory.approvalLevelLabel:
+                    loanNoteHistory.approvalDesicionLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 4" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-success ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalDesicionLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 2" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-success ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalLevelLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 5" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-success ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalDesicionLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 6" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-success ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalDesicionLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 7" _ngcontent-lwc-c10=""
+                    class="badge ACM-badge-notification bg-danger ng-star-inserted py-1">
+                    {{loanNoteHistory.approvalDesicionLabel}}</div>
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 8" _ngcontent-lwc-c10=""
+                    class="badge bg-success ng-star-inserted">
+                    {{loanNoteHistory.approvalDesicionLabel}}</div>
+                </td>
+
+                <td class="ACM-table-historyNote-td-4 text-truncate ACM-table-historyNote-comments"
+                  *ngIf="loanNoteHistory.typeNote === 'NOTE'">{{loanNoteHistory.convertedComments}}</td>
+                <td class="ACM-table-historyNote-td-4" *ngIf="loanNoteHistory.typeNote === 'APPROVEL'">
+                  {{loanNoteHistory.comments}}
+                  <div *ngIf="loanNoteHistory.approvalDesicion === 2"> (
+                    {{'approval_history.Approved_Amount'| translate }} =
+                    {{loanNoteHistory.approvalAmount | number : this.decimalPlaces}} {{ loan?.currencySymbol }} )
+                  </div>
+                </td>
+                <td class="ACM-table-historyNote-td-5 text-center">
+                  <button class="btn btn-shadow btn-primary " (click)="displayNote(loanNoteHistory, content6)">
+                    <i class="pe-7s-more btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngFor="let claim of claimNotesList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                <td class="ACM-table-historyNote-td-1">
+                 {{claim.dateInsertion | date : 'dd/MM/yyyy' }}
+                </td>
+                <td class="ACM-table-historyNote-td-1">
+                <span *ngIf="claim.insertBy ===customerName" style="font-weight: 700;">Customer : </span>  {{claim.insertBy}}
+                </td>
+                <td class="ACM-table-historyNote-td-1"  class="text-center">
+                 <div [ngClass]="claim.visibility === 'public' ? 'bg-success' : 'bg-warning'" style="width: 20%;text-align: center; border-radius: 5px;color: #fff; padding: 4px;margin: 0 auto;" >
+                  {{claim.visibility | uppercase }} </div>
+                </td>
+                <td class="ACM-table-historyNote-td-1">
+                  {{claim.comment}}
+                </td>
+                <td class="ACM-table-historyNote-td-5 text-center">
+                  <button class="btn btn-shadow btn-primary " (click)="displayClaimNote(claim, content6)">
+                    <i class="pe-7s-more btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination *ngIf="loanNoteHistoryArray.length >0" [collectionSize]="loanNoteHistoryArray.length" [(page)]="page" [pageSize]="pageSize"
+                size="sm" [maxSize]="3" [boundaryLinks]="true">
+              </ngb-pagination>
+              <ngb-pagination *ngIf="claimNotesList.length >0" [collectionSize]="claimNotesList.length" [(page)]="page" [pageSize]="pageSize"
+              size="sm" [maxSize]="3" [boundaryLinks]="true">
+            </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option selected [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="loanNoteHistoryArray.length === 0 && claimNotesList.length === 0">
+        <div class="card-body">
+          <div class="page-title-actions mb-3 d-flex justify-content-end">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+              (click)="openLarge(content6)">
+              <fa class="mx-2" name="plus" _nghost-gyt-c2="" ng-reflect-name="plus">
+                <i _ngcontent-gyt-c2="" aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"
+                  ng-reflect-ng-class=""></i>
+              </fa>
+              {{'button.add' | translate}}
+            </button>
+          </div>
+          <h6 style="color: red;" class="pt-3">{{ 'customer_decision.missing_customer_note' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--popup-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new note-->
+    <form [formGroup]="popupForm">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'customer_decision.Note'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="c(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <!--Date-->
+        <div class="col-xl-10">
+          <label> <strong>{{'customer_decision.date'| translate }} </strong> :
+            {{ contactDate | date : 'dd/MM/yyyy'}}</label>
+        </div>
+        <!--input comments-->
+        <div class="col-xl-12">
+          <label for="comments"><strong>{{'customer_decision.comment'| translate }} </strong> </label>
+          <angular-editor [config]="configEditor" class="form-control wysiwyg-edito ACM-wordBreak-note-history"
+            formControlName="comments">
+          </angular-editor>
+        </div>
+        <div *ngIf= "source==='CLAIM'" style="margin-top: 5px;display: flex;gap: 3px;">
+          <input type="checkbox" formControlName="visibility" />  {{'Public' | translate}}
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="reset()">{{'button.cancel' | translate}}</button>
+        <button [hidden]="showNote" (click)="addNewNote()" class="btn btn-primary"
+          [disabled]="popupForm.invalid">{{'button.add' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

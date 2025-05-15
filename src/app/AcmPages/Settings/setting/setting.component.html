@@ -1,0 +1,645 @@
+<!--title-->
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon"><i class="lnr-cog icon-gradient bg-tempting-azure"></i></div>
+      <div>{{'setting.setting'| translate }}</div>
+    </div>
+  </div>
+</div>
+<!-- tabs -->
+
+
+
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChanged($event)">
+
+  <mat-tab label="{{'setting.setting_system' | translate}}">
+    <div>
+      <div class="py-1">
+        <app-setting-system-licence></app-setting-system-licence>
+      </div>
+      <div *ngIf="(testExpiryDate)">
+        <div class="py-1">
+          <app-setting-synchronize-calendar></app-setting-synchronize-calendar>
+        </div>
+        <div class="py-1">
+          <app-customer-setting></app-customer-setting>
+        </div>
+        <div class="py-1">
+          <app-setting-notification></app-setting-notification>
+        </div>
+        <div class="py-1">
+          <app-charge-fee></app-charge-fee>
+        </div>
+        <div class="py-1">
+          <app-motifs-rejet></app-motifs-rejet>
+        </div>
+        <div class="py-1">
+          <app-apr-setting></app-apr-setting>
+        </div>
+        <div class="py-1">
+          <app-claims-customer></app-claims-customer>
+        </div>
+        <div class="py-1">
+          <app-environment></app-environment>
+        </div>
+        <div class="py-1">
+          <app-setting-level></app-setting-level>
+        </div>
+        
+
+
+        <div id="SMS-setting" class="card mb-2">
+          <div class="card-header d-flex" data-target="#collapseSMSSetting" aria-expanded="true"
+            aria-controls="collapseSMSSetting" (click)="toggleCollapseSMSSetting()">
+            <div [style]="{width : '98%'}"> <i class="lnr-cog px-2"> </i>
+              {{'setting.setting-SMS'| translate }}</div>
+            <div [style]="{width : '2%'}">
+              <i
+                [ngClass]="(expandedSettingSMS===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+            </div>
+          </div>
+          <div [ngClass]="(expandedSettingSMS===true)?'collapse show':'collapse'" aria-labelledby="headingTopupSteps"
+            data-parent="#accordionExample" *ngIf="expandedSettingSMS===true">
+            <app-setting-sms>
+            </app-setting-sms>
+          </div>
+        </div>
+
+
+
+        <div class="py-1">
+          <app-setting-reset-data></app-setting-reset-data>
+        </div>
+        <div class="py-1">
+          <app-setting-client></app-setting-client>
+        </div>
+        <div class="py-1">
+          <app-renewal-condition-settings></app-renewal-condition-settings>
+        </div>
+        <div class="py-1">
+          <app-setting-type-risk></app-setting-type-risk>
+        </div>
+        <div class="py-1">
+          <app-journal-entry-type></app-journal-entry-type>
+        </div>
+        <div class="py-1">
+          <app-currency-setting></app-currency-setting>
+        </div> 
+
+        <div class="py-1">
+          <app-closed-days-setting></app-closed-days-setting>
+        </div>
+
+        <div class="py-1">
+          <app-holidays-setting></app-holidays-setting>
+        </div>
+
+        <!-- Setting Synchronisation -->
+        <div class="card py-1">
+          <div class="card-header">
+            {{'setting.synchronize_loans'| translate }}
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Issued Loans -->
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_issued_loans' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="refreshIssuedLoans()">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- Cancelled Loans-->
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_cancelled_loans' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="refreshCancelledLoans()">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_loan_by_account_number' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2"
+                    (click)="synchronizeModal(synchronizeModalContent)">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_customer' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="synchCustomers()">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_portfolio' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="synchPortfolio()">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_customers_branches' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="synchCustomerBranches()">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                  {{'setting.synchronize_collections' | translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2" (click)="synchCollections()">
+                    {{'button.synchronize' | translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-xl-4 row">
+                <div class="col-xl-5">
+                {{'Charge_OFF'|translate}}
+                </div>
+                <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2"
+                    (click)="openchargeOffModal(chargeOffModal)">{{'upload_CSV_File'|translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                  </div>
+                </div>
+                <div class="col-xl-4 row">
+                  <div class="col-xl-5">
+                    {{'setting.run_aml'|translate}}
+                    </div>
+                    <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2"
+                    (click)="runAML()">{{'button.run'|translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                  </div>
+              </div>
+              </div>   
+              <div class="row pt-3">
+                <div class="col-xl-4 row">
+                  <div class="col-xl-5">
+                    {{'setting.run_Doubtful_loan'|translate}}
+                    </div>
+                    <div class="col-xl-6">
+                  <button class="btn-icon btn-icon-only btn btn-success mx-2"
+                    (click)="runDoubtfulLoan()">{{'button.run'|translate}}
+                    <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                  </button>
+                  </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div> 
+  </mat-tab>
+
+
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_product' | translate}}">
+    <div class="col-md-12 py-3">
+      <!-- choose product -->
+      <div class="card">
+        <div class="card-header">
+          {{(isEditMode ? 'setting.select_product' : 'setting.add_new_product') | translate}}
+          <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button *ngIf="isEditMode" [ngClass]="isEditMode ? 'btn-success' : 'btn-warning'" class="btn-icon btn" (click)="toggleIsEditMode()">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+                {{ 'setting.add_new_product' | translate}}
+            </button>
+        </div>
+        </div>
+        <div class="card-body" *ngIf="isEditMode">
+          <form [formGroup]="productForm">
+            <div class="row">
+              <div [ngClass]="{'col-md-8' : productSelected,'col-md-12' : !productSelected}">
+                <div class="position-relative select_product">
+                  <label>{{'setting.product' | translate}}</label>
+                  <div class="input-group">
+                    <select class="form-control" #selectedValue name="selectedValue" id="selectedValue"
+                      formControlName="selectedProduct" (change)="selectProduct()">
+                      <option disabled selected value>{{'setting.select_product' | translate}}</option>
+                      <option *ngFor="let productEntity of productEntitys" [ngValue]="productEntity">
+                        {{productEntity.description}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="productSelected" class="position-relative col-md-4">
+                <label></label>
+                <div class="pt-2">
+                  <div class="input-group ">
+                    <label class="pt-2 px-3">{{'setting.enable_product' | translate}}</label>
+                    <bSwitch [(ngModel)]="enabled" [switch-size]="'small'" [switch-animate]="true"
+                      [ngModelOptions]="{standalone : true}" [switch-off-color]="'danger'" class="px-2 mb-0 "
+                      (click)="EnableProduct()"></bSwitch>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-setting-product-general-configuration #generalConfig [productEntity]="productEntity" [isEditMode]="isEditMode"></app-setting-product-general-configuration>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-setting-product-configuration #productConfig [productEntity]="productEntity"></app-setting-product-configuration>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-guarantar-collateral #productGuarantar [productEntity]="productEntity" [isEditMode]="isEditMode"></app-guarantar-collateral>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-setting-topup-product #productTopup [productEntity]="productEntity" [isEditMode]="isEditMode"></app-setting-topup-product>
+      </div>
+
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-product-eligibility #productEligibility [productEntity]="productEntity" [isEditMode]="isEditMode"></app-product-eligibility>
+      </div>
+
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-product-guarantee #productGuarantee [productEntity]="productEntity" [isEditMode]="isEditMode"></app-product-guarantee>
+      </div>
+
+      <!-- setting AML ISCORE PER PRODUCT-->
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-setting-iscore-aml #productIscore [productEntity]="productEntity" [isEditMode]="isEditMode"></app-setting-iscore-aml>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-product-filters #productFilters [productEntity]="productEntity" [isEditMode]="isEditMode"></app-product-filters>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <ng-container *ngIf="isEditMode; else documentCreation">
+          <app-setting-document-type-product [productEntity]="productEntity"></app-setting-document-type-product>
+        </ng-container>
+        <ng-template #documentCreation>
+          <app-setting-document-product-creation #productDocumentCreation [productEntity]="productEntity"></app-setting-document-product-creation>
+        </ng-template>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-product-currency-setting #productCurrency [productEntity]="productEntity" [isEditMode]="isEditMode"></app-product-currency-setting>
+      </div>
+      <div class="py-1" *ngIf="productEntity != null || productEntity != undefined">
+        <app-payment-priority-setting #productPriority [productEntity]="productEntity" [isEditMode]="isEditMode"></app-payment-priority-setting>
+      </div>
+      <div class="card py-1 my-1" *ngIf="!isEditMode">
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button type="button" class=" btn btn-danger text-white" (click)="toggleIsEditMode()">
+                {{'button.cancel' | translate}}
+            </button>
+            <button type="button" class="m-2 btn btn-primary text-white" (click)="createProduct()">
+                {{'button.create_new_product' | translate}}
+            </button>
+        </div>
+    </div>
+    </div>
+  </mat-tab>
+
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_ged' | translate}}">
+    <div *ngIf="settingDMSLoading">
+      <div class="py-1">
+        <app-setting-document-type></app-setting-document-type>
+      </div>
+      <div class="py-1">
+        <div class="card">
+          <div class="card-header">
+            {{'setting.save_ged_documents' | translate}}
+          </div>
+          <div class="card-body">
+            <div class="row">
+              {{'setting.ged_document' | translate}} : {{countEnabledDocuments}}
+              <button [disabled]="countEnabledDocuments === 0"
+                class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" class="mx-2" name="plus"></fa-icon>
+                {{'button.synchronize' | translate}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_user' | translate}}">
+    <div *ngIf="settingUserLoading">
+      <div class="py-1">
+        <app-setting-users></app-setting-users>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_group' | translate}}">
+    <div *ngIf="settingGroupLoading">
+      <div class="py-1">
+        <app-groupe></app-groupe>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_habilitation' | translate}}">
+    <div *ngIf="settingAccessLoading">
+      <div class="py-1">
+        <app-habilitation></app-habilitation>
+      </div>
+    </div>
+  </mat-tab>
+
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.branches-setting.branches-setting' | translate}}">
+    <div *ngIf="settingBranches">
+      <div class="py-1">
+        <app-branches-setting></app-branches-setting>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.financial-category-setting.financial-category-setting' | translate}}">
+    <div *ngIf="settingFinancialCategory">
+      <div class="py-1">
+        <app-financial-category-setting></app-financial-category-setting>
+      </div>
+    </div>
+  </mat-tab>
+
+
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_aml' | translate}}">
+    <div *ngIf="settingAMLLoading">
+      <div class="py-1">
+        <app-setting-aml-check-and-doubtful-tx></app-setting-aml-check-and-doubtful-tx>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting-blacklist' | translate}}">
+    <div *ngIf="settingBlacklistLoading">
+      <div class="py-1">
+        <app-setting-blacklist></app-setting-blacklist>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.aml_setting.aml_setting_tab' | translate}}">
+    <div *ngIf="settingIscoreLoading">
+      <div class="py-1">
+        <app-setting-aml [navigationMode]="navigationMode"></app-setting-aml>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_field' | translate}}">
+    <div *ngIf="settingFieldLoading">
+      <div class="py-1">
+        <app-setting-field></app-setting-field>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_workflow' | translate}}">
+    <div class="card">
+      <div class="card-header">
+        {{'setting.select_product' | translate}}
+      </div>
+      <div class="card-body">
+        <form [formGroup]="productWorkflowForm">
+          <div class="row">
+            <div class="position-relative col-md-12 select_product">
+              <label>{{'setting.product' | translate}}</label>
+              <div class="input-group">
+                <select class="form-control" #selectedValue name="selectedValue"
+                  formControlName="selectedProductWorkflow" (change)="selectProductWorkflow()">
+                  <option disabled [selected]="productEntityWorkflow === null" value>{{'setting.select_product' |
+                    translate}}</option>
+                  <option *ngFor="let productEntity of productEntitys" [ngValue]="productEntity">
+                    {{productEntity.description}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="py-1" *ngIf="productEntityWorkflow != null || productEntityWorkflow != undefined">
+      <app-setting-level-process [productEntity]="productEntityWorkflow"
+        [productEntitys]="productEntitys"></app-setting-level-process>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.generic_workflow' | translate}}">
+    <div *ngIf="settinggGenericWorkflow" class="card">
+      <div class="card-header">
+        {{ 'setting.generic_workflow' | translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+          <button *ngIf="!productEntityWorkflow" class="d-inline-flex align-items-center btn btn-primary"
+            (click)="addConfiguration(modalContent, 'ADD')">
+            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+            {{'setting.setting_configuration_product.add' | translate}}
+          </button>
+
+          <button *ngIf="productEntityWorkflow" class="d-inline-flex align-items-center btn btn-warning"
+            (click)="addConfiguration(modalContent , 'UPDATE')">
+            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+            {{'setting.setting_configuration_product.edit' | translate}}
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="productWorkflowForm">
+          <div class="row">
+            <div class="position-relative col-md-12 select_product">
+              <label>{{'setting.product' | translate}}</label>
+              <div class="input-group">
+                <select class="form-control" #selectedValue name="selectedValue"
+                  formControlName="selectedProductWorkflow" (change)="selectProductWorkflow()">
+                  <option disabled [selected]="productEntityWorkflow === null" value>{{'setting.select_product' |
+                    translate}}</option>
+                  <option *ngFor="let productEntity of genericWorkflowObjects" [ngValue]="productEntity">
+                    {{productEntity.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="py-1" *ngIf="productEntityWorkflow != null || productEntityWorkflow != undefined">
+      <app-setting-generic-workflow [productEntity]="productEntityWorkflow"
+        [productEntitys]="genericWorkflowObjects"></app-setting-generic-workflow>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.setting_udf' | translate}}">
+    <div *ngIf="settingUDFLoading">
+      <div class="py-1">
+        <app-setting-udf></app-setting-udf>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.address-setting' | translate}}">
+    <div *ngIf="settingAddress">
+      <div class="py-1">
+        <app-setting-address></app-setting-address>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'setting.list-setting' | translate}}">
+    <div *ngIf="settingList">
+      <div class="py-1">
+        <app-setting-list></app-setting-list>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab *ngIf="testExpiryDate" label="{{'reporting.reporting-setting' | translate}}">
+    <div *ngIf="settingReporting">
+      <div class="py-1">
+        <app-core-reporting-setting></app-core-reporting-setting>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+
+<ng-template #modalContent let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'setting.setting_configuration_product.name'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='productDetailsForm' (ngSubmit)="onSubmit()">
+
+        <div class="position-relative pb-2" style = "margin-bottom: 11px;">
+          <label>  {{ 'setting-generic_workflow.name' | translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="name">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger" type = "reset"
+                  (click)="closeModale()">{{'button.cancel' | translate}}</button>
+          <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        </div>
+
+    </form>
+  </div>
+</ng-template>
+
+
+
+
+
+
+<ng-template #synchronizeModalContent let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="syncLoanForm" (ngSubmit)="synchronizeLoan()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'setting.synchronize_loan_by_account_number' | translate}}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label> {{'setting.account_number' | translate}} </label>
+          <div class="input-group">
+            <input class="form-control" formControlName="accountNumber" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-danger">{{'button.save' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #chargeOffModal let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{'upload_CSV_File'|translate}}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="file" class="form-control mb-3" (change)="onFileSelected($event)" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="uploadFile()">{{'upload'|translate}}</button>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="container text-center">
+  <div class="row mt-4" *ngIf="dtoList.length>0">
+    <div class="col-12">
+      <h2>Charge Off CSV Data</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>cu Account Id</th>
+            <th>orginal Product Id</th>
+            <th>charge Off Product Id</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of dtoList">
+            <td>{{ row.cuAccountId }}</td>
+            <td>{{ row.orginalProductId }}</td>
+            <td>{{ row.chargeOffProductId }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <form class="form" [formGroup]='productDetailsForm' (ngSubmit)="onSubmit()">
+
+        <div class="position-relative pb-2" style = "margin-bottom: 11px;">
+          <label>  {{ 'setting-generic_workflow.name' | translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="name">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger"
+                  (click)="closeModale()">{{'button.cancel' | translate}}</button>
+          <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        </div>
+
+    </form>
+  </div>
+</div> -->
+</ng-template>

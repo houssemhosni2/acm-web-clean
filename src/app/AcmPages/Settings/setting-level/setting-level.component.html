@@ -1,0 +1,105 @@
+<!--Setting Level-->
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header">
+    <i class="lnr-cog px-2"> </i>
+    {{'setting.setting_level.setting_level'| translate }}
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+          (click)="openLarge(content6)">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add' | translate}}
+        </button>
+    </div>
+  </div>
+  <p-table [columns]="cols" [value]="settingLevels" [reorderableColumns]="true" (onRowReorder)="onchange($event)"
+    sortField="levelOrder" sortOrder="1">
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns" pReorderableColumn>
+          {{col.header}}
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex">
+      <tr [pReorderableRow]="index">
+        <td *ngFor="let col of columns" [ngSwitch]="col.field">
+          <div *ngSwitchCase="'levelOrder'"><i class="pi pi-bars" style="display: flex;justify-content: center;"
+              pReorderableRowHandle></i></div>
+          <div *ngSwitchCase="'code'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'title'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'enabled'">
+            <div class="custom-checkbox custom-control">
+              <input class="custom-control-input" id="eCheckbox1" type="checkbox" [checked]="rowData[col.field]"
+                disabled>
+              <label class="custom-control-label" for="eCheckbox1"></label>
+            </div>
+          </div>
+        </td>
+        <td>
+          <button class="btn btn-warning">
+            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <div class="card-footer">
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class=" btn btn-primary text-white" (click)="updateOrder()" [disabled]="!updateOrdre">{{'button.save' | translate}}</button>
+        <button class="mx-1 btn btn-danger text-white" (click)="refresh()" [disabled]="!updateOrdre">{{'button.cancel' | translate}}</button>
+    </div>
+  </div>
+</div>
+
+
+<!--popup-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form-->
+    <form [formGroup]="popupForm" (ngSubmit)="d(onSubmit())">
+      <div class="modal-header py-2">
+        <h4 class="modal-title" *ngIf="updateId === 0">{{'setting.setting_level.add_new_setting_level'| translate }}
+        </h4>
+        <h4 class="modal-title" *ngIf="updateId !== 0">{{'setting.setting_level.update_setting_level'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <div class="position-relative pb-4">
+          <label> {{'setting.code'| translate }}</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="code" disabled>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.label'| translate }} <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="title">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.description'| translate }}</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="description">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.status'| translate }}</label>
+          <div class="input-group">
+            <bSwitch [switch-size]="'small'" [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0"
+              formControlName="status" [switch-handle-width]="40"></bSwitch>
+          </div>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c(reset())">{{'button.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="popupForm.invalid">{{'button.save' |translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

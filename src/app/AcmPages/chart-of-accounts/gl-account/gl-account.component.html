@@ -1,0 +1,226 @@
+<app-page-title [heading]="'gl-accounts.gl-accounts'| translate " [icon]="'pe-7s-cash'" [status]="-1"></app-page-title>
+<div class="card">
+    <div class="card-header">
+        {{'gl-accounts.gl-accounts'| translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="d-inline-flex align-items-center btn btn-primary" (click)="addGlAccount(modalContent)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                {{'setting.setting_configuration_product.add'| translate }} </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <p-table #dt [responsive]="true" [autoLayout]=true [value]="acmGlAccountPagination.results"
+            (onLazyLoad)="reloadGlAccountList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+            [totalRecords]="acmGlAccountPagination.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+            [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="cols" [(selection)]="glAccount"
+            selectionMode="single">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                        <div class="center-elem text-center">
+                            {{ col.header | translate}}
+                            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                </tr>
+                <tr>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <input *ngSwitchCase="'accountNumber'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'name'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'description'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <select *ngSwitchCase="'category'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option value="Income"> {{'setting.financial-category-setting.income'| translate }}
+                            </option>
+                            <option value="Expense"> {{'setting.financial-category-setting.expense'| translate }}
+                            </option>
+                            <option value="Asset"> {{'setting.financial-category-setting.asset'| translate }} </option>
+                            <option value="Liability"> {{'setting.financial-category-setting.liability'| translate }}
+                            </option>
+                            <option value="Capital/Reserve"> {{'setting.financial-category-setting.capital-reserve'|
+                                translate }} </option>
+                        </select>
+                        <select *ngSwitchCase="'accountType'" class="form-control ACM-Dashbord-productDescription-col"
+                        (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option value="Normal Account"> {{'gl-accounts.normal-account'| translate }}</option>
+                            <option value="Memo Account"> {{'gl-accounts.memo-account'| translate }}</option>
+                        </select>
+                        <select *ngSwitchCase="'branchId'" class="form-control ACM-Dashbord-productDescription-col"
+                        (change)="dt.filter($event.target.value, 'branchId', 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let branch of branchList" [value]="branch.id">
+                                {{ branch.code }} - {{ branch.name }}
+                            </option>
+                        </select>
+                        <select *ngSwitchCase="'currencyId'" class="form-control ACM-Dashbord-productDescription-col"
+                        (change)="dt.filter($event.target.value, 'currencyId', 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let currency of currencyList" [value]="currency.id">
+                                {{ currency.symbol }}
+                            </option>
+                        </select>
+                        <select *ngSwitchCase="'financialCategoryId'" class="form-control ACM-Dashbord-productDescription-col"
+                        (change)="dt.filter($event.target.value, 'financialCategoryId', 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let categoryFinancial of financialCategoryList" [value]="categoryFinancial.id">
+                                {{ categoryFinancial.code }} - {{ categoryFinancial.description }}
+                            </option>
+                        </select>
+                        <select *ngSwitchCase="'idMainAccount'" class="form-control ACM-Dashbord-productDescription-col"
+                        (change)="dt.filter($event.target.value, 'idMainAccount', 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let mainAccount of mainAccountList" [value]="mainAccount.id">
+                                {{ mainAccount.accountNumber }} - {{ mainAccount.name }}
+                            </option>
+                        </select>
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <div *ngSwitchCase="'accountNumber'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'name'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'category'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'accountType'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'idMainAccount'">{{rowData["mainAccount"]}}</div>
+                        <div *ngSwitchCase="'branchId'">{{rowData["branch"]}}</div>
+                        <div *ngSwitchCase="'financialCategoryId'">{{rowData["financialCategory"]}}</div>
+                        <div *ngSwitchCase="'currencyId'">{{rowData["currency"]}}</div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning text-white mx-1" (click)="editGlAccount(modalContent,rowData)">
+                            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                        </button>
+                    </td>
+                    <td>   
+                        <button class="btn btn-sm btn-danger text-white" (click)="disableGlAccount(rowData)">
+                            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title"> {{ (action === 'update' ? 'gl-accounts.update-gl-accounts' :
+                'gl-accounts.add-gl-accounts') | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModale()">&times;</span>
+            </button>
+        </div>
+        <form class="form" [formGroup]='groupForm'>
+            <div class="card-body">
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.account-number'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="accountNumber">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.name'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="name">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.description'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="description">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.category'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="category">
+                            <option value="Income"> {{'setting.financial-category-setting.income'| translate }}
+                            </option>
+                            <option value="Expense"> {{'setting.financial-category-setting.expense'| translate }}
+                            </option>
+                            <option value="Asset"> {{'setting.financial-category-setting.asset'| translate }} </option>
+                            <option value="Liability"> {{'setting.financial-category-setting.liability'| translate }}
+                            </option>
+                            <option value="Capital/Reserve"> {{'setting.financial-category-setting.capital-reserve'|
+                                translate }} </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.branch'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="branchId">
+                            <option *ngFor="let branch of branchList" [value]="branch.id">
+                                {{ branch.code }} - {{ branch.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.currency'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="currencyId">
+                            <option *ngFor="let currency of currencyList" [value]="currency.id">
+                                {{ currency.symbol }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.account-type'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="accountType">
+                            <option value="Normal Account"> {{'gl-accounts.normal-account'| translate }}</option>
+                            <option value="Memo Account"> {{'gl-accounts.memo-account'| translate }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.financial-category'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="financialCategoryId">
+                            <option *ngFor="let categoryFinancial of financialCategoryList"
+                                [value]="categoryFinancial.id">
+                                {{ categoryFinancial.code }} - {{ categoryFinancial.description }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'gl-accounts.main-account'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="idMainAccount">
+                            <option *ngFor="let mainAccount of mainAccountList" [value]="mainAccount.id">
+                                {{ mainAccount.accountNumber }} - {{ mainAccount.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <input class="form-check-input" type="checkbox" formControlName="subAccounts">
+                    <label class="custom-control-label ms-2">{{'gl-accounts.add-sub-account'| translate }} </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModale()">{{'button.cancel'
+                    | translate}}</button>
+                <button class="mb-1 btn btn-primary" type="submit" (click)="onSubmit()">{{'button.save' |
+                    translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

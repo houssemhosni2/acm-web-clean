@@ -1,0 +1,89 @@
+<div class="card">
+    <ngx-loading [show]="loading"
+        [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+    </ngx-loading>
+    <div class="card-header"> {{'setting.setting_product_guarantee.product_guarantee' | translate}} </div>
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="settingForm" (ngSubmit)="onSubmit()">
+        <div class="card-body">
+
+            <div class="row">
+                <div class="form-group col-xl-6 col-md-6 mt-6">
+                    <label>{{'setting.setting_product_guarantee.guarantee_config'| translate}}</label>
+                </div>
+
+                <div class="form-group ACM-image-client col-xl-1 col-md-1 mt-3">
+                    <label> {{ 'setting.setting_product_guarantee.guarantee_percentage' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 p-3">
+                    <div class="input-group">
+                        <div>
+                            <input class="form-control" formControlName="minGuaranteePercentage" type="number" min="0">
+                        </div>
+                        <span class="input-group-append">
+                            <button class="btn btn-light border hl" ngxclipboard="" type="button"
+                                ng-reflect-target-elm="">%</button></span>
+                    </div>
+                </div>
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'setting.setting_product_guarantee.min_guarantee_amount' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="minGuaranteeAmount" type="number" min="0">
+                    </div>
+                </div>
+
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'setting.setting_configuration_product.minAge' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="minimumAge" type="number" min="0">
+                    </div>
+                </div>             
+            </div>
+
+            <div class="row">
+                <div class="form-group col-xl-6 col-md-6 mt-6">
+                    <label>{{'setting.setting_product_guarantee.collateral_config'| translate}}</label>
+                </div>
+
+                <div class="form-group ACM-image-client col-xl-1 col-md-1 mt-3">
+                    <label> {{ 'setting.setting_product_guarantee.collateral_percentage' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 p-3">
+                    <div class="input-group">
+                        <div>
+                            <input class="form-control" formControlName="minCollateralPercentage" type="number" min="0">
+                        </div>
+                        <span class="input-group-append">
+                            <button class="btn btn-light border hl" ngxclipboard="" type="button"
+                                ng-reflect-target-elm="">%</button></span>
+                    </div>
+                </div>
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'setting.setting_product_guarantee.min_collateral_amount' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="minCollateralAmount" type="number" min="0">
+                    </div>
+                </div>
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'setting.setting_configuration_product.maxAge' | translate }} </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="maximumAge" type="number" min="0">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer" *ngIf="isEditMode">
+            <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                <button type="submit" class=" btn btn-primary text-white">{{'button.save' | translate}}</button>
+            </div>
+        </div>
+    </form>
+</div>

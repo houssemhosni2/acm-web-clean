@@ -1,0 +1,20 @@
+<div *ngIf="!isOfflineModeEnabled() && isLoading | async" class="overlay" [dir]="'ltr'">
+  <mat-progress-spinner *ngIf="!isOfflineModeEnabled()" class="spinner" [color]="color" [mode]="mode" [value]="value">
+  </mat-progress-spinner>
+  <!-- <circle-progress *ngIf="isOfflineModeEnabled()"
+  class="circle"
+  [percent]="100"
+  [radius]="100"
+  [outerStrokeWidth]="16"
+  [innerStrokeWidth]="8"
+  [outerStrokeColor]="'#30BFA5'"
+  [innerStrokeColor]="'#495057'"
+  [animation]="false"
+  [animationDuration]="10000"
+  [showSubtitle]= "false"
+  [titleFontSize]="35"
+  [unitsFontSize]="35"
+  [titleFontWeight]="600"
+  [unitsFontWeight]="600"
+></circle-progress> -->
+</div>

@@ -1,0 +1,67 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+    </ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseOne"
+      aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+
+      <div *ngIf="typeUDF==='3'">
+      <i class="lnr-magnifier text-secondary px-2"></i>
+       {{'customer.customer_analysis_loan' | translate}} : {{accountNumberExtern}}
+      </div>
+      <div *ngIf="typeUDF==='2'">
+        <i class="lnr-magnifier text-secondary px-2"></i>
+        {{'customer.customer_analysis_loan' | translate}} : {{loanEntity?.accountNumber}}
+      </div>
+      <div *ngIf="typeUDF==='4'">
+        <i class="lnr-magnifier text-secondary px-2"></i>
+        {{'generic-wf.generic-wf-info' | translate}}
+      </div>
+      <div *ngIf="typeUDF==='1'">
+        <i class="lnr-magnifier text-secondary px-2"></i>
+        {{'customer.customer_analysis_customer' | translate}}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseOne" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div *ngIf="udfLinksGroups.length > 0">
+      <div class="card-body">
+        <div>
+          <div class="container">
+            <label style="font-weight: bold;font-size: medium;">{{"udf.udf_category" | translate}}</label>   
+            <div class="row" *ngFor="let Groupe of udfLinksGroups, let i = index">
+              <div class="row" style="margin-bottom: 1%;">
+                <div>
+                    {{Groupe.userDefinedFieldGroupName}}
+                </div>
+              </div>
+              <div class="row" style="margin-left: 10%;">
+              <div class="col-xl-4 col-md-4 mb-3" *ngFor="let links  of Groupe.udfGroupeFieldsModels">
+                <div>
+                  <label style="font-weight: bold;">
+                    {{links.fieldName}}
+                  </label>
+                </div>
+                <div >
+                  {{links.value}}
+                </div>
+              </div>
+              </div>
+              <hr>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div *ngIf="udfLinksGroups.length === 0">
+        <div class="card-body">
+          <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

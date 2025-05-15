@@ -1,0 +1,35 @@
+<app-page-title [heading]=" 'sidebar.customer_meza_card'| translate " [icon]="'pe-7s-note2'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="row mr-30">
+  <div class="col-xl-12">
+    <mat-tab-group class="page-mat-tabs" (selectedTabChange)="changeTabs($event)">
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-primary">{{customerMezaCardStatut.sent}}</span>
+          <span class="control-label">{{ 'meza_card_check.sent' | translate }}</span>
+        </ng-template>
+        <app-customer-meza-card-table [customerPaginationEntity]='customerPaginationEntity' [statusTab]="'SENT'"></app-customer-meza-card-table>
+        <div class="d-block text-right px-2 py-2">
+          <button class="mb-2 mx-2 btn btn-danger" *ngIf="statusSent && !sharedService.habilitationButton('UNTRUST',currentPath)"
+          (click)="update('UNTRUSTED')">{{'button.untrusted' | translate}}</button>
+          <button class="mb-2 btn btn-success" *ngIf="statusSent && !sharedService.habilitationButton('TRUST',currentPath)"
+              (click)="update('TRUSTED')">{{'button.trusted' | translate}}</button>
+      </div>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-success">{{customerMezaCardStatut.trusted}}</span>
+          <span class="control-label">{{ 'meza_card_check.trust' | translate }}</span>
+        </ng-template>
+        <app-customer-meza-card-table [customerPaginationEntity]='customerPaginationEntity' [statusTab]="'TRUSTED'"></app-customer-meza-card-table>
+      </mat-tab>
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-danger">{{customerMezaCardStatut.untrusted}}</span>
+          <span class="control-label">{{ 'meza_card_check.untrust' | translate }}</span>
+        </ng-template>
+        <app-customer-meza-card-table  [customerPaginationEntity]='customerPaginationEntity' [statusTab]="'UNTRUSTED'"></app-customer-meza-card-table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

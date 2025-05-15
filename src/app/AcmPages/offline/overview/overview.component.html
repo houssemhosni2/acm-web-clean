@@ -1,0 +1,42 @@
+<!--title-->
+<app-page-title [heading]="'offline.overview'| translate " [icon]="'pe-7s-keypad'" [account]="''"
+  [status]="-1"></app-page-title>
+
+<div *ngIf="!isOfflineModeEnabled()" class="mx-4 display-end ACM-page-title-actions-{{translate.currentLang}}" (click)="syncronize()">
+  <button type="button" ngbDropdownToggle class="mb-2 mr-2 btn-icon btn btn-primary"><i
+      class="pe-7s-config btn-icon-wrapper"></i>{{'actions.synchronize'| translate }}</button>
+</div>
+
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <div *ngIf="1 > 0">
+      <div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{'offline.type'|translate}}</th>
+              <th>{{'offline.number'|translate}}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let element of elements">
+              <td>{{element.name}}</td>
+              <td>{{element.count}}</td>
+              <td class="d-flex">
+                <button class="btn btn-warning mx-2" [routerLink]="['/offline/preview']"
+                  [queryParams]="{ type: element.name, title: element.trasnlation}">
+                  <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                </button>
+                <button  *ngIf="element.count > 0" class="btn-icon btn-icon-only btn d-flex justify-items-center p-0 px-2 btn-primary" 
+                  type="button" (click)="syncronizeByType(element.name)" >  
+                  <i class="fa fa-refresh btn-icon-wrapper pt-2"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

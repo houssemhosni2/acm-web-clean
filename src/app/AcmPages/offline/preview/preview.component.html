@@ -1,0 +1,71 @@
+<!--title-->
+<app-page-title [heading]="title | translate " [icon]="'pe-7s-keypad'" [account]="''" [status]="-1"></app-page-title>
+
+<div class="main-card mb-3 card">
+
+  <div class="card-body">
+    <div *ngIf="1 > 0">
+      <div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{{'dashboard.client_name'|translate}}</th>
+              <th *ngIf="type == 'loans' || type == 'collections'">{{'dashboard.product_name'|translate}}</th>
+              <th *ngIf="type == 'loans' || type == 'collections'">{{'dashboard.amount'|translate}}</th>
+              <th *ngIf="type == 'loans' || type == 'collections'">{{'dashboard.owner'|translate}}</th>
+              <th *ngIf="type == 'loans'">{{'dashboard.status'|translate}}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let element of data; let index = index">
+              <td *ngIf="type == 'customers' || type == 'prospects'">{{getFullName(element)}}</td>
+              <td *ngIf="type == 'collections'">{{element.customerName}}</td>
+              <td *ngIf="type == 'loans'">{{getFullName(element.customerDTO)}}</td>
+              <td *ngIf="type == 'loans' || type == 'collections'">{{element.productDescription}}</td>
+              <td *ngIf="type == 'loans'">{{element.applyAmountTotal}}</td>
+              <td *ngIf="type == 'collections'">{{element.amount}}</td>
+              <td *ngIf="type == 'loans' || type == 'collections'">{{element.ownerName}}</td>
+              <td *ngIf="type == 'loans'">{{element.statutLibelle}}</td>
+              
+              <td class="d-flex">
+                <button *ngIf="type == 'loans'" class="btn btn-success" (click)="loanDetails(element)">
+                  <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                </button>
+
+                <button *ngIf="type == 'loans'" class="ms-3 btn btn-danger" 
+                (click)="delete(type, element.loanId)">
+                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+              </button>
+
+                <button *ngIf="type == 'prospects'" class="btn btn-success"
+                  (click)="customerUpdate(element,'UPDATE_ALL')">
+                  <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                </button>
+                <button *ngIf="type == 'customers'" class="btn btn-success"
+                  (click)="customerUpdate(element,'UPDATE')">
+                  <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                </button>
+
+                <button *ngIf="type == 'collections'" class="btn btn-success"
+                (click)="collectionUpdate(element)">
+                <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+              </button>
+
+              <button class="btn-icon btn-icon-only btn d-flex justify-items-center p-0 px-2 mx-2 btn-primary" 
+                type="button" (click)="syncronizeElement(element,type,index)" >  
+                <i class="fa fa-refresh btn-icon-wrapper pt-2"></i>
+              </button>
+
+                <button *ngIf="type == 'customers' || type == 'prospects' || type == 'collections'"  class="btn btn-danger"
+                (click)="delete(type, type === 'customers' || type == 'prospects' ? element.itemId  : element.id)">
+                  <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

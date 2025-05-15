@@ -1,0 +1,232 @@
+<app-page-title [heading]=" 'collections.collection-dashboard.loan-collection'| translate " [icon]="'pe-7s-note2'"
+  [account]="loan.accountNumber" [collectionStatut]="collection.status">
+</app-page-title>
+
+<div class="row">
+  <div class="col-md-9 col-xl-9 px-1">
+    <div class="mb-1 card">
+      <div class="card-header-tab card-header">
+        <div class="card-header-title font-size-lg text-capitalize fw-normal">
+          <i class="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
+        </div>
+      </div>
+      <div class="g-0 row">
+        <div class="col-sm-6 col-md-4 col-xl-4">
+          <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+            <div class="icon-wrapper rounded-circle">
+              <div class="icon-wrapper-bg opacity-10 bg-primary"></div>
+              <i class="lnr-clock text-white opacity-8"></i>
+            </div>
+            <div class="widget-chart-content">
+              <div class="widget-subheading"> {{'collections.collection-dashboard.lateDays'|translate}}</div>
+              <div class="widget-numbers">{{collection.lateDays}} {{'collections.collection-dashboard.days'|translate}}
+              </div>
+            </div>
+          </div>
+          <div class="divider m-0 d-md-none d-sm-block"></div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-xl-4">
+          <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+            <div class="icon-wrapper rounded-circle">
+              <div class="icon-wrapper-bg opacity-9 bg-warning"></div>
+              <i class="lnr-list text-white"></i>
+            </div>
+            <div class="widget-chart-content">
+              <div class="widget-subheading">{{'collections.collection-dashboard.nb_unpaid_installment'|translate}}
+              </div>
+              <div class="widget-numbers"><span>{{collection.numberOfUnpaidInstallment}}
+                  {{'collections.collection-dashboard.installment'|translate}}</span></div>
+            </div>
+          </div>
+          <div class="divider m-0 d-md-none d-sm-block"></div>
+        </div>
+        <div class="col-sm-12 col-md-4 col-xl-4">
+          <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+            <div class="icon-wrapper rounded-circle">
+              <div class="icon-wrapper-bg opacity-9 bg-danger"></div>
+              <i class="pe-7s-credit text-white"></i>
+            </div>
+            <div class="widget-chart-content">
+              <div class="widget-subheading">{{'collections.collection-dashboard.unpaid_amount'|translate}}</div>
+              <div class="widget-numbers"><span>{{collection.unpaidAmount| number : this.decimalPlaces:'fr'}}
+                  {{collection.currencySymbol}}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-customer [expanded]="true" [collection]="'inCollection'"></app-customer>
+     <app-loan-info [expanded]="true"></app-loan-info>
+    <app-loan-provider-article [mode]="view"> </app-loan-provider-article>
+    <app-customer-account-360 [expanded]="true" [fromCustomer360] = "true"></app-customer-account-360>
+    <app-loan-guarantors [expanded]="false"></app-loan-guarantors>
+    <app-list-documents *ngIf="!isOfflineModeEnabled()" [expanded]="true"></app-list-documents>
+    <app-screening *ngIf="!isOfflineModeEnabled()" [expandedCustomerScreening]="false" [expandedGuanatorsScreening]="false" [loanApproval]="true">
+    </app-screening>
+    <app-legal-participants [source]="'COLLECTION'" [expanded]="true" [collectionId]="collection.id" [saveParticipants]="saveParticipants"
+    (completeAction)="actionCompleted($event)" [originSource]="originSource"></app-legal-participants>
+    <app-third-party-hitsory *ngIf="!isOfflineModeEnabled()"></app-third-party-hitsory>
+    <app-customer-notes *ngIf="!isOfflineModeEnabled()" [expanded]="false"></app-customer-notes>
+    <app-customer-collection-history [activeCollection]="collection.id"
+      [expanded]="true"></app-customer-collection-history>
+    <app-collections-documents *ngIf="!isOfflineModeEnabled()" [category]="categoryCollection" [expanded]="true"></app-collections-documents>
+    <app-collection-note [category]="categoryCollection" [showAddButton]="true" [expanded]="true"
+      [collectionId]="collection.id"></app-collection-note>
+    <app-setting-collection-validation *ngIf="!completeButtonDisabled" [expanded]="true"
+      [saveFilesAction]="saveFilesAction" (completeAction)="actionCompleted()"
+      [originSource]="originSource"></app-setting-collection-validation>
+   <app-event-table [expanded]="true" [source]="'COLLECTION'"></app-event-table>
+    <app-charge-fee-step *ngIf="!isOfflineModeEnabled()" [expanded]="true" [source]="'COLLECTION'"></app-charge-fee-step>
+    <app-udf-step-workflow  [source]="'workflow'" [category]="'COLLECTION'"></app-udf-step-workflow>
+  </div>
+  <div class="col-md-3 col-xl-3 px-1">
+    <app-collection-process></app-collection-process>
+  </div>
+
+</div>
+<div class="row" *ngIf="source !=='preview'">
+  <div class="col-xl-9 col-md-9 pr-0 mt-2">
+    <div class="d-block text-end card-footer p-2">
+      <button class="mx-2 btn btn-outline-danger" (click)="exit()">
+        {{'button.exit' | translate}}
+      </button>
+      <button *ngIf="collection.status==0 && !isOfflineModeEnabled()" [disabled]="completeButtonDisabled" class="mx-2 btn btn-outline-danger" (click)="skipModal(content)">
+         {{'button.skip' | translate}}
+      </button>
+      <button *ngIf="!isOfflineModeEnabled()" [disabled]="completeButtonDisabled" class="mx-2 mx-2 btn btn-primary" (click)="createLegal()">
+        {{'button.close-collection-create-legal' | translate}}
+      </button>
+
+      <button [disabled]="completeButtonDisabled" class="mx-2 mx-2 btn btn-primary" (click)="save()">
+        {{'button.save'| translate }}
+      </button>
+      <button [disabled]="completeButtonDisabled" class="mx-2 mx-2 btn btn-success" (click)="actionCompleted()">
+        {{'button.complete'| translate }}
+      </button>
+      <button *ngIf = "reviewSteps().length>0 &&  !loanSharedService.habilitationButton('REVIEW_COLLECTION',currentPath) && !isOfflineModeEnabled()"
+          [disabled]="completeButtonDisabled" class="mx-2 mx-2 btn btn-warning text-white"
+      (click)="reviewModal(content2, 'REVIEW')">{{'button.review' | translate}}</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #content  let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="skip()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'review.skip'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>step</label>
+          <span class="text-danger">*</span>
+          <select class="form-control" formControlName="step">
+            <option *ngFor="let step of skipSteps()" [ngValue]="step">
+              {{step.libelle}}
+            </option>
+          </select>
+        </div>
+
+
+
+
+        <div class="position-relative form-group">
+          <label>{{'setting.group_management.list_groupe'| translate }}</label>
+
+
+          <ngx-select-dropdown tabindex="0" formControlName="user" [multiple]="false"
+            [(ngModel)]="participantSelected" [options]="groupeEntitys" [config]="configUsers"></ngx-select-dropdown>
+        </div>
+
+
+
+
+
+
+
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+                (change)="changeConfirmChecbox()">
+              <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-warning text-white">Skip</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'review.review_collection'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifReviewEntity of settingMotifReviewEntitys"
+              [ngValue]="settingMotifReviewEntity">
+              {{settingMotifReviewEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_steps'| translate }}</label>
+          <select class="form-control" formControlName="step" >
+            <option *ngFor="let step of reviewSteps()" [ngValue]="step">
+              {{step.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'review.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control" >
+              <input class="form-check-input" id="CheckboxReviewOnlySelected" type="checkbox" formControlName="reviewAllPreviousSteps">
+              <label class="custom-control-label ms-2">{{'review.review_all_previous_steps'|translate}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReview">{{'button.confirm_checkbox' |
+                translate}}</label>
+              <input class="form-check-input" id="exampleCustomCheckboxReview" type="checkbox" formControlName="confirm"
+                (change)="changeChecboxReview()">
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button
+        type="submit" class="btn btn-warning text-white">{{'button.review' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

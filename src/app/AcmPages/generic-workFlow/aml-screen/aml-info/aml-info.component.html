@@ -1,0 +1,45 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+      aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-book text-secondary px-2"></i>
+        {{'aml.aml_info'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne">
+      <div class="m-3">
+        <app-aml-profile-informtion [gender]="amlData?.mapRecord?.Gender" [type]="amlData?.mapRecord?.recordType"
+          [nameDetails]="amlData?.mapRecord?.NameDetails" [descriptions]="amlData?.mapRecord?.Descriptions"
+          [dateDetails]="amlData?.mapRecord?.DateDetails"
+          [images]="amlData?.mapRecord?.Images"></app-aml-profile-informtion>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main-card mb-3 card">
+  <app-aml-profile-details [descriptions]="amlData?.mapRecord?.Descriptions"
+    [expanded]="true"></app-aml-profile-details>
+</div>
+<div class="main-card mb-3 card">
+  <app-aml-profile-sanctions-references [sanctionsReferences]="amlData?.mapRecord?.SanctionsReferences"
+    [expanded]="true"></app-aml-profile-sanctions-references>
+</div>
+<div class="main-card mb-3 card">
+  <app-aml-profile-identity [iDNumberTypes]="amlData?.mapRecord?.IDNumberTypes"
+    [expanded]="true"></app-aml-profile-identity>
+</div>
+<div class="main-card mb-3 card">
+  <app-aml-profile-function [roleDetail]="amlData?.mapRecord?.RoleDetail" [expanded]="true"></app-aml-profile-function>
+</div>
+<div class="main-card mb-3 card">
+  <app-aml-profile-note [profileNotes]="amlData?.mapRecord?.ProfileNotes" [expanded]="true"></app-aml-profile-note>
+</div>
+<div class="main-card mb-3 card">
+  <app-aml-profile-sources [sourceDescription]="amlData?.mapRecord?.SourceDescription"
+    [expanded]="true"></app-aml-profile-sources>
+</div>

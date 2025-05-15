@@ -1,0 +1,42 @@
+<div class="card">
+    <div class="card-header">
+        {{'setting.payment-priority-setting.payment-priority-setting'| translate }}
+    </div>
+    <div *ngIf="form">
+        <form [formGroup]="form">
+            <div class="card-body">
+                <div class="col-lg-6 position-relative pb-4">
+                    <div formArrayName="priorities">
+                        <div *ngFor="let priority of paymentPriotityTab; let i = index">
+                            <div class="d-flex align-items-center">
+                                <div class="col-lg-3">
+                                    <select [formControlName]="i" class="form-control form-group">
+                                        <option value="">-- {{'setting.payment-priority-setting.select-priority'| translate }} --</option>
+                                        <ng-container *ngFor="let option of paymentPriotityTab;let j = index">
+                                            <option [value]="option.value" *ngIf="!isOptionHidden(option.value, i)">
+                                                {{ j+1}}
+                                            </option>
+                                        </ng-container>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="p-2">{{ priority.i18nKey | translate }} {{'setting.payment-priority-setting.priority-order'| translate }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer" *ngIf="isEditMode">
+                <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                    <button type="button" class=" btn btn-danger text-white" (click)="resetForm()">
+                        {{'button.refresh' | translate}}
+                    </button>
+                    <button type="button" class="m-2 btn btn-primary text-white" (click)="save()">
+                        {{'button.save' | translate}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

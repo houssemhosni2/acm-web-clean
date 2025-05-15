@@ -1,0 +1,63 @@
+<div *ngIf="acmAmlChecksDTOs">
+
+    <div class="card-header d-flex justify-content-between">
+        <div> {{ 'aml_profile_details.workflow' | translate}} </div>
+    </div>
+    <div class="card-body">
+        <div class="row m-1 pb-0">
+            <perfect-scrollbar *ngIf="this.items.length > 0">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{'customer.aml_status' | translate }}</th>
+                                <th>{{'generic_wf.object_name'| translate }}</th>
+                                <th>{{'dashboard.owner'| translate }}</th>
+                                <th>{{'dashboard.status'| translate }}</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="items">
+                            <tr *ngFor="let item of items">
+                                <td>
+                                    <div *ngIf="item?.amlStatus.includes('Not')"
+                                        class="badge bg-success ng-star-inserted" style="margin: 2px;">
+                                        {{ item?.amlStatus}}  
+                                    </div>
+                                    <div *ngIf="item?.amlStatus.includes('Confirmed')"
+                                        class="badge bg-danger ng-star-inserted" style="margin: 2px;">
+                                        {{ item?.amlStatus}}
+                                    </div>
+                                    <div *ngIf="item?.amlStatus.includes('Pending')"
+                                        class="badge bg-warning ng-star-inserted" style="margin: 2px;">
+                                        {{ item?.amlStatus}}
+                                    </div>
+                                </td>
+                                <td>{{ item.genericWorkFlowObject.name }}</td>
+                                <td *ngIf="item.ownerName">{{ item.ownerName}} </td>
+                                <td *ngIf="item.groupOwnerName">{{ item.groupOwnerName}}</td>
+                                <td>
+                                    <div class="badge bg-primary mx-1 p-1" >
+                                        <div class="px-1">
+                                            <span> {{ item.actualStepName}} </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td *ngIf="item.groupOwnerName && !isdPdf" >
+                                    <button (click)="assignItem(item)" pButton type='button' icon='fa fa-edit'
+                                        class="p-1" [disabled]="item?.status === 5"></button>
+                                </td>
+                                <td *ngIf="item.ownerName && !isdPdf">
+                                    <button (click)="itemDetails(item)" pButton type='button' icon='fa fa-edit'
+                                        class="p-1" [disabled]="item?.status === 5"></button>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </perfect-scrollbar>
+        </div>
+    </div>
+</div>

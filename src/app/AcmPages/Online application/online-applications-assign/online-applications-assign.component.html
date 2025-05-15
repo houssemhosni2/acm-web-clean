@@ -1,0 +1,125 @@
+<app-page-title [heading]=" 'sidebar.loan_ib'| translate " [icon]="'pe-7s-note2'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="card">
+  <div class="card-header d-flex justify-content-between">
+    <div>
+      <i class="text-secondary pr-2"></i>
+      {{'loan_assign.list_loan'| translate }}
+    </div>
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}"
+      *ngIf="!loanSharedService.habilitationButton('ASSIGN_LOAN',currentPath) || loanSharedService.getAuthorized()">
+      <button class="mb-2 mr-2 btn-icon btn btn-primary" (click)="openAssign(content)" [disabled]="check  || disable">
+        <i class="lnr-hand btn-icon-wrapper"></i>
+        {{'button.assign' | translate}}
+      </button>
+    </div>
+  </div>
+  <p-table #dt [responsive]="true" [autoLayout]=true [value]="loanIbPaginationEntity.resultsIbLoans"
+    (onLazyLoad)="reloadLoansList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+    [totalRecords]="loanIbPaginationEntity.totalElements"
+    [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns">
+
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th style='width: 40px;'></th>
+        <!-- actions button -->
+        <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+          <div class="center-elem text-center">
+            {{col.header | translate}}
+            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th style='width: 40px;'></th>
+        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+          <input *ngSwitchCase="'customerNameNoPipe'" class="form-control" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'customerAddress'" class="form-control" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <select *ngSwitchCase="'productDescription'" class="form-control"
+            (change)="dt.filter($event.target.value, col.field, 'equals')">
+            <option *ngFor="let product of products" value="{{product.value}}">{{product.label}}</option>
+          </select>
+          <input *ngSwitchCase="'applyAmountTotal'" class="form-control" type="number" min="0" step="50"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'applyDate'" class="form-control" type="date"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'owner'" class="form-control" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+      <tr [pSelectableRow]="rowData">
+        <td class="ACM-table-notification-td-1">
+          <div id="checkboxlist" class="custom-checkbox custom-control">
+            <input type="checkbox" [id]="rowData?.loanIdIb" (change)="onChangeCheckBox(rowData, i, $event)"
+              class="custom-control-input"><label class="custom-control-label" [for]="rowData?.loanIdIb"></label>
+          </div>
+        </td>
+        <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+          <div *ngSwitchCase="'customerNameNoPipe'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'customerAddress'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'productDescription'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'applyAmountTotal'">
+            {{rowData[col.field] | number : this.devToolsServices.getDecimalPlaces(loans.currencyDecimalPlaces) }}
+            {{ loans?.currencySymbol }} </div>
+          <div *ngSwitchCase="'applyDate'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+          <div *ngSwitchCase="'ownerName'">{{rowData[col.field]}}</div>
+        </td>
+        <td>
+          <button class="btn btn-warning" (click)='loanIbDetails(rowData)'>
+            <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<!--popup Reassign application-->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="assignForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'REASSIGN.reassign_app'| translate }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label>{{'REASSIGN.list_user'| translate }}</label>
+          <div class="input-group">
+            <select class="form-control" formControlName="participants">
+              <option *ngFor="let user of accountPortfolios" [ngValue]="user">
+                {{user.fullName}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label> {{'reject.note'| translate }} </label>
+          <div class="input-group">
+            <textarea class="form-control" formControlName="note"></textarea>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="custom-control-input" id="exampleCustomCheckbox" type="checkbox" formControlName="confirm"
+                (change)="changeChecboxModel($event)">
+              <label class="custom-control-label ms-2" for="exampleCustomCheckbox">{{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.cancel' |
+          translate}}</button>
+        <button type="submit" class="btn btn-success">{{'button.ok' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

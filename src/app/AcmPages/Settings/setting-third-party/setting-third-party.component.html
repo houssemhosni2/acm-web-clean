@@ -1,0 +1,114 @@
+<app-page-title [heading]="'setting.third-party.third-party'| translate "
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [status]="-1"></app-page-title>
+
+<div class="card">
+  <div class="card-header">
+    {{ 'setting.third-party.third-party' | translate }}
+
+
+
+  </div>
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="settingThirdPartyPagination.resultsThirdParties"
+      (onLazyLoad)="reloadThirdPartyList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="settingThirdPartyPagination.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]"
+      [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [(selection)]="settingThirdPartyEntity"
+      selectionMode="single">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <!-- actions button -->
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{ col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+
+            <input *ngSwitchCase="'firstName'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'lastName'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'email'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'addressParty'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'code_postal'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'phoneNumber'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <select *ngSwitchCase="'type'" class="form-control"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="null">{{'category_loan.all'| translate}}</option>
+              <option value="Financial partners">{{ 'party.type.financial-partners' | translate }}</option>
+              <option value="Insurance companies">{{ 'party.type.insurance-companies' | translate }}</option>
+              <option value="Financial backers">{{ 'party.type.financial-backers' | translate }}</option>
+              <option value="Business partners">{{ 'party.type.business-partners' | translate }}</option>
+              <option value="Technical partners">{{ 'party.type.technical-partners' | translate }}</option>
+              <!-- <option value="Control agency">{{ 'party.type.control-agency' | translate }}</option> -->
+              <option value="Individuals">{{ 'party.type.individuals' | translate }}</option>
+              <option value="Lawyer">{{ 'party.type.lawyer' | translate }}</option>
+              <option value="Bailiff">{{ 'party.type.bailiff' | translate }}</option>
+              <option value="Expert">{{ 'party.type.expert' | translate }}</option>
+              <option value="Consultant">{{ 'party.type.consultant' | translate }}</option>
+              <option value="Collection company">{{ 'party.type.collection_company' | translate }}</option>
+              <option value="Recovery company">{{ 'party.type.recovery_company' | translate }}</option>
+            </select>
+            <select *ngSwitchCase="'statut'" class="form-control"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="null">{{'category_loan.all'| translate}}</option>
+              <option value="Active"> {{ 'party.statut.active' | translate }}</option>
+              <option value="Inactive"> {{ 'party.statut.inactive' | translate }}</option>
+              <option value="Reactivated"> {{ 'party.statut.reactivated' | translate }}</option>
+              <option value="Black list"> {{ 'party.statut.black-list' | translate }}</option>
+            </select>
+            <input *ngSwitchCase="'numero_rne'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'pays'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'ville'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <select *ngSwitchCase="'enabled'" class="form-control ACM-Dashbord-productDescription-col"
+              (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+              <option value=""> {{ "category_loan.all" | translate }}</option>
+              <option value="true">{{ "setting.on" | translate }}</option>
+              <option value="false">{{ "setting.off" | translate }}</option>
+            </select>
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+            <div *ngSwitchCase="'firstName'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'lastName'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'email'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'addressParty'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'code_postal'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'phoneNumber'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'type'">{{rowData[col.field]|translate}}</div>
+            <div *ngSwitchCase="'statut'">{{rowData[col.field]|translate}}</div>
+            <div *ngSwitchCase="'numero_rne'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'pays'">{{rowData[col.field]|translate}}</div>
+            <div *ngSwitchCase="'ville'">{{rowData[col.field]|translate}}</div>
+            <div *ngSwitchCase="'enabled'">
+              <bSwitch [(ngModel)]="rowData[col.field]" [switch-size]="'mini'" [switch-animate]="true"
+                [switch-off-color]="'danger'" [switch-handle-width]="40" class="px-2 mb-0"
+                (click)="endableDisable(rowData)">
+              </bSwitch>
+            </div>
+          </td>
+          <td *ngIf="!sharedService.habilitationButton('UPDATE',currentPath)">
+            <button class="btn btn-success" (click)="thirdPartyUpdate(rowData)">
+              <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

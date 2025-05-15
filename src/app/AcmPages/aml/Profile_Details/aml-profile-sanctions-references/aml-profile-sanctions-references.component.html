@@ -1,0 +1,39 @@
+<div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseProfileDetails"
+    aria-expanded="true" aria-controls="collapseProfileDetails" (click)="toggleCollapse()">
+    <div> {{ 'aml_profile_details.sanctions_section.sanctions_list' | translate }} </div>
+    <div *ngIf="!isdPdf">
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+</div>
+<div id="collapseProfileDetails" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+    <div class="row m-1 pb-0">
+        <div class="table-responsive">
+            <table class=" mb-0 table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'aml_profile_details.sanctions_section.sanctions_list' | translate }}</th>
+                        <th>{{ 'aml_profile_details.sanctions_section.from' | translate }}</th>
+                        <th>{{ 'aml_profile_details.sanctions_section.to' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="sanctionsReferencesList">
+                    <tr *ngFor="let item of sanctionsReferencesList">
+                        <td>
+                            {{item?.name}}
+                        </td>
+                        <td>
+                            <span *ngIf="item?.SinceDay"> {{ item?.SinceDay }} </span>
+                            <span *ngIf="item?.SinceMonth"> / {{ item?.SinceMonth }} </span>
+                            <span *ngIf="item?.SinceYear"> / {{ item?.SinceYear }} </span>
+                        </td>
+                        <td>
+                            <span *ngIf="item?.ToDay"> {{ item?.ToDay }} </span>
+                            <span *ngIf="item?.ToMonth"> / {{ item?.ToMonth }} </span>
+                            <span *ngIf="item?.ToYear"> / {{ item?.ToYear }} </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

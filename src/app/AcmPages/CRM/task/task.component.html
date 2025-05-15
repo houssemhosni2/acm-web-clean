@@ -1,0 +1,190 @@
+<app-page-title [heading]="'sidebar.tasks' | translate" [icon]="'lnr-database'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="card mb-3">
+  <div class="card-header-tab card-header">
+    <div class="btn-actions-pane-right">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addEvent()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'button.create' | translate}}
+      </button>
+    </div>
+  </div>
+
+  <div class="card-body ACM-task">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="scroll-area-lg">
+      <perfect-scrollbar [autoPropagation]="true">
+        <ul class="todo-list-wrapper list-group list-group-flush" *ngFor="let task of tasks; let i =index">
+          <div class="ACM-taskdate">
+            <span
+              *ngIf=" i == 0 || (task?.dateDebut | date:'EEEE dd MMMM ') !== (tasks[i-1]?.dateDebut | date:'EEEE dd MMMM ')">
+              {{ task?.dateDebut | date:'EEEE dd MMMM '}}</span>
+          </div>
+          <li class="list-group-item">
+            <div *ngIf="task.category === loan_category" class="todo-indicator  " style="background-color: #a4ddf1">
+            </div>
+            <div *ngIf="task.category === legal_category" class="todo-indicator  " style="background-color: #dc5b75">
+            </div>
+            <div *ngIf="task.category === collection_category" class="todo-indicator  "
+              style="background-color: #b0e5b8"></div>
+            <div *ngIf="task.category === prospect_category" class="todo-indicator " style="background-color: #b0e5b8">
+            </div>
+            <div *ngIf="task.category === claim_category" class="todo-indicator" style="background-color: #80BCBD;">
+            </div>
+            <div class="widget-content p-0">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left mx-2">
+                  <div class="custom-checkbox custom-control"><input type="checkbox" [id]="task?.id"
+                      (change)='onChange(task,i)' class="custom-control-input"><label class="custom-control-label"
+                      [for]="task?.id">&nbsp;</label>
+                  </div>
+                </div>
+                <div class="widget-content-left">
+                  <div class="widget-heading">
+                    {{ task?.dateDebut !== null ? task?.dateDebut.substring(11, 16) : task?.dateDebut}}-
+                    {{ task?.dateFin !== null ? task?.dateFin.substring(11, 16) : task?.dateFin}}
+                    &nbsp;&nbsp;&nbsp;{{ task?.libelleEvent }}
+                    <div *ngIf="task.statut === 'New'" class="badge badge bg-warning ml-2">
+                      {{ 'status.new' | translate }}</div>
+                    <div *ngIf="task.statut === 'Done' || task.statut === 'CLOSED'" class="badge badge bg-success ml-2">
+                      {{ 'status.done' | translate }}</div>
+                    <div *ngIf="task.statut === 'Canceled'" class="badge badge bg-danger ml-2">
+                      {{ 'status.cancel' | translate }}</div>
+                  </div>
+                  <div class="widget-subheading-left"><i>{{ task?.description }}</i></div>
+                </div>
+                <div *ngIf="visibleIndices.has(i)" class="widget-content-right widget-content-actions">
+                  <button class="btn btn-warning text-white" [hidden]="iconButton" (click)="editEvent(task)">
+                    <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-ruler')"></fa-icon>
+                  </button>
+                  &nbsp;
+                  <button class="btn btn-danger" [hidden]="iconButton" (click)="openDialog(task?.id)">
+                    <fa-icon [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>
+          <div>
+
+          </div>
+        </ul>
+        <div *ngIf="tasks.length === 0" class="pt-3">
+          <ul class="todo-list-wrapper list-group list-group-flush">
+            <h6 style="color: red;">{{ 'task.missing_task' | translate }} </h6>
+          </ul>
+        </div>
+      </perfect-scrollbar>
+    </div>
+    <div class="d-block text-end card-footer pt-3 mx-2">
+      <button class="mb-2 mx-2 btn btn-outline-danger" (click)="cancelTask()" [disabled]="block">{{ 'button.cancel' |
+        translate }}</button>
+      <button class="mb-2 btn btn-success" (click)="doneTask()" [disabled]="block">{{ 'button.done' | translate
+        }}</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title" *ngIf="calendarEventsEntity.id === undefined">{{ 'task.new_event' | translate }}</h5>
+      <h5 class="modal-title" *ngIf="calendarEventsEntity.id !== undefined">{{ 'task.modif_event' | translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="card-body">
+      <form class="form" [formGroup]="eventForm" (ngSubmit)="onSubmit()" (change)="changeForm()">
+        <div class="position-relative">
+          <label> {{'task.title'| translate }}</label>
+          <div>
+            <input type="text" class="form-control" formControlName="title">
+          </div>
+        </div>
+        <br>
+        <div class="position-relative">
+          <label> {{'task.customers'| translate }}</label>
+            <p-autoComplete formControlName="customer" [suggestions]="customerPaginationEntity.resultsCustomers"
+              (completeMethod)="filterCustomerSingle($event)" field="customerNameNoPipe" [size]="30" [minLength]="1"
+               [forceSelection]="true"  [inputStyle]="{'width': '100%'}"   [style]="{'width':'100%'}">
+               <ng-template let-filteredCustomer pTemplate="item">
+                {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+              </ng-template>
+            </p-autoComplete>
+          <br>
+        </div>
+        <br>
+        <div class="position-relative">
+          <label> {{'task.start_date'| translate }}</label>
+          <div class="input-group">
+            <div class="col-6">
+              <input type="date" class="form-control" [min]="minDate" formControlName="startDate"
+                (change)="dateChanged()">
+            </div>
+            <div class="col-6">
+              <input type="time" class="form-control" formControlName="hourDate">
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="position-relative">
+          <label> {{'task.end_date'| translate }}</label>
+          <div class="input-group">
+            <div class="col-6">
+              <input type="date" class="form-control" [min]="eventForm.controls.startDate.value"
+                formControlName="endDate" (change)="dateChanged()">
+            </div>
+            <div class="col-6">
+              <input type="time" class="form-control" formControlName="hourEndDate">
+            </div>
+          </div>
+        </div>
+        <br>
+        <div>
+          <label>{{'task.participant'| translate }} </label>
+          <ngx-select-dropdown tabindex="0" formControlName="participant" [multiple]="true" [options]="participants"
+            [config]="configParticipants" (change)="participantMethod()"></ngx-select-dropdown>
+        </div>
+        <br>
+        <div class="position-relative">
+          <label> {{'task.location'| translate }}</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="location">
+          </div>
+        </div>
+        <br>
+        <div class="position-relative">
+          <label> {{'task.description'| translate }}</label>
+          <div class="input-group">
+            <textarea rows="3" cols="20" pInputTextarea class="form-control" formControlName="description">
+          </textarea>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <button class="mb-2 mx-2 btn btn-outline-danger" type="reset" (click)="reset()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-2 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+          <button class="mb-2 mx-2 btn btn-outline-primary"
+            *ngIf="calendarEventsEntity?.category === collectionCategory" (click)="collectionDetails()">
+            {{'collections.open_collection' |translate}}</button>
+          <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="calendarEventsEntity?.category === loanCategory"
+            (click)="loanDetails()">{{'task.open_loan' | translate}}</button>
+          <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="calendarEventsEntity?.idCustomerExtern !== null
+            && calendarEventsEntity?.idCustomerExtern !== undefined "
+            (click)="clientDetails()">{{'button.Go_to_costumer' |
+            translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="calendarEventsEntity?.category === genericWorkflowCategory"
+              (click)="itemDetails()">{{'button.Go_to_Wf' | translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="calendarEventsEntity?.category === genericWorkflowCategory"
+              (click)="itemDetails()">{{'button.Go_to_Wf' | translate}}</button>
+              <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="calendarEventsEntity?.category === legalCategory"
+            (click)="collectionDetails()"> {{'collections.open_legal_collection' |translate}}</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</ng-template>

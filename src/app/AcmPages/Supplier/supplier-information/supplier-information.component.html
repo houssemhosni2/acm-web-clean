@@ -1,0 +1,556 @@
+<div class="accordion mb-1">
+  <div class="card">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+  </div>
+
+  <!-- KPI CARD -->
+  <div class="card mb-2">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseKPI" aria-expanded="true"
+      aria-controls="collapseKPI" (click)="toggleCollapseKPI()">
+      <div>
+        <i class="lnr-pie-chart text-secondary px-2"></i>
+        {{ 'supplier-360.supplier_kpi' | translate}}
+      </div>
+      <div>
+        <i [ngClass]="(expandedKPI===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expandedKPI===true)?'collapse show':'collapse'" aria-labelledby="headingKPI"
+      data-parent="#collapseKPI">
+      <div class="g-1 row" *ngIf="KPIChecker">
+        <div class="col-sm-6 col-md-4 col-xl-4">
+          <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+            <div class="icon-wrapper rounded-circle">
+              <div class="icon-wrapper-bg opacity-10 bg-primary"></div>
+              <i class="lnr-briefcase text-white opacity-8"></i>
+            </div>
+            <div class="widget-chart-content">
+              <div class="widget-subheading h5"> {{'supplier-360.supplier_turnover' | translate }}</div>
+              <div class="widget-numbers"> {{ objectifCa }} TND </div>
+            </div>
+            <div class="divider m-0 d-md-none d-sm-block"></div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-xl-4">
+          <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+            <div class="icon-wrapper rounded-circle">
+              <div class="icon-wrapper-bg opacity-9 bg-warning"></div>
+              <i class="lnr-chart-bars text-white"></i>
+            </div>
+            <div class="widget-chart-content">
+              <div class="widget-subheading h5"> {{'supplier-360.supplier_turnover_success' | translate }} </div>
+              <div class="widget-numbers"><span> {{ sumSupplierBalance }} TND </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider m-0 d-md-none d-sm-block"></div>
+        </div>
+        <div class="col-sm-12 col-md-4 col-xl-4">
+          <div class="card no-shadow rm-border bg-transparent widget-chart text-start">
+            <div class="icon-wrapper rounded-circle">
+              <div class="icon-wrapper-bg opacity-9 bg-danger"></div>
+              <i class="pe-7s-credit text-white"></i>
+            </div>
+            <div class="widget-chart-content">
+              <div class="widget-subheading h5">{{ 'supplier-360.objectif_percentage' | translate }} </div>
+              <div class="widget-numbers"><span> {{ percentage }} % </span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body" *ngIf="!KPIChecker">
+        <div class="widget-subheading" style="color : rgb(113, 94, 94)"> {{ 'NO_DATA_DISPLAY_KPI' | translate }} </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- KPI CARD -->
+
+  <div class="card mb-2">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseOne" aria-expanded="true"
+      aria-controls="collapseOne" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-user text-secondary px-2"></i>
+        {{ 'supplier-360.supplier_information' | translate}}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="row mt-2 pb-0">
+          <div class="col-xl-2 col-sm-3 text-center">
+            <div class="frame">
+              <img [src]='newPhoto' alt="image" class="img-thumbnail">
+              <button type="button" class="mb-2 mx-2 btn-icon btn-icon-only btn-pill btn btn-light ACM_top-left"
+                (click)="fileInput.click()">
+                <i class="lnr-camera btn-icon-wrapper"> </i>
+              </button>
+              <input #fileInput id="photo" type="file" [name]="'file'" (change)="addImage($event)"
+                style="display:none;">
+            </div>
+          </div>
+          <div class="col-xl-10 col-sm-12">
+            <div class="widget-content p-0">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="row">
+                      <h4 class="text-uppercase col-10"></h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xl-12">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left mb-3">
+                        <div style="display : -webkit-box;">
+                          <h5 class="fw-bold"> {{ 'supplier-360.supplier_name' | translate}} : {{ supplier.name }}</h5>
+
+                          <div class="badge bg-warning ms-3" *ngIf="supplier.status === 'POTENTIEL'">
+                            {{ 'supplier.supplier_status_potentiel' | translate }}
+                          </div>
+                          <div class="badge bg-danger ms-3" *ngIf="supplier.status === 'REJECTED'">
+                            {{ 'supplier.supplier_status_rejected' | translate }}
+                          </div>
+                          <div class="badge bg-success ms-3" *ngIf="supplier.status === 'APPROVED'">
+                            {{ 'supplier.supplier_status_approved' | translate }}
+                          </div>
+                        </div>
+
+                        <button class="btn btn-primary  ACM-btn-send-login" *ngIf="supplier360"
+                          (click)="sendCallbackSupplier()">
+                          <i class="lnr-lock btn-icon-wrapper"></i>
+                          {{ 'supplier-360.supplier_callback' | translate}}
+                        </button>
+
+                        <button class="btn btn-primary ACM-btn-send-login m-2" *ngIf="supplier.isCustomer"
+                          (click)="customerDetails(supplier)">
+                          {{ 'supplier-360.is-customer' | translate }}
+                        </button>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row pb-3">
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left ">
+                        <div class="widget-heading"> {{ 'supplier.approved' | translate }} </div>
+                        <div class="widget-subheading">   {{ (supplier.isApproved ? 'true' : 'false') | translate }} 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{ 'supplier-360.supplier_activity' | translate}}</div>
+                        <div class="widget-subheading" *ngIf="supplier.activity"> {{supplier.activityName}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.activity" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> {{ 'supplier-360.supplier_acronym' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="supplier.acronyme"> {{supplier.acronyme}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.acronyme" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> {{ 'supplier-360.supplier_commercial_name' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="supplier.commercialName"> {{supplier.commercialName}}
+                        </div>
+                        <div class="widget-subheading" *ngIf="!supplier.commercialName" style="color : red"> {{
+                          'NO_DATA' | translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+
+            </div>
+
+            <div class="row pb-3">
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> {{ 'supplier-360.supplier_email' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="supplier.email"> {{supplier.email}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.email" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> {{ 'supplier-360.supplier_date_start_activity' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="supplier.activityStartDate">
+                          {{supplier.activityStartDate | date: 'yyyy-MM-dd'}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.activityStartDate" style="color : red"> {{
+                          'NO_DATA' | translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> {{ 'supplier-360.supplier_legal_category' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="legalCategory"> {{legalCategory}} </div>
+                        <div class="widget-subheading" *ngIf="!legalCategory" style="color : red"> {{ 'NO_DATA'
+                          | translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{ 'supplier-360.supplier_patente_nb' | translate}}</div>
+                        <div class="widget-subheading" *ngIf="supplier.registerNumber">Ref {{supplier.registerNumber}}
+                        </div>
+                        <div class="widget-subheading" *ngIf="!supplier.registerNumber" style="color : red"> {{ 'NO_DATA'
+                          | translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row pb-3">
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{ 'supplier-360.supplier_phone_number' | translate}}</div>
+                        <div class="widget-subheading" *ngIf="supplier.telephone"> {{supplier.telephone}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.telephone" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{ 'supplier-360.supplier_phone_number' | translate}} 2 </div>
+                        <div class="widget-subheading" *ngIf="supplier.telephone2"> {{supplier.telephone2}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.telephone2" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{ 'supplier-360.supplier_website' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="supplier.webSite"> {{supplier.webSite}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.webSite" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> CIN </div>
+                        <div class="widget-subheading" *ngIf="supplier.identity"> {{supplier.identity}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.identity" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row pb-3">
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> Objectif in CA </div>
+                        <div class="widget-subheading" *ngIf="supplier.objectif"> {{supplier.objectif}} </div>
+                        <div class="widget-subheading" *ngIf="!supplier.objectif" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-3">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading"> {{ 'Periodicity' | translate}} </div>
+                        <div class="widget-subheading" *ngIf="preodicityName"> {{preodicityName}} </div>
+                        <div class="widget-subheading" *ngIf="!preodicityName" style="color : red"> {{ 'NO_DATA' |
+                          translate }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-2">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseAddress" aria-expanded="true"
+      aria-controls="collapseAddress" (click)="toggleCollapseAddress()">
+      <div>
+        <i class="lnr-apartment text-secondary px-2"></i>
+        {{ 'supplier-360.supplier_address' | translate}}
+      </div>
+      <div>
+        <i [ngClass]="(expandedAddress===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expandedAddress===true)?'collapse show':'collapse'" aria-labelledby="headingAddress"
+      data-parent="#accordionExample">
+      <div *ngIf="addressDataChecker">
+        <div class="card-body" *ngFor="let address of supplierAddress">
+          <div class="row mt-2 pb-0">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-xs-12 col-sm-12">
+              <div class="row">
+
+              </div>
+              <div class="row pb-3">
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading"> {{'supplier-360.supplier_address_type' | translate}} </div>
+                          <div class="widget-subheading" *ngIf="address.addressTypeId==1"> Primary </div>
+                          <div class="widget-subheading" *ngIf="address.addressTypeId==2"> Secondary </div>
+                          <div class="widget-subheading" *ngIf="address.addressTypeId==3"> Work </div>
+
+
+                          <div class="widget-subheading" *ngIf="!address.addressTypeId" style="color : red"> {{
+                            'NO_DATA'
+                            | translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading"> {{'supplier-360.supplier_date_move_in' | translate}} </div>
+                          <div class="widget-subheading" *ngIf="address.dateMovedIn"> {{address.dateMovedIn | date: 'yyyy-MM-dd'}} </div>
+                          <div class="widget-subheading" *ngIf="!address.dateMovedIn" style="color : red"> {{ 'NO_DATA'
+                            |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading"> {{'supplier-360.supplier_date_move_out' | translate}} </div>
+                          <div class="widget-subheading" *ngIf="address.dateMovedOut"> {{address.dateMovedOut | date: 'dd/MM/yyyy'}} </div>
+                          <div class="widget-subheading" *ngIf="!address.dateMovedOut" style="color : red"> {{ 'NO_DATA'
+                            |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'supplier-360.address.region' | translate}} </div>
+                          <div class="widget-subheading" *ngIf="address.country"> {{address.country}} </div>
+                          <div class="widget-subheading" *ngIf="!address.country" style="color : red"> {{ 'NO_DATA' |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row pb-3">
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer_management.region' | translate }} </div>
+                          <div class="widget-subheading" *ngIf="address.state"> {{address.state}} </div>
+                          <div class="widget-subheading" *ngIf="!address.state" style="color : red"> {{ 'NO_DATA' |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading"> {{'customer_management.city' | translate}} </div>
+                          <div class="widget-subheading" *ngIf="address.state"> {{address.townCity}} </div>
+                          <div class="widget-subheading" *ngIf="!address.townCity" style="color : red"> {{ 'NO_DATA' |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer_management.street' | translate}}</div>
+                          <div class="widget-subheading" *ngIf="address.address1"> {{address.address1}} </div>
+                          <div class="widget-subheading" *ngIf="!address.address1" style="color : red"> {{ 'NO_DATA' |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row pb-3">
+                <!-- <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading"> {{'supplier-360.address.pt2' | translate}} </div>
+                          <div class="widget-subheading" *ngIf="address.address2"> {{address.address2}} </div>
+                          <div class="widget-subheading" *ngIf="!address.address2" style="color : red"> {{ 'NO_DATA' |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                <div class="col-xl-3 col-sm-3">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'supplier-360.address.zip_code' | translate}}</div>
+                          <div class="widget-subheading" *ngIf="address.postalCode"> {{address.postalCode}} </div>
+                          <div class="widget-subheading" *ngIf="!address.postalCode" style="color : red"> {{ 'NO_DATA' |
+                            translate }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="card-body" *ngIf="!addressDataChecker">
+        <div class="widget-subheading" style="color : rgb(113, 94, 94)"> {{ 'NO_DATA_DISPLAY' | translate }} </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+
+</div>

@@ -1,0 +1,46 @@
+<div class="card-shadow-primary profile-responsive card-border mb-1 card" style = "position: -webkit-sticky;  position: sticky; top: 50px; ">
+  <div class="dropdown-menu-header">
+    <div class="dropdown-menu-header-inner bg-danger">
+      <div class="menu-header-image" style="background-image: url('../../../../../assets/images/sidebar/city1.jpg')">
+      </div>
+      <div class="menu-header-content btn-pane-right">
+        <div class="avatar-icon-wrapper mx-2 avatar-icon-xl">
+          <div class="icon-wrapper rounded-circle">
+            <div class="icon-wrapper-bg bg-white opacity-10"></div>
+            <i class="pe-7s-way text-danger"></i>
+          </div>
+        </div>
+        <div>
+          <h5 class="menu-header-title">{{'process.loan_process'| translate }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+    </ngx-loading>
+    <div class="vertical-time-simple vertical-without-time vertical-timeline
+      vertical-timeline--animate vertical-timeline--one-column pt-0 ACM-process-vertical-{{translate.currentLang}}"
+      *ngFor="let loanProcess of loanProcessEntitys">
+      <div [ngClass]=" {
+                'dot-success vertical-timeline-element' : (loanProcess.orderEtapeProcess < orderProcess),
+                'dot-warning vertical-timeline-element': (loanProcess.orderEtapeProcess === orderProcess)
+                }">
+        <div>
+          <span class="vertical-timeline-element-icon bounce-in ACM-process-icon-{{translate.currentLang}}"></span>
+          <div class="vertical-timeline-element-content ACM-process-title-{{translate.currentLang}} bounce-in">
+            <p class="timeline-title font-weight-bold" [ngClass]=" {
+                'text-success' : (loanProcess.orderEtapeProcess < orderProcess ),
+                'text-warning' :(loanProcess.orderEtapeProcess === orderProcess ),
+                'opacity-6' : !(loanProcess.orderEtapeProcess >= orderProcess)
+                }">
+              {{loanProcess.libelle }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<app-validation-approval *ngIf="!isOfflineModeEnabled()" [display]="display"></app-validation-approval>
+</div>

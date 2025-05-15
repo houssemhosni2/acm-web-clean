@@ -1,0 +1,58 @@
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="customerPaginationEntity.resultsCustomers"
+      (onLazyLoad)="reloadCustomerList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="customerPaginationEntity.totalElements"
+      [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns"
+      [showCurrentPageReport]="true" [(selection)]="customer" selectionMode="multiple">
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style='width: 40px;'></th>
+          <!-- actions button -->
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <th style='width: 40px;'></th>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'customerNumber'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'customerNameNoPipe'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'branchesName'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'identity'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'acmMezaCardDTO'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td class="ACM-table-notification-td-1" *ngIf="statusTab === 'SENT'">
+            <div id="checkboxlist" class="custom-checkbox custom-control">
+              <input type="checkbox" [id]="rowData?.id" (change)="onChangeCheckBox(rowData, i, $event)"
+                class="custom-control-input"><label class="custom-control-label" [for]="rowData?.id"></label>
+            </div>
+          </td>
+          <td class="ACM-table-notification-td-1" *ngIf="statusTab !== 'SENT'">
+            <div></div>
+          </td>
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+            <div *ngSwitchCase="'customerNumber'">{{rowData[col.field]}}</div>
+            <div class="text-left" *ngSwitchCase="'customerNameNoPipe'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'identity'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'branchesName'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'acmMezaCardDTO'">{{rowData[col.field].cardNumber}}</div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

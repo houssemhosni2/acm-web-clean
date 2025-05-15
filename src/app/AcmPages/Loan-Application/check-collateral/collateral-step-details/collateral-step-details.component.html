@@ -1,0 +1,240 @@
+<div class="accordion mb-1">
+    <div class="card">
+      <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapseOne"
+        aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+        <div class="card-header-title">
+          <i class="lnr-user text-secondary px-2"></i>
+          {{ 'collaterol.collaterol' | translate}}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div id="collapseOne" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <!-- bouton popup-->
+        <div class="page-title-actions p-4 d-flex justify-content-end">
+          <button *ngIf="isCollateralStep" (click)="addGuarantie(formContent)" class="btn-shadow d-inline-flex align-items-center btn btn-primary " type="button">
+            <fa-icon  class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+            {{'button.add' | translate}}
+          </button>
+        </div>
+        <div *ngIf="guaranties.length > 0">
+          <div>
+            <!-- tableau notes -->
+            <div class="table">
+              <table   class="align-middle mb-0 table table-hover">
+                <thead>
+                  <tr>
+                    <th>{{ 'collaterol.reference' | translate}}</th>
+                    <th>{{ 'collaterol.description' | translate}}</th>
+                    <th>{{ 'collaterol.type' | translate}}</th>
+                    <th>{{ 'collaterol.gross_value' | translate}}</th>
+                    <th> {{ 'collaterol.value_date' | translate}}</th>
+                    <th> {{ 'collaterol.realised_value' | translate}}</th>
+                    <th> {{ 'collaterol.fixed_cost' | translate}}</th>
+                    <th> {{ 'collaterol.net_value' | translate}}</th>
+                    <th> {{ 'collaterol.expiry_date' | translate}}</th>
+                    <th *ngIf="isCollateralStep"></th>
+                    <th *ngIf="isCollateralStep"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="let item of guaranties | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize, let i = index">
+                    <tr *ngIf="item.netValue !== -1">
+                      <td>{{ item.reference }}</td>
+                      <td>{{ item.description}}</td>
+                      <td>{{ item.collateralTypeDescription}}</td>
+                      <td>{{ item.grossValue | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr'}}</td>
+                      <td>{{ item.valueDate | date : "dd/MM/yyyy"}}</td>
+                      <td>{{ item.realisedValue | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr'}}</td>
+                      <td>{{ item.fixedCost | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr'}}</td>
+                      <td>{{ item.netValue | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr'}}</td>
+                      <td>{{ item.expiryDate | date : "dd/MM/yyyy" }}</td>
+
+                      <td class="text-center" *ngIf="isCollateralStep">
+                        <button class="btn btn-danger" (click)='deleteGuarantie(i)'>
+                          <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                        </button>
+                      </td>
+                      <td class="text-center" *ngIf="isCollateralStep">
+                        <button class="btn btn-warning mx-1" (click)='editGuarantie(i,formContent)'>
+                          <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="guaranties.length === 0">
+          <div class="card-body">
+            <h6 style="color: red;" class="pt-3">{{ 'collaterol.missing_collaterol' | translate }}</h6>
+          </div>
+        </div>
+
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="guaranties.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                [maxSize]="3" [boundaryLinks]="true">
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-right': translate.currentLang === 'ar'}">
+      <div class="card">
+        <div class="card-header py-2">
+          <h4 class="modal-title">---</h4>
+          <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+            (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="card-body">
+        </div>
+        <div class="card-footer py-2 d-flex justify-content-end">
+          <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <!-- <ng-template #content2 let-c="close" let-d="dismiss">
+      <div class="main-card card">
+        <div class="card-header py-2">
+          <h4 class="modal-title">Add guarantie</h4>
+          <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+                  (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <app-collateral-form  (addedGuarantie)="addGuarantie($event)"></app-collateral-form>
+      </div>
+    </ng-template>-->
+  <ng-template #formContent>
+    <div dir="{{getDirection()}}" [ngClass]="{'text-right': translate.currentLang === 'ar'}">
+      <div class="card">
+        <div class="card-header py-2">
+          <h4 class="modal-title">{{ 'collaterol.collaterol' | translate}}</h4>
+          <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+            (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="formCollateral" >
+            <div class="card-body">
+              <div class="row no-gutters">
+                <div class="col-sm-3 col-md-6 px-1">
+                  <div class="position-relative form-group">
+                    <label>{{ 'collaterol.type' | translate}}</label>
+                    <span class="text-danger">*</span>
+                    <select class="form-control" formControlName="collateralType" name="collateralType"
+                        [compareWith]="compareCollateralType" (change)="collateralTypeChanged()">
+                      <option disabled selected value>{{ 'upload_document.default_select' | translate}}
+                        </option>
+                      <option *ngFor="let collateralType of collateralTypes" [ngValue]="collateralType">
+                        <!--[ngValue]="description"-->
+                        {{collateralType.description}}
+                        <!--{{collateralType.description}}-->
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-3 col-md-6 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.reference' | translate}} </label>
+                    <input class="form-control" placeholder="{{'collaterol.reference'| translate }}" type="text"
+                      formControlName="reference">
+                  </div>
+                </div>
+                <div class="col-sm-3 col-md-6 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.description' | translate}} </label>
+                    <input class="form-control" placeholder="{{ 'collaterol.description' | translate}}" type="text"
+                      formControlName="description">
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3 col-md-3 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.gross_value' | translate}} </label>
+                    <span class="text-danger">*</span>
+                    <input class="form-control" placeholder="{{ 'collaterol.gross_value' | translate}}" type="number"
+                      formControlName="grossValue" (change)="grossValueChanged()">
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3 col-md-3 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.value_date' | translate}} </label>
+                    <span class="text-danger">*</span>
+
+                    <input class="form-control" placeholder=" {{ 'collaterol.value_date' | translate}}" type="date"
+                      formControlName="valueDate">
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3 col-md-3 px-1">
+                  <div class="position-relative form-group">
+                    <label>{{ 'collaterol.realised_value' | translate}} </label>
+                    <span class="text-danger">*</span>
+                    <input class="form-control" placeholder="{{ 'collaterol.realised_value' | translate}}" type="number"
+                      formControlName="realisedValue" disabled>
+                  </div>
+                </div>
+                <div class="col-xl-3 col-sm-3 col-md-3 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.fixed_cost' | translate}} </label>
+                    <span class="text-danger">*</span>
+                    <input class="form-control" placeholder=" {{ 'collaterol.fixed_cost' | translate}}" type="number"
+                      formControlName="fixedCost" (change)="fixedCostChanged()" disabled>
+                  </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-3 col-md-3 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.net_value' | translate}} </label>
+                    <span class="text-danger">*</span>
+                    <input class="form-control" placeholder="{{ 'collaterol.net_value' | translate}}" type="number"
+                      formControlName="netValue" disabled>
+                  </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-3 col-md-3 px-1">
+                  <div class="position-relative form-group">
+                    <label> {{ 'collaterol.expiry_date' | translate}} </label>
+                    <input class="form-control" placeholder="{{ 'collaterol.expiry_date' | translate}}" type="date"
+                      formControlName="expiryDate">
+                  </div>
+                </div>
+               </div>
+              <!--  udf component -->
+              <app-udf-step-workflow [source]="actionCollateralForm" [category]="'COLLATERAL'" [saveUdf]="saveUdf" [getUdfList]="getUdfList" (udfList)="onSubmit($event)" (validationUdfEmitter)="validationUdf($event)"></app-udf-step-workflow>
+              <div class="modal-footer py-1">
+                <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' | 
+                  translate}}</button>
+                <button (click)="save()" class="btn btn-primary" [disabled]="!formCollateral.valid">{{'button.ok' |
+                  translate}}</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </ng-template>

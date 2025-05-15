@@ -1,0 +1,65 @@
+
+<div class="card-body">
+  <p-table #dt [responsive]="true" [autoLayout]=true [value]="settingThirdPartyPaginationEntity.resultsThirdParties"
+           (onLazyLoad)="reloadThirdPartyList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+           [totalRecords]="settingThirdPartyPaginationEntity.totalElements"
+           (onRowSelect)="handleSelect($event)"
+           (onRowUnselect)="handleUnselect($event)"
+           [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns"
+           [(selection)]="thirdParty" selectionMode="multiple" >
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <!-- actions button -->
+        <th class="ACM_Customer_Search_void_Col" ></th>
+        <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+          <div class="center-elem text-center">
+            {{col.header | translate}}
+            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+          </div>
+        </th>
+        <th class="ACM_Customer_Search_void_Col" ></th>
+      </tr>
+      <tr>
+        <th class="ACM_Customer_Search_void_Col" >
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th *ngFor="let col of columns" [ngSwitch]="col.field ">
+          <input *ngSwitchCase="'type'" class="form-control placeholder" type="text"
+                 (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'firstName'" class="form-control placeholder" type="text"
+                 (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'lastName'" class="form-control placeholder" type="text"
+                 (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'phoneNumber'" class="form-control placeholder" type="text"
+                 (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'email'" class="form-control" type="text"
+                 (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'addressParty'" class="form-control" type="text"
+                 (input)="dt.filter($event.target.value, col.field, 'contains')">
+        </th>
+        <th style='width: 40px;' ></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-loans let-rowData let-columns="columns" >
+      <tr >
+        <td>
+          <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
+        </td>
+        <td *ngFor="let col of columns ; let index = index" [ngSwitch]="col.field" class="text-center" >
+          <div *ngSwitchCase="'type'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'firstName'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'lastName'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'phoneNumber'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'email'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'addressParty'">{{rowData[col.field]}}</div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<div class="card-footer py-2 d-flex justify-content-end">
+  <button class="mb-1 mx-2 btn btn-outline-danger"
+  (click)="closeModale()">{{'button.cancel' | translate}}</button>
+  <button class="mb-1 btn btn-primary"
+          (click)='addThirdParty(thirdParty)'>{{'button.add' | translate}}</button>
+</div>

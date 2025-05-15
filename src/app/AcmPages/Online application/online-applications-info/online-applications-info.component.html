@@ -1,0 +1,1032 @@
+<ng-template #content1 let-c="close" let-d="dismiss">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <form class="form col-xl-12 col-md-12 px-0" [formGroup]="rejectForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header py-2">
+                <h4 class="modal-title">{{'reject.reject_loan'| translate }}</h4>
+                <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+                    (click)="d('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row no-gutters">
+                <div class="position-relative form-group col-xl-12 col-md-12">
+                    <label>{{'reject.reject_reason'| translate }}</label>
+                    <div class="input-group">
+                        <select class="form-control" formControlName="reason">
+                          <option selected value> </option>
+                            <option *ngFor="let settingMotifRejetsEntity of settingMotifRejetsEntitys"
+                                [ngValue]="settingMotifRejetsEntity">
+                                {{settingMotifRejetsEntity.libelle}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative form-group col-xl-12 col-md-12">
+                    <label> {{'reject.note'| translate }} </label>
+                    <div class="input-group">
+                        <textarea class="form-control" formControlName="note"></textarea>
+                    </div>
+                </div>
+                <div class="position-relative form-group">
+                    <div>
+                        <div class="custom-checkbox custom-control">
+                            <input class="custom-control-input" id="exampleCustomCheckbox" type="checkbox"
+                                formControlName="confirm" (change)="changeCheckBoxReject()">
+                            <label class="custom-control-label ms-2"
+                                for="exampleCustomCheckbox">{{'button.confirm_checkbox' | translate}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer py-1">
+                <button type="reset" class="btn btn-outline-danger"
+                    (click)="c('Close click')">{{'button.close' | translate}}</button>
+                <button type="submit" class="btn btn-danger">{{'button.reject' | translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+<app-page-title [heading]=" 'sidebar.online_application'| translate " [icon]="'pe-7s-note2'" [account]="''"
+    [status]="-1">
+</app-page-title>
+<div class="row">
+    <div class="col-md-12 col-xl-12 px-1">
+        <div class="mb-1 card">
+            <ngx-loading [show]="loading"
+                [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+            </ngx-loading>
+            <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+                <div *ngIf="loanIb.customerDTO.customerType === 'INDIV'" class="card-header-title">
+                    <i class="lnr-user text-secondary pr-2"></i>
+                    {{'customer.customer_details'| translate }}
+                </div>
+                <div *ngIf="loanIb.customerDTO.customerType === 'GRP'" class="card-header-title">
+                    <i class="lnr-users text-secondary pr-2"></i>
+                    {{'customer.customer_groupe.groupe_information'| translate }}
+                </div>
+                <div *ngIf="loanIb.customerDTO.customerType === 'ORG'" class="card-header-title">
+                    <i class="lnr-user text-secondary pr-2"></i>
+                    {{'customer.customer_organisation.organisation_information'| translate }}
+                </div>
+                <div>
+                    <i [ngClass]="(!expanded)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+                </div>
+            </div>
+            <div id="collapseOne" [ngClass]="(!expanded)?'collapse show':'collapse'" aria-labelledby="headingOne"
+                data-parent="#accordionExample">
+                <div class="card-body px-5">
+                    <div *ngIf="loanIb.customerDTO.customerType === 'INDIV'" class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.first_name' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.firstName }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.second_name' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.secondName }}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.middle_name' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.middleName }}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.last_name' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.lastName}}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="loanIb.customerDTO.customerType === 'GRP'" class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_groupe.groupe_name' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerNameNoPipe }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_groupe.groupe_length' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ customerLinksRelationshipEntity.length}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.portfolio' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.ownerName }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="loanIb.customerDTO.customerType === 'ORG'" class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_organisation.organisation_name' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerNameNoPipe }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_organisation.register_nember' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                                {{ registrationNumber }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_organisation.date_of_issue' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                              {{ dateOfIssue }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_organisation.date_of_expiry' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                              {{ dateOfExpiry }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.telephone' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                <div>{{ loanIb.customerDTO.telephone }}</div>
+                                                <div *ngIf="!loanIb.customerDTO.telephone">
+                                                    {{'customer.msg_telephone'| translate }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.email' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.email }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.address' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ customerAddress }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.branch' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.branchesDescription}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="loanIb.customerDTO.customerType === 'ORG'" class="row no-gutters pb-3">
+                        <div class="col-xl-6 col-sm-6">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer.customer_organisation.project_description' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.productDescription }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-sm-6">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.portfolio' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.ownerName }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="loanIb.customerDTO.customerType === 'INDIV'" class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.date_of_birth' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.dateOfBirth | date: 'dd/MM/yyyy' }}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.hijri_date_of_birth' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.customerDTO.dateOfBirthHijri | date: 'dd/MM/yyyy' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.gender' | translate}}</div>
+                                            <div class="widget-subheading">
+
+                                                <mat-radio-group [(ngModel)]="loanIb.customerDTO.gender">
+                                                    <mat-radio-button class="example-margin px-2" disabled value="M">
+                                                        {{'customer.gender_male' | translate}}</mat-radio-button>
+                                                    <mat-radio-button class="example-margin" disabled value="F">
+                                                        {{'customer.gender_female' | translate}} </mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.portfolio' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.ownerName }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="(loanIb.customerDTO.customerType === 'INDIV')" class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.nationality' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ nationality }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="resident" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.national_ID' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{ nationalId }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  *ngIf="!resident" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.resident_ID' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{ residentId }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  *ngIf="!resident" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.resident_relation_status' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{ residentRelationStatus }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.national_ID_expiry_date' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{expiryGregorianDate?.day}}/{{expiryGregorianDate?.month}}/{{expiryGregorianDate?.year}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.national_ID_expiry_hijri_date' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{expiryHijriDate?.day}}/{{expiryHijriDate?.month}}/{{expiryHijriDate?.year}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Collapse members for Groupe-->
+        <div *ngIf="loanIb.customerDTO.customerType !=='INDIV'" class="mb-1 card">
+            <ngx-loading [show]="loading"
+                [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+            </ngx-loading>
+            <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapseMembers"
+                aria-expanded="true" aria-controls="collapseMembers" (click)="toggleCollapseMembers()">
+                <div *ngIf="loanIb.customerDTO.customerType ==='GRP'" class="card-header-title">
+                    <i class="lnr-users text-secondary pr-2"></i>
+                    {{'customer.customer_groupe.members_informations'| translate }}
+                </div>
+                <div *ngIf="loanIb.customerDTO.customerType ==='ORG'" class="card-header-title">
+                    <i class="lnr-user text-secondary pr-2"></i>
+                    {{'customer.customer_organisation.main_partner'| translate }}
+                </div>
+                <div>
+                    <i
+                        [ngClass]="(!expandedmembers)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+                </div>
+            </div>
+            <div id="collapseMembers" [ngClass]="(!expandedmembers)?'collapse show':'collapse'"
+                aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div *ngFor="let relation of customerLinksRelationshipEntity; let index =index" class="card-body px-5">
+                    <div class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.first_name' | translate}} </div>
+                                            <div class="widget-subheading">
+                                                {{relation.member.firstName}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.second_name' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.secondName }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.middle_name' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.middleName }}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.last_name' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.lastName}}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="relation.member.listUDFGroup" class="row no-gutters">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.nationality' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  *ngIf="relation.member.resident" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.national_ID' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!relation.member.resident" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.resident_ID' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!relation.member.resident" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.resident_relation_status' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.national_ID_expiry_date' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="relation.member.resident"  class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">
+                                                {{'customer_management.national_ID_expiry_hijri_date' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="relation.member.listUDFGroup" class="row no-gutters pb-3">
+                          <div *ngFor="let a of  relation.member.listUDFGroup" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-subheading">
+                                                {{a?.value}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="relation.member.resident"  class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div  class="widget-subheading">
+                                            {{ relation.member.expiryHijryDate?.day+ '/'+ relation.member.expiryHijryDate?.month+'/'+relation.member.expiryHijryDate?.year}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div *ngIf="!relation.member.resident"  class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading"> {{'customer_management.national_ID_expiry_hijri_date' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.expiryHijryDate?.day+ '/'+ relation.member.expiryHijryDate?.month+'/'+relation.member.expiryHijryDate?.year}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.telephone' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                <div>{{ relation.member.telephone }}</div>
+                                                <div *ngIf="!relation.member.telephone">
+                                                    {{'customer.msg_telephone'| translate }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.email' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.email }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="loanIb.customerDTO.customerType ==='GRP'" class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.branch' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.branchesDescription}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="loanIb.customerDTO.customerType ==='GRP'" class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.date_of_birth' | translate}}</div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.dateOfBirth | date: 'dd/MM/yyyy' }}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'customer.hijri_date_of_birth' | translate}}
+                                            </div>
+                                            <div class="widget-subheading">
+                                                {{ relation.member.dateOfBirthHijri | date: 'dd/MM/yyyy' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-divider></mat-divider>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="card mb-1">
+            <div class="card-header d-flex justify-content-between" data-target="#collapseSchedule" aria-expanded="true"
+                aria-controls="collapseSchedule" (click)="toggleCollapseTwo()">
+                <div>
+                    <i class="lnr-file-empty text-secondary pr-2"></i>
+                    {{'online_application.online_application_details'| translate }}
+                </div>
+                <div>
+                    <i [ngClass]="(!expandedTwo)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+                </div>
+            </div>
+            <div id="collapseSchedule" [ngClass]="(!expandedTwo)?'collapse show':'collapse'"
+                aria-labelledby="headingOne">
+                <div class="card-body px-5">
+                    <div class="row no-gutters pb-3">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.loan_type'| translate }}</div>
+                                            <div class="widget-subheading">{{ loanIb.loanType }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.loan_product'| translate }}</div>
+                                            <div class="widget-subheading">{{ loanIb.productDescription }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.loan_amount'| translate }}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.applyAmountTotal | number : this.decimalPlaces:'fr'}}
+                                                {{ loanIb?.currencySymbol }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.term'| translate }}</div>
+                                            <div class="widget-subheading">{{ loanIb.termPeriodNum }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-gutters pb-2">
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.grace_period'| translate }}</div>
+                                            <div class="widget-subheading">
+                                                {{ loanIb.gracePeriod }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.monthly_payment'| translate }} </div>
+                                            <div class="widget-subheading"> {{normalPayment | number : this.decimalPlaces}} {{ loanIb?.currencySymbol }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.upfront_fee'| translate }}</div>
+                                            <div class="widget-subheading">
+                                                {{upfrontfeeprc}} {{ loanIb?.currencySymbol }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-2">
+                            <div class="widget-content p-0">
+                              <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                  <div class="widget-content-left">
+                                    <div class="widget-heading">{{'loan.apr'| translate }}</div>
+                                    <div class="widget-subheading">{{apr}}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <div class="col-xl-3 col-sm-3">
+                            <div class="widget-content p-0">
+                                <div class="widget-content-outer">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{'loan.issue_date'| translate }}</div>
+                                            <div class="widget-subheading">{{ loanIb?.issueDate | date: 'dd/MM/yyyy' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="row no-gutters pb-3">
+                    <div class="col-xl-12 col-sm-12">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'loan.project_description'| translate }}</div>
+                              <div class="widget-subheading">{{ loanIb.projectDescription }}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-1">
+            <div class="card-header d-flex justify-content-between" data-target="#collapseLoanSchedule"
+                aria-expanded="true" aria-controls="collapseLoanSchedule" (click)="toggleCollapseThree()">
+                <div>
+                    <i class="lnr-calendar-full text-secondary pr-2"></i>
+                    {{'loan.loan_schedule'| translate }}
+                </div>
+                <div>
+                    <i
+                        [ngClass]="(!expandedthree)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+                </div>
+            </div>
+            <div id="collapseLoanSchedule" [ngClass]="(!expandedthree)?'collapse show':'collapse'"
+                aria-labelledby="headingOne">
+                <div class="no-gutters row">
+                    <div class="table-responsive">
+                        <table class="mb-0 table green px-0">
+                            <thead>
+                                <tr>
+                                    <th>{{'schedule.period'| translate }}</th>
+                                    <th>{{'schedule.repayment_date'| translate }}</th>
+                                    <th>{{'schedule.total_repayment'| translate }}</th>
+                                    <th>{{'schedule.interest'| translate }}</th>
+                                    <th>{{'schedule.principal'| translate }}</th>
+                                    <th>{{'schedule.balance'| translate }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    *ngFor="let schedule of schedules | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                                    <td  [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.period}}</td>
+                                    <td  [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.repaymentDate}}</td>
+                                    <td  [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.totalRepayment  | number : this.decimalPlaces:'fr'}}
+                                        {{ loanIb?.currencySymbol }}</td>
+                                    <td  [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.interestRepayment  | number : this.decimalPlaces:'fr'}}
+                                        {{ loanIb?.currencySymbol }}</td>
+                                    <td  [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.loanRepayment  | number : this.decimalPlaces:'fr'}}
+                                        {{ loanIb?.currencySymbol }}</td>
+                                    <td  [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.balance  | number : this.decimalPlaces:'fr'}} {{ loanIb?.currencySymbol }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer pb-0">
+                    <div class="row no-gutters w-100">
+                        <div class="col-xl-6 col-lg-6 col-md-12">
+                            <ngb-pagination [collectionSize]="schedules.length" [(page)]="page" [pageSize]="pageSize"
+                                size="sm" [maxSize]="3" [boundaryLinks]="true">
+                            </ngb-pagination>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12">
+                            <div class="d-flex justify-content-lg-end">
+                                <select class="custom-select" style="width: auto" name="pageSize"
+                                    [(ngModel)]="pageSize">
+                                    <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                                    <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                                    <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                                    <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-block text-end px-2 py-2">
+            <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+            <button class="mb-2 mx-2 btn btn-danger" *ngIf="loanIb.statut ===  0 "
+                (click)="rejectModal(content1)">{{'button.reject' | translate}}</button>
+            <button class="mb-2 btn btn-primary" *ngIf="loanIb.statut ===  0 && action" 
+                (click)="accept()">{{'button.accept' | translate}}</button>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,92 @@
+<div class="card">
+    <div class="card-header">
+        {{ 'topup.topup_configuration' | translate }}
+    </div>
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="topupSettingForm" (ngSubmit)="onSubmit()">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-xl-6 col-md-6">
+                    <label> {{'topup.min_loan_payment_percentage_label' | translate }}
+                    </label>
+                </div>
+                <div class="form-group col-xl-4 col-md-4">
+                    <div class="input-group">
+                        <input class="form-control col-md-4" formControlName="minLoanPaymentPercentage" type="number"
+                            min="0">&nbsp; %
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xl-6 col-md-6 mt-3">
+                    <label>{{ 'topup.clean_repayement_label' | translate }}
+                    </label>
+                </div>
+                <div class="form-group ACM-image-client col-xl-1 col-md-1 mt-3">
+                    <label> {{ 'topup.max_continuous_late_days' | translate }}
+                    </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 p-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="maxContinuousLateDays" type="number" min="0">
+                    </div>
+                </div>
+
+                <div class=" form-group ACM-image-client col-xl-1 col-md-1  mt-3">
+                    <label>{{ 'topup.max_separate_late_days' | translate }}
+                    </label>
+                </div>
+                <div class="form-group col-xl-1 col-md-1 mt-3">
+                    <div class="input-group">
+                        <input class="form-control" formControlName="maxSeparateLateDays" type="number" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="form-group col-xl-6 col-md-6">
+                    <label>{{ 'topup.min_loan_amount' | translate }}
+                    </label>
+                </div>
+                <div class="form-group col-xl-3 col-md-3">
+                    <select class="form-control" formControlName="minLoanAmountType">
+                        <option selected value='0'> {{ 'topup.fixed_amount' | translate }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group col-xl-3 col-md-3">
+                    <div class="input-group">
+                        <input class="form-control col-md-4" formControlName="minFixedLoanAmount" type="number" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="form-group col-xl-6 col-md-6">
+                    <label> {{ 'topup.Max_allowed_topup_on_same_loan' | translate }}
+                    </label>
+                </div>
+                <div class="form-group col-xl-6 col-md-6">
+                    <div class="input-group">
+                        <input class="form-control col-md-4" formControlName="maxAllowedTopupOnSameLoan" type="number"
+                            min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="form-group col-xl-6 col-md-6">
+                    <label>{{ 'topup.Min_number_of_previously_issued_loans' | translate }}
+                    </label>
+                </div>
+                <div class="form-group col-xl-6 col-md-6">
+                    <div class="input-group">
+                        <input class="form-control col-md-4" formControlName="minPreviouslyIssuedLoansNumber"
+                            type="number" min="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer" *ngIf="isEditMode">
+            <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                    <button type="submit" class=" btn btn-primary text-white">{{'button.save' | translate}}</button>
+            </div>
+        </div>
+    </form>
+</div>

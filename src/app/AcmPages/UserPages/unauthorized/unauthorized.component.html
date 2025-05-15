@@ -1,0 +1,35 @@
+<div class="container" *ngIf="testExpiryDate&&testMaxActiveUser">
+  <div id="notfound">
+    <div class="notfound">
+      <div class="app-logo ml-5 mb-5"></div>
+      <div class="notfound-404">
+        <h1>{{'403_Unauthorized.titre' | translate}}</h1>
+        <h2>{{'403_Unauthorized.message' | translate}}</h2>
+      </div>
+      <a [routerLink]="['/acm']" routerLinkActive="Active">{{'403_Unauthorized.button_Go_Home' | translate}}</a>
+    </div>
+  </div>
+</div>
+
+
+<div class="container" *ngIf="!testExpiryDate||!testMaxActiveUser||!testSimultaniousUser">
+  <div id="notfound">
+    <div class="notfound">
+      <h2>Licence Verification</h2>
+    <p>Dear [Client's Name],</p>
+    <p>We hope you are enjoying using our web application. In an effort to maintain transparency and compliance, we kindly request you to verify the licence of our application.</p>
+    <p>To proceed with licence verification, please follow the steps below:</p>
+    <ol>
+        <li>Log in to your user account on our website.</li>
+        <li>Go to the "Settings" or "Setting system" section.</li>
+        <li>Look for the option "Licence" .</li>
+        <li>Copy and paste the provided licence code into the designated field.</li>
+        <li>Click on the "Validate" button.</li>
+    </ol>
+    <p>Once these steps are completed, the system will verify the validity of your licence and provide you with confirmation. If you encounter any issues or have additional questions, please don't hesitate to contact our customer support.</p>
+    <p>Thank you for your trust, and we are here to assist you with any further assistance you may need.</p>
+    <p>Best regards,<br>The web application support team</p>
+      <a [routerLink]="['/acm']" routerLinkActive="Active">{{'403_Unauthorized.button_Go_Home' | translate}}</a>
+    </div>
+  </div>
+</div>

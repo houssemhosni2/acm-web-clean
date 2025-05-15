@@ -1,0 +1,72 @@
+    <div class="card-body">
+      <p-table #dt [responsive]="true" [autoLayout]=true [value]="customerPaginationEntity.resultsCustomers"
+               (onLazyLoad)="reloadCustomerList($event)" [lazy]="!isOfflineModeEnabled()" [lazyLoadOnInit]="false" sortMode="multiple"
+               [totalRecords]="customerPaginationEntity.totalElements"
+               [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns"
+               [(selection)]="customer" selectionMode="multiple" >
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <!-- actions button -->
+            <th class="ACM_Customer_Search_void_Col" *ngIf="guarantor"></th>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+              <div class="center-elem text-center">
+                {{col.header | translate}}
+                <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+              </div>
+            </th>
+            <th class="ACM_Customer_Search_void_Col" *ngIf="!guarantor"></th>
+          </tr>
+          <tr>
+            <th class="ACM_Customer_Search_void_Col" *ngIf="guarantor">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th *ngFor="let col of columns" [ngSwitch]="col.field">
+              <input *ngSwitchCase="'customerNumber'" class="form-control placeholder" type="text"
+                     (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'customerNameNoPipe'" class="form-control placeholder" type="text"
+                     (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'branchesName'" class="form-control placeholder" type="text"
+                     (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'identity'" class="form-control" type="text"
+                     (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'solidarityName'" class="form-control" type="text"
+                     (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'accountPortfolioDescription'" class="form-control" type="text"
+                     (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <input *ngSwitchCase="'dateInsertion'" class="form-control ACM-Dashbord-Date-col" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            </th>
+            <th style='width: 40px;' *ngIf="!guarantor"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+          <tr *ngIf="rowData.id !== currentCustomer.id" >
+            <td>
+              <p-tableCheckbox  [value]="rowData" *ngIf="guarantor"></p-tableCheckbox>
+            </td>
+            <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+              <div *ngSwitchCase="'customerNumber'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'customerNameNoPipe'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'identity'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'solidarityName'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'branchesName'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'accountPortfolioDescription'">{{rowData[col.field]}}</div>
+              <div *ngSwitchCase="'dateInsertion'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+            </td>
+            <td *ngIf="!guarantor">
+              <button (click)='addCustomer(rowData)' pButton type='button' icon='fa fa-edit'></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="card-footer py-2 d-flex justify-content-end">
+      <button class="mb-1 mx-2 btn btn-outline-danger"
+      (click)="closeModale()">{{'button.cancel' | translate}}</button>
+      <button class="mb-1 btn btn-primary"
+              (click)='addguarantors(customer)'>{{'button.add' | translate}}</button>
+
+    </div>
+
+
+

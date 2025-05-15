@@ -1,0 +1,31 @@
+<app-page-title [heading]="'sidebar.loan_application'| translate " [icon]="'pe-7s-note2'"
+                [account]="loan.accountNumber" [status]="loan?.statutWorkflow" [loanApplicationStatus]="loan?.loanApplicationStatus"></app-page-title>
+<div class="row">
+  <div class="col-md-9 col-xl-9 px-1">
+    <app-customer-edit [completeLoanData]="false" (updateC)="changeFormsCustomer($event)"
+                       (updateCutomer)="checkCustomer($event)" (load)="checkLoading($event)"></app-customer-edit>
+    <app-customer-notes  [expanded]="true"></app-customer-notes>
+    <app-event-table  [expanded]="true" [source]="'LOAN'"></app-event-table>
+    <app-charge-fee-step [expanded]="true" [source]="'LOAN'"></app-charge-fee-step>
+    <app-upload-item [saveFilesAction]="saveFilesAction"
+    (lengthDocuments)="receiveLengthDocuments($event)" [category]="categoryLoan"(checkRequiredDoc)="checkRequiredDocumentParent($event)"
+     (saveDone)="saveDocumentsDone($event)"
+    [originSource]="originSource" [expanded]="true">
+    </app-upload-item>
+    <div *ngIf="loan.etapeWorkflow > 23 || !isOfflineModeEnabled()" >
+    <app-conditional-approve-list [expanded]="true"></app-conditional-approve-list>
+    </div>
+    <div class="d-block text-end px-2">
+      <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+      <button class="mb-2 mx-2 btn btn-success "
+              *ngIf="(!loanSharedService.habilitationButton('SAVE',currentPath) && loan.isOwnerOrValidator) || !isOfflineModeEnabled()" type="submit"
+              (click)="submitCustomer()" >{{'button.save'| translate }}</button>
+      <button *ngIf="loan.isOwnerOrValidator|| isOfflineModeEnabled()" class="mb-2 mx-2 btn btn-primary"
+              (click)="nextStep()">{{'button.next' | translate}}
+      </button>
+    </div>
+  </div>
+  <div class="col-md-3 col-xl-3 px-1">
+    <app-loan-process [etapeProcess]="currentStatus"></app-loan-process>
+  </div>
+</div>

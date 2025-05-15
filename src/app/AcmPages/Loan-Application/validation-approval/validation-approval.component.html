@@ -1,0 +1,55 @@
+<div *ngIf="display===true" class="col-sm-12 col-lg-12">
+  <div class="card-hover-shadow-2x mb-3 card">
+    <div class="card-header-tab card-header">
+      <div class="card-header-title font-size-lg text-capitalize fw-normal">
+        <i class="pe-7s-users px-2"> </i>
+        {{'approvers_list'|translate}}
+      </div>
+      <div class="btn-actions-pane-right text-capitalize actions-icon-btn" ngbDropdown>
+         <div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-area-sm" >
+      <perfect-scrollbar [autoPropagation]="false" >
+        <ul class="todo-list-wrapper list-group list-group-flush">
+          <li class="list-group-item"  *ngFor="let grp of listValidators" >
+            <div class="todo-indicator bg-success" *ngIf="grp.validation===true"></div>
+            <div class="widget-content p-0" *ngIf="grp.validation===true">
+              <div  class="widget-content-wrapper">
+                <div class="widget-content-left me-2">
+                </div>
+                <div class="widget-content-left flex2" *ngIf="grp.validation===true &&grp.ownerName!==null">
+                  <div class="widget-heading">{{grp.ownerName}} ( {{grp.groupeName }} )</div>
+                </div>
+                <div class="widget-content-left flex2" *ngIf="grp.validation===true &&grp.ownerName===null">
+                  <div class="widget-heading">{{grp.groupeName }}</div>
+                </div>
+                <div class="widget-content-right ms-3" *ngIf="grp.validation===true" >
+                  <div class="badge rounded-pill bg-success">{{'dashboard.approved'|translate}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="todo-indicator bg-warning" *ngIf="grp.validation===false" ></div>
+            <div class="widget-content p-0"  *ngIf="grp.validation===false">
+              <div  class="widget-content-wrapper">
+                <div class="widget-content-left me-2">
+                </div>
+                <div class="widget-content-left flex2" *ngIf="grp.validation===false &&grp.ownerName!==null">
+                  <div class="widget-heading">{{grp.ownerName}} ( {{grp.groupeName }} )</div>
+                </div>
+
+                <div class="widget-content-left flex2" *ngIf="grp.validation===false &&grp.ownerName===null">
+                  <div class="widget-heading">{{grp.groupeName }}</div>
+                </div>
+                <div class="widget-content-right ms-3"  *ngIf="grp.validation===false" >
+                  <div class="badge rounded-pill bg-warning">{{'pending'|translate}}</div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </perfect-scrollbar>
+    </div>
+  </div>
+

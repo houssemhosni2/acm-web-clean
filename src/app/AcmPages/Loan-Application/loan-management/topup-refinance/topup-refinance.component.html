@@ -1,0 +1,108 @@
+<app-page-title *ngIf="completeLoanData && topupRefinance" [heading]="'loan_management.topup_refinance.topup_refinance' | translate" [icon]="'pe-7s-culture'"
+  [account]="selectedLoan.accountNumber" [status]="-2"></app-page-title>
+<app-customer [expanded]="true" *ngIf="completeLoanData"></app-customer>
+<!--form add-->
+<form [formGroup]="addLoanForm">
+  <div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseLoanDetails" aria-expanded="true"
+      aria-controls="collapseCustomerAccount" (click)="toggleCollapseLoanDetails()">
+      <div>
+        <i class="lnr-file-empty text-secondary pr-2"></i>
+        {{ 'loan_management.loan_details.loan_detail' | translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expandedLoanDetails===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expandedLoanDetails===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="form-row d-flex align">
+          <div class="col-xl-6 col-sm-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.loan_details.account_portfolio'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="accountPortfolio" name="accountPortfolio">
+                <option selected value>
+                  {{'loan_management.loan_details.account_portfolio_default_select'| translate }}
+                </option>
+                <option *ngFor="let accountPortfolio of accountPortfolios" [ngValue]="accountPortfolio">
+                  {{accountPortfolio.fullName}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.loan_details.loan_reason'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" [compareWith]="compareLoanReason"
+              formControlName="loanReason" name="loanReason">
+                <option selected value>
+                  {{'loan_management.loan_details.loan_reason_default_select'| translate }}
+                </option>
+                <option *ngFor="let productLoanReason of productLoanReasons" [ngValue]="productLoanReason">
+                  {{productLoanReason.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-row d-flex align">
+          <div class="col-xl-6 col-md-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.loan_details.source_of_funds'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="sourceOfFunds"
+              name="sourceOfFunds" [compareWith]="compareSourceOfFunds">
+
+              <option selected value>
+                  {{'loan_management.loan_details.source_of_funds_default_select'| translate }}
+                </option>
+                <option *ngFor="let sourceOfFunds of sourceOfFundss" [ngValue]="sourceOfFunds">
+                  {{sourceOfFunds.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6 col-md-6 px-1">
+            <div class="position-relative form-group">
+              <label>{{'loan_management.calculators.product'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="product" name="product"
+
+              (change)="getProductRequirement()">
+                <option selected value>
+                  {{'loan_management.calculators.product_code_default_select'| translate }}
+                </option>
+                <option *ngFor="let product of products" [ngValue]="product">
+                  {{product.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<app-loan-provider-article  [mode]="updatemode()" (addNewAsset)="addNewAsset()" *ngIf = "updateSupplier()" 
+(selectAssets)="newAsset($event)" (totalAmount)="totalAmount($event)" (calculRequired)="calculRequired($event)"  [supplier]="updateSupplier()"  [assets]="assets">
+</app-loan-provider-article>   
+
+
+
+<!-- Calculator -->
+<div >
+  <app-calculator [selectedLoan]="selectedLoan" [selectedProduct]="selectedProduct" [source]="'add-topup-refinance'"
+  [loanDetailsValidity]="addLoanForm.valid" (loanFormDetailsTouched)="markAsTouched($event)"  [show]="true"></app-calculator>
+</div>
+
+<div class="d-block text-end card-footer p-2" *ngIf="completeLoanData">
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button class="btn btn-success mx-2" (click)="submitLoan()"
+    [disabled]="customerActiveAccount >= selectedProduct.maxAccounts  ">{{'button.save'|
+    translate }}</button>
+</div>

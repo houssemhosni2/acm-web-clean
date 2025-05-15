@@ -1,0 +1,147 @@
+<div class="card mb-3">
+  <div class="card-body ACM-task">
+    <form [formGroup]="habilitationForm">
+      <div class="position-relative form-group">
+        <label>{{'setting.group_management.list_groupe'| translate }}</label>
+        <select class="form-control" formControlName="groups" name="selectedValue" id="selectedValue"
+           (ngModelChange)="getHabitationByGroup($event)">
+          <option selected value disabled>{{'setting.group_management.default_select'| translate }}</option>
+          <option *ngFor="let groupeEntity of groupeEntitys" [ngValue]="groupeEntity">{{groupeEntity.libelle}}</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="main-card mb-2 card" *ngIf="showTable">
+    <div class="card-header">
+      <i class="lnr-file-empty pr-2"> </i>
+      {{'setting.habilitation_management.habilitations'| translate }}
+    </div>
+    <div>
+      <div class="table-responsive" *ngIf="habilitationEntitys.length!=0">
+        <table class="align-middle mb-0 table table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{{'setting.habilitation_management.ihm_description_screen'| translate }}</th>
+              <th>{{'setting.habilitation_management.ihm_description'| translate }}</th>
+              <th>{{'setting.habilitation_management.ihm_button'| translate }}</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let habilitationEntity of habilitationEntitys; let i = index">
+              <td class="ACM-table-notification-td-1">
+                <div class="custom-checkbox custom-control">
+                  <input type="checkbox" [id]="habilitationEntity?.id"
+                    (change)="onChangeCheckBox(habilitationEntity, i, $event)" [checked]="habilitationEntity.enabled"
+                    class="custom-control-input"><label class="custom-control-label"
+                    [for]="habilitationEntity?.id"></label>
+                </div>
+              </td>
+              <td class="ACM-table-habilitation-td-2">
+                {{ habilitationEntity?.description}}
+              </td>
+              <td class="ACM-table-historyNote-td-2">
+                {{habilitationEntity.acmWebRoute}}
+              </td>
+              <td class="ACM-table-habilitation-td-2">
+                <div *ngFor="let habilitationEntityButton of habilitationEntityButtons; let i = index">
+                  <div *ngIf="(habilitationEntity.acmHabilitation === habilitationEntityButton.acmHabilitation) ">
+                    <div class="row py-1">
+                      <div class="col-xl-5">
+                        {{habilitationEntityButton.value}}
+                      </div>
+                      <bSwitch [(ngModel)]="habilitationEntityButton.enableButton" [switch-size]="'mini'"
+                        [switch-animate]="true" (ngModelChange)='onChange(habilitationEntityButton)'
+                        [switch-off-color]="'danger'" [switch-disabled]="!habilitationEntity.enabled" class="px-2 mb-0">
+                      </bSwitch>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td  class="ACM-table-habilitation-td-2">
+                <button class="btn btn-warning" (click)="updateIhmFieldHabilitation(ihmFieldHabilitationContent, habilitationEntity?.acmHabilitation)">
+                  <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="d-block text-end card-footer pt-3 mx-2" *ngIf="showTable">
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class=" btn btn-primary text-white" (click)="updateHabilitation()">
+        {{'button.save' | translate}}
+      </button>
+    </div>
+  </div>
+</div>
+<ng-template #ihmFieldHabilitationContent let-close="close">
+  <div class="card">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">
+        {{'setting.habilitation_management.habilitation_ihm_fields'| translate }} </h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModal()">&times;</span>
+      </button>
+    </div>
+    <div class="card-body">
+      <label> {{'setting.habilitation_management.choose_ihm_form'| translate }} </label>
+      <select class="form-control" (change)="FormChanged($event)">
+        <option>{{'setting.habilitation_management.default_select_ihm_form'| translate }} </option>
+        <option *ngFor="let form of ihmForms" [ngValue]="form.codePage">{{ form.codePage }}</option>
+      </select>
+    </div>
+      <div class="table-responsive" *ngIf="ihmFormSelected">
+        <table class="mb-0 t table table-hover">
+          <thead>
+            <tr>
+              <th> {{'setting.habilitation_management.code_field'| translate }} </th>
+              <th> {{'setting.habilitation_management.description_field'| translate }} </th>
+              <th> {{'setting.habilitation_management.habilitation'| translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let ihmField of ihmFields  | slice: (pageF-1) * pageFSize : (pageF-1) * pageFSize + pageFSize; let i = index ">
+              <td>{{ihmField.codeField}}</td>
+              <td>{{ihmField.description}}</td>
+              <td>
+                <select class="form-control form-group" type="text"
+                  (change)="changeIhmFieldHabilitation($event,ihmField)" [(ngModel)]="ihmField.habilitation">
+                  <option selected value></option>
+                  <option *ngFor="let habilitation of habilitations" value="{{habilitation}}">{{ habilitation }}
+                  </option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <div class="card-footer pb-0" *ngIf="ihmFormSelected">
+      <div class="row no-gutters w-100">
+        <div class="col-xl-6 col-lg-6 col-md-12">
+          <ngb-pagination [collectionSize]="ihmFields.length" [(page)]="pageF" [pageSize]="pageFSize" size="sm"
+            [maxSize]="3" [boundaryLinks]="true">
+          </ngb-pagination>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12">
+          <div class="d-flex justify-content-lg-end">
+            <select class="custom-select" style="width: auto" name="pageFSize" [(ngModel)]="pageFSize">
+              <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+              <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+              <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+              <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer py-2 d-flex justify-content-end">
+      <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModal()">{{'button.close' |
+        translate}}</button>
+    </div>
+  </div>
+</ng-template>

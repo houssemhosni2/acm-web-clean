@@ -1,0 +1,172 @@
+<app-page-title *ngIf="source === 'ADD'" [heading]="'button.add_party'| translate "
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [status]="-1"></app-page-title>
+<app-page-title  *ngIf="source === 'EDIT'" [heading]="'button.edit_party'| translate "
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [status]="-1"></app-page-title>
+
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+    aria-controls="collapseCustomerAccount" (click)="toggleCollapseSetting()">
+    <div>
+      <i class="lnr-user text-secondary pr-2"></i>
+      {{ 'setting.third-party.partner-info' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(thirdPartySetting===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseCustomer" [ngClass]="(thirdPartySetting===true)?'collapse show':'collapse'"
+    aria-labelledby="headingOne" data-parent="#accordionExample">
+    <form class="form" [formGroup]="groupForm" #ngForm="ngForm">
+      <div class="card-body">
+        <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-xl-12 d-flex justify-content-end">
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label> {{'setting.setting_users.first-name'|translate}}</label>
+                <span class="text-danger">*</span>
+
+                  <input class="form-control" formControlName="firstName">
+
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'customer.last_name'|translate}}</label>
+                <span class="text-danger">*</span>
+
+                  <input class="form-control" formControlName="lastName">
+
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'customer.email'|translate}}</label>
+                <span class="text-danger">*</span>
+
+                  <input class="form-control" formControlName="email">
+
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-12 d-flex justify-content-end">
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'customer.address'|translate}}</label>
+
+                  <input class="form-control" formControlName="addressParty">
+
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.zip_code'|translate}}</label>
+                <span class="text-danger">*</span>
+
+                  <input class="form-control" formControlName="code_postal" type="number">
+
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'customer.telephone'|translate}}</label>
+                <span class="text-danger">*</span>
+
+                  <input class="form-control" formControlName="phoneNumber" type="number">
+                </div>
+              </div>
+
+          </div>
+          <div class="col-xl-12 d-flex justify-content-end">
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>RNE</label>
+                <span class="text-danger">*</span>
+
+                  <input class="form-control" formControlName="numero_rne" type="text" maxlength="8">
+
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'party.type_partner'|translate}}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="type" name="type">
+                  <option selected value="null">{{ 'party.type.default_select' | translate }} </option>
+                  <option value="Financial partners">{{ 'party.type.financial-partners' | translate }}</option>
+                  <option value="Insurance companies">{{ 'party.type.insurance-companies' | translate }}</option>
+                  <option value="Financial backers">{{ 'party.type.financial-backers' | translate }}</option>
+                  <option value="Business partners">{{ 'party.type.business-partners' | translate }}</option>
+                  <option value="Technical partners">{{ 'party.type.technical-partners' | translate }}</option>
+                  <!-- <option value="Control agency">{{ 'party.type.control-agency' | translate }}</option> -->
+                  <option value="Individuals">{{ 'party.type.individuals' | translate }}</option>
+                  <option value="Lawyer">{{ 'party.type.lawyer' | translate }}</option>
+                  <option value="Bailiff">{{ 'party.type.bailiff' | translate }}</option>
+                  <option value="Expert">{{ 'party.type.expert' | translate }}</option>
+                  <option value="Consultant">{{ 'party.type.consultant' | translate }}</option>
+                  <option value="Collection company">{{ 'party.type.collection_company' | translate }}</option>
+                  <option value="Recovery company">{{ 'party.type.recovery_company' | translate }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{'Statut'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="statut" name="statut">
+                  <option selected value="null"> {{ 'party.statut.default-select' | translate }} </option>
+                  <option value="Active"> {{ 'party.statut.active' | translate }}</option>
+                  <option value="Inactive"> {{ 'party.statut.inactive' | translate }}</option>
+                  <option value="Reactivated"> {{ 'party.statut.reactivated' | translate }}</option>
+                  <option value="Black list"> {{ 'party.statut.black-list' | translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!--<div class="col-xl-12 d-flex justify-content-end">
+            <div class="col-sm-6">
+              <div class="position-relative form-group">
+                <label>{{ 'customer_management.country' | translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="pays" name="pays" (change)="loadRegion(addressListEntity[0]?.addressListID, null)"
+                  [compareWith]="compareAddressListValue" [ngModel]="country">
+                  <ng-container *ngFor="let country of countryList ">
+                    <option [ngValue]="country">
+                      {{country.name}}
+                    </option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.region'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="ville" name="ville"
+                  [compareWith]="compareAddressListValue" [ngModel]="region">
+                  <ng-container *ngFor="let region of regionList ">
+                    <option [ngValue]="region">
+                      {{region.name}}
+                    </option>
+                  </ng-container>
+                </select>
+              </div>
+            </div> 
+          </div>-->
+        </div>
+      </div>
+      </form>
+  </div>
+</div>
+<app-generic-workFlow-document   [category]="'THIRD_PARTY'"  [expanded]="true"></app-generic-workFlow-document>
+
+
+
+
+<app-udf-step-workflow [source]="thirdPartyforUpdate!== null ? 'edit' : 'add' "
+  [category]="'PARTY'"></app-udf-step-workflow>
+<div class="d-block text-end card-footer p-2">
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button class="mb-1 btn btn-primary" type="submit" (click)="submit()">
+    {{'button.save'|translate}}
+  </button>
+</div>

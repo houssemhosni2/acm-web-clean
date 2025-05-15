@@ -1,0 +1,156 @@
+<div class="card">
+  <div class="card-header">
+    {{ 'setting.general_config' | translate }}
+  </div>
+  <form class="form col-xl-12 col-md-12 px-0" [formGroup]="generalSettingForm" (ngSubmit)="onSubmit()">
+    <div class="card-body">
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label> {{ 'setting.product_fields.product_code' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="code" type="text" min="0">
+          </div>
+        </div>
+      </div>
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label> {{ 'setting.product_fields.product_description' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="description" type="text" min="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label>{{ 'setting.product_fields.age_group' | translate }}
+          </label>
+        </div>
+        <div class="form-group ACM-image-client col-xl-1 col-md-1">
+          <label> {{ 'setting.product_fields.age_min' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-1 col-md-1">
+          <div class="input-group">
+            <input class="form-control" formControlName="minimumAge" type="number" min="0">
+          </div>
+        </div>
+
+        <div class=" form-group ACM-image-client col-xl-1 col-md-1">
+          <label>{{ 'setting.product_fields.age_max' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-1 col-md-1 ">
+          <div class="input-group">
+            <input  class="form-control" formControlName="maximumAge" type="number" min="0" >
+          </div>
+        </div>
+        <div class="d-flex justify-content-end error-msg" *ngIf="generalSettingForm.errors?.['ageRangeInvalid'] && generalSettingForm.get('maximumAge')?.touched">
+          <small><small>{{ 'alert.max_age' | translate }}</small></small>
+        </div>
+      </div>
+
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label> {{ 'setting.product_fields.max_accounts_per_product' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="maxAccounts" type="number" min="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label>{{ 'setting.product_fields.loan_terms' | translate }}
+          </label>
+        </div>
+        <div class="form-group ACM-image-client col-xl-1 col-md-1">
+          <label> {{ 'setting.product_fields.loan_terms_min' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-1 col-md-1">
+          <div class="input-group">
+            <input class="form-control" formControlName="minimumTerm" type="number" min="0">
+          </div>
+        </div>
+
+        <div class=" form-group ACM-image-client col-xl-1 col-md-1">
+          <label>{{ 'setting.product_fields.loan_terms_max' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-1 col-md-1">
+          <div class="input-group">
+            <input class="form-control" formControlName="maximumTerm" type="number" min="0">
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end error-msg" *ngIf="generalSettingForm.errors?.['termRangeInvalid'] && generalSettingForm.get('maximumTerm')?.touched">
+          <small>{{ 'alert.max_term' | translate }}</small>
+        </div>
+      </div>
+
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label>{{ 'setting.product_fields.defered_period' | translate }}
+          </label>
+        </div>
+        <div class="form-group ACM-image-client col-xl-1 col-md-1">
+          <label> {{ 'setting.product_fields.defered_period_min' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-1 col-md-1">
+          <div class="input-group">
+            <input class="form-control" formControlName="minimumDeferredPeriod" type="number" min="0">
+          </div>
+        </div>
+
+        <div class=" form-group ACM-image-client col-xl-1 col-md-1">
+          <label>{{ 'setting.product_fields.defered_period_max' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-1 col-md-1">
+          <div class="input-group">
+            <input class="form-control" formControlName="maximumDeferredPeriod" type="number" min="0">
+          </div>
+        </div>
+        <div class="d-flex justify-content-end error-msg" *ngIf="generalSettingForm.errors?.['deferredRangeInvalid'] && generalSettingForm.get('maximumDeferredPeriod')?.touched">
+          <small>{{ 'alert.max_deferred_period' | translate }}</small>
+        </div>
+      </div>
+
+      <div class="row p-2">
+        <div class="form-group col-xl-6 col-md-6">
+          <label>{{ 'setting.product_fields.default_rate' | translate }}
+          </label>
+        </div>
+        <div class="form-group col-xl-3 col-md-3">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="rateValue" type="number" min="0">
+          </div>
+        </div>
+        <div class="form-group col-xl-3 col-md-3">
+          <div class="input-group d-flex align-items-center">
+            <label class="px-3">{{'setting.product_fields.flat_interest_rate' | translate}}</label>
+            <bSwitch [(ngModel)]="enabled" [switch-size]="'small'" [switch-animate]="true"
+              [ngModelOptions]="{standalone : true}" [switch-off-color]="'danger'" class="px-2 mb-0 "
+              (click)="enableFlatInterestRate()"></bSwitch>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer" *ngIf="isEditMode">
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+              <button type="submit" class=" btn btn-primary text-white">{{'button.save' | translate}}</button>
+      </div>
+  </div>
+  </form>
+</div>

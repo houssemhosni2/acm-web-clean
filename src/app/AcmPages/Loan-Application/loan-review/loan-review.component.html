@@ -1,0 +1,176 @@
+<app-page-title [heading]=" 'sidebar.loan_application'| translate " [icon]="'pe-7s-note2'"
+  [account]="loan.accountNumber" [status]="loan.statutWorkflow"
+  [loanApplicationStatus]="loan?.loanApplicationStatus"></app-page-title>
+<div class="row">
+  <div class="col-md-9 col-xl-9 px-1" id="loan-approval">
+
+    <app-customer [expanded]="true"></app-customer>
+    <app-loan-info [expanded]="true"></app-loan-info>
+    <app-loan-provider-article [mode]="view" [supplier]="loan.productDTO.supplier"> </app-loan-provider-article>
+    <app-schedule [expanded]="false"></app-schedule>
+    <app-customer-account-360 [expanded]="false" [fromCustomer360] = "false"></app-customer-account-360>
+    <app-approval-field-visit [expanded]="false" *ngIf="checkComponentFieldVisitVisibily"></app-approval-field-visit>
+    <app-loan-guarantors [expanded]="false" *ngIf="checkComponentGuarantorVisibily"></app-loan-guarantors>
+    <app-collateral-step-details [expanded]="false"
+      *ngIf="checkComponentCollateralVisibily"></app-collateral-step-details>
+    <app-list-documents [expanded]="true" ></app-list-documents>
+    <app-screening [expandedCustomerScreening]="false" [expandedGuanatorsScreening]="false" [loanApproval]="true">
+    </app-screening>
+    <app-financial-analysis-details [expanded]="false" >
+    </app-financial-analysis-details>
+    <app-customer-analyse [expanded]="false" typeUDF="2" [loanEntity]="loan"></app-customer-analyse>
+    <app-customer-analyse [expanded]="false" typeUDF="1"></app-customer-analyse>
+    <app-customer-notes [expanded]="true"></app-customer-notes>
+    <app-event-table [expanded]="true" [source]="'LOAN'"></app-event-table>
+    <app-charge-fee-step [expanded]="true" [source]="'LOAN'"></app-charge-fee-step>
+    <div *ngIf="loan.etapeWorkflow > 23" >
+    <app-conditional-approve-list [expanded]="true"></app-conditional-approve-list>
+    <app-udf-step-workflow [source]="'workflow'" [category]="'LOAN'"></app-udf-step-workflow>
+    </div>
+    <app-upload-item  [saveFilesAction]="saveFilesAction" (lengthDocuments)="receiveLengthDocuments($event)" [category]="categoryLoan"
+    [originSource]="originSource" [expanded]="true" (saveDone)="saveDocumentsDone($event)" (checkRequiredDoc)="checkRequiredDocumentParent($event)">
+    </app-upload-item>
+    </div>
+  <div class="col-md-3 col-xl-3 px-1">
+    <app-loan-process></app-loan-process>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-9 col-md-9 pr-0 mt-2">
+    <div class="d-block text-end">
+      <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+      <button class="mb-2 mx-2 btn btn-warning text-white"
+        *ngIf="!loanSharedService.habilitationButton('REVIEW_AUDIT',currentPath) && loan.parentId === 0 && loan.isOwnerOrValidator"
+        (click)="reviewModal(content2)" >{{'button.review' |
+        translate}}</button>
+      <button class="mb-2 mx-2 btn btn-warning text-white"
+        *ngIf="!loanSharedService.habilitationButton('REVIEW_RISK',currentPath) && loan.parentId === 0 && loan.isOwnerOrValidator"
+        (click)="reviewModal(content2)" >{{'button.review' |
+        translate}}</button>
+      <button
+        *ngIf="!loanSharedService.habilitationButton('RECOMMEND_AUDIT',currentPath)  && loan.parentId === 0 && loan.isOwnerOrValidator"
+        class="mb-2 btn btn-success" (click)="recommendModel(content, 'AUDIT')"
+        >{{'button.recommend' | translate}}</button>
+      <button
+        *ngIf="!loanSharedService.habilitationButton('RECOMMEND_RISK',currentPath)  && loan.parentId === 0 && loan.isOwnerOrValidator"
+        class="mb-2 btn btn-success" (click)="recommendModel(content, 'RISK')"
+        >{{'button.recommend' | translate}}</button>
+
+        <button class="mb-2 btn btn-success mx-2" (click)="saveUdfs()">{{'button.save'| translate }}</button>
+
+        <button class="mb-2 mx-2 btn btn-primary "
+        *ngIf=" displayButtonExecuteApi && (!loanSharedService.habilitationButton('EXECUTE_API',currentPath) && loan.isOwnerOrValidator)"
+        type="submit" (click)="executeThirdPartyApi()">{{('Execute_api'|translate)}} </button>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'recommend.recommend_loan'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'recommend.recommend_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifRecommendEntity of settingMotifRecommendEntitys"
+              [ngValue]="settingMotifRecommendEntity">
+              {{settingMotifRecommendEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'recommend.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReject"> {{'button.confirm_checkbox' |
+                translate}}</label>
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+                (change)="changeChecboxRecommand()">
+            </div>
+          </div>
+        </div>
+
+
+        <!---->
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-success">{{'button.recommend' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmitReview()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'review.review_loan'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifReviewEntity of settingMotifReviewEntitys"
+              [ngValue]="settingMotifReviewEntity">
+              {{settingMotifReviewEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_steps'| translate }}</label>
+          <select class="form-control" formControlName="step" (change)="checkreviewalloption()">
+            <option *ngFor="let step of reviewSteps()" [ngValue]="step">
+              {{step.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'review.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="form-check-input" id="CheckboxReviewOnlySelected" type="checkbox" formControlName="reviewAllPreviousSteps">
+              <label class="custom-control-label ms-2"
+                for="exampleCustomCheckboxReview">{{'review.review_all_previous_steps'|translate}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+                translate}}</label>
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+                (change)="changeChecboxReview()">
+             
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-warning text-white">{{'button.review' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

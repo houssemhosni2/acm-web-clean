@@ -1,0 +1,75 @@
+<div *ngIf="guarantors.length !== 0">
+  <div class="accordion mb-1" id="accordionExample">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseGuarantor"
+        aria-expanded="true" aria-controls="collapseGuarantor" (click)="toggleCollapseEmpty()">
+        <div>
+          <i class="lnr-user px-2"></i>
+          {{ 'guarantors.guarantors' | translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div id="collapseGuarantor" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+        <div class="card-body no-gutters row">
+          <ngx-loading [show]="loading" loan-review
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+          </ngx-loading>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'guarantors.name' | translate }}</th>
+                <th scope="col">{{ 'guarantors.registration_date' | translate }}</th>
+                <th scope="col">{{ 'guarantors.amount' | translate }}</th>
+                <th scope="col">{{ 'guarantors.adresse' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let guarantor of guarantors; let i =index">
+                <td scope="row">{{ this.loanSharedService.getCustomerName(guarantor.member) }}</td>
+                <td>{{ guarantor?.dateDebut | date : "dd/MM/yyyy" }}</td>
+                <td>{{ guarantor?.amountGuarantor | number : this.decimalPlaces}}
+                  {{ loan?.currencySymbol }}</td>
+                <td>{{ guarantor.member.listAddress[0]?.address1 }} {{ guarantor.member.listAddress[0]?.address2 }} {{
+                  guarantor.member.listAddress[0]?.address3 }}
+                  {{ guarantor.member.listAddress[0]?.townCity }} {{ guarantor.member.listAddress[0]?.county }} {{
+                  guarantor.member.listAddress[0]?.country }}
+                </td>
+                <td>
+                  <button class="btn btn-warning" (click)='customerDetails(guarantor)'>
+                  <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+              </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="guarantors.length === 0">
+  <div class="accordion mb-1" id="accordionExampleCollapseGuarantorEmpty">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between" id="headingOneCollapseGuarantorEmpty"
+        data-target="#collapseGuarantorEmpty" aria-expanded="true" aria-controls="collapseGuarantorEmpty"
+        (click)="toggleCollapseEmpty()">
+        <div>
+          <i class="lnr-user px-2"></i>
+          {{ 'guarantors.guarantors' | translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div id="collapseGuarantorEmpty" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+        aria-labelledby="headingOne">
+        <div class="card-body">
+          <h6 style="color: red;" class="pt-3">{{ 'guarantors.missing_guarantor' | translate }} </h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

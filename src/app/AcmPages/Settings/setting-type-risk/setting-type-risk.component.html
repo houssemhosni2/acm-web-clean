@@ -1,0 +1,233 @@
+<div class="card">
+  <div class="card-header">
+
+{{ 'setting.type-de-risque' | translate }}
+<div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+  <button class="d-inline-flex align-items-center btn btn-primary" (click)="addRiskType(modalContent)" >
+    <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+    {{'setting.setting_configuration_product.add'| translate }}
+  </button>
+</div>
+</div>
+  <div>
+    <div class="mb-0 t table table-hove">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{ 'setting.label' | translate }}</th>
+
+            <th>{{ "setting.description" | translate }}</th>
+            <th>{{ 'setting.echelle' | translate }}</th>
+            <th>{{ 'setting.status' | translate }}</th>
+            <th></th>
+
+
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let SettingTypeRiskEntity of settingTypeRisk;
+              let i = index">
+            <td>{{ SettingTypeRiskEntity.label }}</td>
+            <td>{{ SettingTypeRiskEntity.description }}</td>
+            <td>{{ SettingTypeRiskEntity.echelleListString }}</td>
+
+            <td>
+              <bSwitch
+                [(ngModel)]="SettingTypeRiskEntity.enabled"
+                [switch-size]="'mini'"
+                [switch-animate]="true"
+                [switch-off-color]="'danger'"
+                [switch-handle-width]="40"
+                class="px-2 mb-0"
+                (click)="endableDisable(SettingTypeRiskEntity)"
+              >
+              </bSwitch>
+            </td>
+            <td>
+              <button class="btn btn-warning text-white  mr-4 "
+              (click)="updateRiskType(modalContent, SettingTypeRiskEntity)">
+              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+            </button>
+            <button class="btn btn-danger text-white"
+              (click)="deleteRiskType(SettingTypeRiskEntity)">
+              <fa-icon [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+            </button>
+            </td>
+
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2" *ngIf="popuppMode === 'UPDATE'">
+      <h5 class="modal-title">{{ 'setting.update-risk-type' | translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <div class="modal-header py-2" *ngIf="popuppMode === 'ADD'">
+      <h5 class="modal-title">{{'setting.add-risk-type'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='groupForm'>
+
+
+        <div class="position-relative pb-4">
+          <label>{{'setting.label'| translate }}</label>
+          <span class="text-danger" >*</span>
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="label">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.description'| translate }}</label>
+          <div class="input-group">
+            <textarea class="form-control" formControlName="description"></textarea>
+          </div>
+        </div>
+        <div class="py-1">
+            <div class="card-header">
+              {{'setting.echelle'| translate }}
+              <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                <button class="d-inline-flex align-items-center btn btn-primary" (click)="addEchelle()">
+                  <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                  {{ 'setting.add-echelle' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <form class="form" [formGroup]="echelleForm" (ngSubmit)="onsave()">
+              <div>
+                <table class="mb-0 t table table-hover">
+                  <thead>
+                    <tr>
+                      <th>{{'setting.label'| translate }}</th>
+                      <th>{{'setting.description'| translate }}</th>
+
+
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let echelle of echelleList, let i = index">
+
+                      <td class="col-sm-5" *ngIf="!echelle.forDelete">
+                        <div class="input-group">
+                          <input class="form-control" formControlName="label{{i}}">
+                        </div>
+                      </td>
+                      <td class="col-sm-5" *ngIf="!echelle.forDelete" >
+                        <div class="input-group">
+                          <input class="form-control" formControlName="description{{i}}">
+                        </div>
+                      </td>
+                      <td *ngIf="!echelle.forDelete">
+                        <div class="row d-flex justify-content-end px-3">
+                          <div class="px-2">
+                            <button class="btn btn-danger" (click)="deleteEchelle(i,echelle)">
+                              <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="col-sm-1" *ngIf="!echelle.forDelete" hidden>
+                        <div class="input-group">
+                          <input type="text" class="form-control" formControlName="forDelete{{i}}">
+
+                        </div>
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+                </table>
+
+              </div>
+
+
+              <div class="modal-footer py-1">
+
+              </div>
+            </form>
+          </div>
+
+
+
+
+
+
+      <div class="modal-footer">
+        <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+          translate}}</button>
+        <button class="mb-1 btn btn-primary" (click)="onSubmit()">{{'button.save' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #content>
+  <div [ngClass]="{ 'text-end': translate.currentLang === 'ar' }">
+    <div class="modal-header py-2">
+      <div class="row no-gutters align-items-center">
+        <div class="col-xl-3">
+          <div class="fa fa-question-circle text-info ACM-icon-question"></div>
+        </div>
+        <div class="col-xl-9">
+          <h4 class="modal-title">
+            {{ "confirmation_dialog.title" | translate }}
+          </h4>
+        </div>
+      </div>
+      <button type="button" class="close">
+        <span aria-hidden="true" (click)="closeModal()">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body row no-gutters">
+      <div
+        mat-dialog-content
+        *ngIf="messageDisplayed === 'change_status_all_users'"
+      >
+        {{ "notifications.change_status_all_users" | translate }}
+      </div>
+      <div mat-dialog-content *ngIf="messageDisplayed === 'change_status'">
+        {{ "notifications.change_status" | translate }}
+      </div>
+    </div>
+    <div class="col-xl-3">
+      <mat-checkbox
+        (change)="getCheckboxValue($event)"
+        [hidden]="!showCheckbox"
+        >{{ "notifications.apply_for_all_user" | translate }}</mat-checkbox
+      >
+    </div>
+    <div class="modal-footer py-0">
+      <div mat-dialog-actions class="my-2">
+        <button
+          mat-button
+          class="btn btn-outline-2x btn-outline-success active"
+          (click)="getAnswer(true)"
+          cdkFocusInitial
+        >
+          {{ "button.yes" | translate }}
+        </button>
+        <button
+          mat-button
+          class="btn btn-outline-2x btn-outline-danger active"
+          (click)="getAnswer(false)"
+          cdkFocusInitial
+        >
+          {{ "button.no" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,456 @@
+<app-page-title [heading]="'sidebar.customer_360'| translate" [icon]="'lnr-home'" [account]="''" [status]="-1"></app-page-title>
+<div class="col-md-12 col-xl-12 px-0">
+  <div class="container tabs-animated tabs-animated-shadow tabs-rounded-lg col-xl-12">
+    <ul class="nav nav-tabs nav-justified">
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': informationTab}" (click)="changeTab(1)">
+          <span>{{'customer-360.customer_information' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': otherinformationTab}" (click)="changeTab(2)">
+          <span>{{'customer.customer_analysis' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': accountTab}" (click)="changeTab(3)">
+          <span>{{'customer-360.customer_account' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': transactionTab}" (click)="changeTab(4)">
+          <span>{{ 'transactions.transactions' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': guaranteesTab}" (click)="changeTab(8)">
+          <span>{{'customer-360.guarantees' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': documentTab}" (click)="changeTab(5)">
+          <span>{{'customer-360.customer_document' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': relationshipTab}" (click)="changeTab(6)">
+          <span>{{'customer-360.relationships' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': communicationTab}" (click)="changeTab(7)">
+          <span>{{'customer-360.communications' | translate}}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': collectionTab}" (click)="changeTab(9)">
+          <span>  {{'collections.collection-dashboard.collection_history' | translate}}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="informationTab">
+    
+    <app-customer #childComponent [customer360]="true" [expanded]="true"></app-customer>
+    <app-customer-members (customerEvent)="reload($event)" [expanded]="true"></app-customer-members>
+    <div class="pt-1">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseOne"
+             aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+          <div>
+            <i class="lnr-user text-secondary px-2"></i>
+            {{ 'customer_management.address_information_groupe' | translate }}
+          </div>
+          <div>
+            <i
+              [ngClass]="(expandedAddress===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+          </div>
+        </div>
+        <div id="collapseOne" [ngClass]="(expandedAddress===true)?'collapse show':'collapse'"
+             aria-labelledby="headingOne"
+             data-parent="#accordionExample">
+          <div *ngIf="addresses.length >0" class="card-body">
+            <div *ngFor="let addresse of addresses; let i= index">
+              <div class="row mt-2 pb-0">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                  <div class="row">
+                    <div class="col-xl-12">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left mb-3">
+                              <h5 class="text-uppercase">{{getAdressType(addresse.addressTypeId)}}</h5>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row pb-3">
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.country'| translate }}</div>
+                              <div class="widget-subheading">
+                                {{addresse.country}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.region'| translate }}</div>
+                              <div class="widget-subheading row">
+                                {{addresse.state}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.city'| translate }}</div>
+                              <div class="widget-subheading">{{addresse.townCity}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{"customer_management.district" | translate}}</div>
+                              <div class="widget-subheading">{{addresse.county}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row pb-3">
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.street'| translate }}</div>
+                              <div class="widget-subheading">
+                                {{addresse.address1}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.building_number'| translate }}</div>
+                              <div class="widget-subheading row">
+                                {{addresse.address2}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.unit_number'| translate }}</div>
+                              <div class="widget-subheading">{{addresse.address3}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.zip_code'| translate }}</div>
+                              <div class="widget-subheading">{{addresse.postalCode}}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row pb-3">
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.date_moved_in'| translate }}</div>
+                              <div class="widget-subheading">
+                                {{addresse.dateMovedIn | date: 'dd/MM/yyyy'}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-3">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div class="widget-content-wrapper">
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.date_moved_out'| translate }}</div>
+                              <div class="widget-subheading row">
+                                {{addresse.dateMovedOut | date: 'dd/MM/yyyy'}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-4">
+                      <div class="widget-content p-0">
+                        <div class="widget-content-outer">
+                          <div>
+                            <div class="widget-content-left">
+                              <div class="widget-heading">{{'customer_management.gps-location'| translate }}</div>
+                              <div class="row">
+                                <div class="input-group">
+                                  <input placeholder="{{'customer_management.gps-location'| translate }}"
+                                         name="otherInfo"
+                                         type="text" class="form-control"   (change)="loadMarkerMap(i)"
+                                         [(ngModel)]="mapLocation[i]"/>
+                                  <div class="input-group-append">
+                                    <button class="btn-icon btn-icon-only btn btn-primary" (click)="getCurrentPlace(i)"
+                                            type="button" ngbTooltip="Current position" placement="top">
+                                      <i class="pe-7s-map-marker"></i>
+                                    </button>
+                                    <button class="btn btn-warning text-white" (click)="showMap(i)" type="button"
+                                            ngbTooltip="Show Map" placement="top">
+                                      <i class="pe-7s-look btn-icon-wrapper"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-2 col-sm-2 d-flex align-items-end px-0">
+                      <button class="mx-2 btn-icon btn-icon-only btn btn-success" ngbTooltip="update"
+                              placement="bottom" (click)="addressUpdateReason(updateAddress, i)"><i
+                        class="pe-7s-diskette btn-icon-wrapper"></i></button>
+                      <button class="btn-icon btn-icon-only btn btn-warning text-white" ngbTooltip="history"
+                              placement="bottom" (click)="getAddressHistory(addressHistoryPop, addresse)"><i
+                        class="pe-7s-timer btn-icon-wrapper"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr class="solid pt-2">
+            <agm-map  *ngIf="displayMap"
+              style="height: 450px;"
+              class="pb-3"
+              [latitude]="latitude"
+              [longitude]="longitude"
+              [zoom]="zoom"
+              [disableDefaultUI]="false"
+              [disableDoubleClickZoom]="true">
+              <agm-marker
+                *ngFor="let m of markers; let i = index"
+                [latitude]="m.lat"
+                [longitude]="m.lng"
+                [label]="m.label"
+                [markerDraggable]="m.draggable"
+                (dragEnd)="markerDragEnd(i, $event)">
+                <agm-info-window>
+                  <strong>{{'customer_management.address'| translate }} {{i + 1}}</strong>
+                </agm-info-window>
+              </agm-marker>
+            </agm-map>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="otherinformationTab">
+    <app-customer-analyse [expanded]="true" typeUDF="1"></app-customer-analyse>
+    <div *ngFor="let loan of udfLoans">
+      <app-customer-analyse [expanded]="true" typeUDF="3" [udfLoans]="loan.acmUdfLinksGroupeFieldDTOs"
+                            [accountNumberExtern]="loan.accountNumberExtern"></app-customer-analyse>
+    </div>
+  </div>
+  <div *ngIf="accountTab">
+    <app-customer-account-360 [expanded]="true" [fromCustomer360] = "true" [transitionsAccountes]="transitionsAccountes" > </app-customer-account-360>
+  </div>
+  <div *ngIf="guaranteesTab">
+    <app-guarantees [expanded]="true" (guarantorEvent)="refreshFromguaranteesTab()" ></app-guarantees>
+    <app-my-loan-guarantors [expanded]="true" (myLoanGuarantorEvent)="refreshFromguaranteesTab()"  ></app-my-loan-guarantors>
+
+      <app-loan-collaterals [loans]="loans" [customer]="customer"  [expanded]="true"></app-loan-collaterals>
+
+  </div>
+  <div *ngIf="documentTab">
+    <app-customer-document [expanded]="true"></app-customer-document>
+  </div>
+  <div *ngIf="relationshipTab">
+    <app-customer-relationship (customerEvent)="refresh()" [expanded]="true"></app-customer-relationship>
+  </div>
+  <div *ngIf="communicationTab">
+    <app-customer-message [Type]="'customer'"></app-customer-message>
+  </div>
+  <div *ngIf="collectionTab">
+    <app-customer-collection-history  [expanded]="true"></app-customer-collection-history>
+  </div>
+  <div *ngIf="transactionTab">
+    <app-customer-transactions [expanded]="true"></app-customer-transactions>
+  </div>
+
+</div>
+<div class="d-block text-end pt-3 px-2">
+  <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+</div>
+
+<!-- Address History -->
+<ng-template #addressHistoryPop let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'customer_management.address-history'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+              (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <perfect-scrollbar class="scroll-container" style="max-height:650px;">
+        <div *ngFor="let history of addressHistory">
+          <div class="row d-flex align-items-end">
+            <p class="px-2 mb-0">{{'customer_management.updated-by'| translate }} </p>
+            <h6 class="mb-0 pb-1"> {{history.insertBy}}</h6>
+            <p class="px-2 mb-0"> {{'customer_management.for-reason'| translate }} </p>
+            <h6 class="mb-0 pb-1">{{history.reasonUpdate}}</h6>
+            <div class="px-3">
+              <div class="badge-warning badge">{{history.dateInsertion | date: 'dd/MM/yyyy'  }}</div>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+            <tr>
+              <th class="ACM-table-font-size-modal">{{'customer_management.country'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.region'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.city'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{"customer_management.district" | translate}}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.street'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.building_number'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.unit_number'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.zip_code'| translate }}</th>
+              <th class="ACM-table-font-size-modal">{{'customer_management.gps-location'| translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.country != history.newAddressDTO.country) ? 'text-danger' : ''">{{history.oldAddressDTO.country}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.state != history.newAddressDTO.state) ? 'text-danger' : ''">{{history.oldAddressDTO.state}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.townCity != history.newAddressDTO.townCity) ? 'text-danger' : ''">{{history.oldAddressDTO.townCity}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.county != history.newAddressDTO.county) ? 'text-danger' : ''">{{history.oldAddressDTO.county}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.address1 != history.newAddressDTO.address1) ? 'text-danger' : ''">{{history.oldAddressDTO.address1}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.address2 != history.newAddressDTO.address2) ? 'text-danger' : ''"> {{history.oldAddressDTO.address2}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.address3 != history.newAddressDTO.address3) ? 'text-danger' : ''">{{history.oldAddressDTO.address3}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.postalCode != history.newAddressDTO.postalCode) ? 'text-danger' : ''">{{history.oldAddressDTO.postalCode}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.lan + ', ' + history.oldAddressDTO.lng != history.newAddressDTO.lan + ', ' + history.newAddressDTO.lng) ?
+                'text-danger' : ''">
+                <div *ngIf="history.oldAddressDTO.lan === null && history.oldAddressDTO.lng === null">-</div>
+                <div
+                  *ngIf="history.oldAddressDTO.lan !== null && history.oldAddressDTO.lng !== null">{{history.oldAddressDTO.lan + ', ' + history.oldAddressDTO.lng}}</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.country != history.newAddressDTO.country) ? 'text-success' : ''">{{history.newAddressDTO.country}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.state != history.newAddressDTO.state) ? 'text-success' : ''">{{history.newAddressDTO.state}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.townCity != history.newAddressDTO.townCity) ? 'text-success' : ''">{{history.newAddressDTO.townCity}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.county != history.newAddressDTO.county) ? 'text-success' : ''">{{history.newAddressDTO.county}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.address1 != history.newAddressDTO.address1) ? 'text-success' : ''">{{history.newAddressDTO.address1}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.address2 != history.newAddressDTO.address2) ? 'text-success' : ''"> {{history.newAddressDTO.address2}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.address3 != history.newAddressDTO.address3) ? 'text-success' : ''">{{history.newAddressDTO.address3}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.postalCode != history.newAddressDTO.postalCode) ? 'text-success' : ''">{{history.newAddressDTO.postalCode}}</td>
+              <td class="ACM-table-font-size-modal"
+                  [ngClass]="(history.oldAddressDTO.lan + ', ' + history.oldAddressDTO.lng != history.newAddressDTO.lan + ', ' + history.newAddressDTO.lng) ?
+                'text-success' : ''">
+                <div *ngIf="history.newAddressDTO.lan === null && history.newAddressDTO.lng === null">-</div>
+                <div
+                  *ngIf="history.newAddressDTO.lan !== null && history.newAddressDTO.lng !== null">{{history.newAddressDTO.lan + ', ' + history.newAddressDTO.lng}}</div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <hr class="solid pt-2">
+        </div>
+      </perfect-scrollbar>
+    </div>
+  </div>
+</ng-template>
+<ng-template #updateAddress let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form [formGroup]="addressFromReason">
+      <div class="modal-header py-2">
+        <h5 class="modal-title">Update Address</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+                (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-xl-12 col-sm-12">
+          <div class="widget-content p-0">
+            <div class="widget-content-outer">
+              <div class="widget-content-left">
+                <div class="widget-heading mb-2">Reason</div>
+                <div class="row">
+                  <textarea class="form-control" formControlName="addressReason"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer p-1">
+        <button type="submit" class="btn btn-primary" (click)="saveAddress()">save</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+

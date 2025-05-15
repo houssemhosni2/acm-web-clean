@@ -1,0 +1,140 @@
+<div *ngIf="supplier">
+  <div class="accordion mb-1">
+    <div class="card">
+      <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapseOne"
+        aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+        <div class="card-header-title">
+          <i class="lnr-file-empty text-secondary px-2"></i> {{'supplier.assets_selection'|translate}}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div id="collapseOne" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div class="pb-3 px-2">
+          <div class="custom-checkbox custom-control">
+          </div>
+        </div>
+        <!-- bouton popup-->
+        <div class="page-title-actions p-4 d-flex justify-content-end" *ngIf="mode==='edit'">
+          <button class="btn-shadow d-inline-flex align-items-center btn btn-primary mx-2" type="button"
+            (click)="openLarge(content2)">
+            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+            {{'asset.select_asset'|translate}} </button>
+          <button class="btn-shadow d-inline-flex align-items-center btn btn-primary mx-2" type="button"
+            (click)="createNewAsset()">
+            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+            {{'asset.add-new-asset'|translate}} </button>
+        </div>
+        <div>
+          <div class="p-0">
+            <!-- tableau notes -->
+            <div class="table-responsive-md">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>{{'sidebar.supplier'|translate}}</th>
+                    <th>{{'sidebar.article_code'|translate}}</th>
+                    <th>{{'expenses-settings.libel'|translate}}</th>
+                    <th>{{'collaterol.description'|translate}}</th>
+                    <th>{{'financial_analysis.unit_price'|translate}}</th>
+                    <th>{{'sidebar.discount'|translate}}</th>
+                    <th>{{'sidebar.quantity'|translate}}</th>
+                    <th>{{'supplier.withholding_tax'| translate }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="let item of listAssetsSelected | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize, let i = index">
+                    <ng-container *ngIf="item.enabled">
+                    <tr>
+                      <td class="px-5">{{ item?.asset.supplierName }}</td>
+                      <td>{{ item?.asset.codeArticle }}</td>
+                      <td>{{ item?.asset.libelle }}</td>
+                      <td>{{ item?.asset.description }}</td>
+                      <td *ngIf="mode!=='view'">
+                        <input type="number" class="form-control" [(ngModel)]="item.prixUnitaire"
+                          (change)="onChange(item)">
+                      </td>
+                      <!-- Mode Edit-->
+                      <td *ngIf="mode!=='view'">
+                        <div class="input-group mb-3">
+                          <input type="number" class="form-control" [(ngModel)]="item.remiseArticle"
+                            (change)="onChange(item)">
+                          <span class="input-group-text" id="basic-addon1">%</span>
+                        </div>
+                      </td>
+                      <td *ngIf="mode!=='view'">
+                        <input type="number" class="form-control" [(ngModel)]="item.quantiteArticle"
+                          (change)="onChange(item)">
+                      </td>
+                      <td *ngIf="mode!=='view'">
+                        <div class="input-group mb-3">
+                          <select class="form-control" [(ngModel)]="item.withholdingTax" (change)="onChange(item)">
+                            <option *ngFor="let tax of withholdingTaxes" [ngValue]="tax">
+                              {{tax}}%
+                            </option>
+                          </select>
+                        </div>
+                      </td>
+                      <td *ngIf="mode!=='view'">
+                        <a type="button" class="btn btn-danger" (click)="deleteAsset(item)">
+                          <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                        </a>
+                      </td>
+                      <!-- Mode View-->
+                      <td *ngIf="mode==='view'"> {{item.prixUnitaire}} </td>
+                      <td *ngIf="mode==='view'"> {{item.remiseArticle}} % </td>
+                      <td *ngIf="mode==='view'"> {{item.quantiteArticle}} </td>
+                      <td *ngIf="mode==='view'"> {{ item.withholdingTax || 0 }} </td>
+                    </tr>
+                  </ng-container>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="text-center opacity-6 pt-1 pb-0">
+          <b> {{'dashboard.total' | translate}} {{ getEnabledAssetsCount() }}</b>
+          <br>
+          <b> {{'dashboard.amount' | translate}} {{totalAssetAmount}} </b>
+        </div>
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="guarantors.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                [maxSize]="3" [boundaryLinks]="true">
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div class="main-card card">
+    <div class="card-header py-2">
+      <h4 class="modal-title"> {{'supplier.assets_selection'|translate}}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <!--Appel Component list of articles-->
+    <app-list-asset [search]="true" (selectedAssets)="addAssets($event)" [mode]="mode"> </app-list-asset>
+  </div>
+</ng-template>

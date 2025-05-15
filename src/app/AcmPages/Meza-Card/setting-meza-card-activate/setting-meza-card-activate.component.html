@@ -1,0 +1,165 @@
+<div class="card">
+  <div class="card-header">
+    {{'meza_card.send_card'| translate }}
+  </div>
+  <div class="card-body">
+    <ngb-accordion>
+      <ngb-panel id="static-1">
+        <ng-template ngbPanelTitle>
+          <span class="card-header--title">
+            {{'incentive.advanced_search'| translate }}
+          </span>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <form [formGroup]="mezaFilterForm">
+            <div>
+              <tr>
+                <td>{{'meza_card.merchant_id'| translate }}</td>
+                <td>{{'meza_card.card_type'| translate }}</td>
+                <td>{{'meza_card.card_number'| translate }}</td>
+                <td>{{'meza_card.account'| translate }}</td>
+                <td>{{'meza_card.expiry_date'| translate }}</td>
+                <td>{{'meza_card.activity_Date'| translate }}</td>
+                <td>{{'meza_card.embossed_name'| translate }}</td>
+                <td>{{'meza_card.status'| translate }}</td>
+                <td>{{'meza_card.branch_name'| translate }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td class="px-1"><input type="text" class="form-control" formControlName="marchant" name="marchant" /></td>
+                <td class="px-1"><input type="text" class="form-control" formControlName="cardType" name="cardType" /></td>
+                <td class="px-1"><input type="text"class="form-control" formControlName="cardNumber" name="cardNumber" /></td>
+                <td class="px-1"><input type="text" class="form-control" formControlName="account" name="account" /></td>
+                <td class="px-1"><input type="date" class="form-control" formControlName="expiryDate" name="expiryDate" /></td>
+                <td class="px-1"><input type="date" class="form-control" formControlName="activityDate" name="activityDate" /></td>
+                <td class="px-1"><input type="text" class="form-control" formControlName="embossed" name="embossed" /></td>
+                <td class="px-1">
+                  <select class="form-control" formControlName="status" name="status">
+                    <option value="UPLOAD">{{'meza_card.uploaded'| translate }}</option>
+                    <option value="SENT">{{'meza_card.meza_sent'| translate | uppercase }}</option>
+                  </select>
+                  </td>
+                <td class="px-1">
+                  <select class="form-control" formControlName="branch" name="branch">
+                      <option *ngFor="let brancheEntity of branchEntitys" [ngValue]="brancheEntity">
+                      {{brancheEntity.description}}
+                    </option>
+                  </select>
+                </td>
+                <td class="px-1">
+                  <div class=" d-flex position-relative form-group pt-4 mt-1">
+                    <div class="px-1">
+                      <button class="btn btn-sm btn-primary " (click)="onSubmit()">
+                        <i class="pe-7s-search"></i>
+                      </button>
+                    </div>
+                    <div class="px-1">
+                      <button class="btn btn-sm btn-danger " (click)="reset()">
+                         <i class="pe-7s-refresh"></i>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </div>
+          </form>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+    <table class="table table-hover">
+      <thead>
+      <th>
+        <input class="form-control-lg" type="checkbox" [(ngModel)]="allSelection" (change)="selectAll()">
+      </th>
+      <th>{{'meza_card.merchant_id'| translate }}</th>
+      <th>{{'meza_card.card_type'| translate }}</th>
+      <th>{{'meza_card.card_number'| translate }}</th>
+      <th>{{'meza_card.account'| translate }}</th>
+      <th>{{'meza_card.expiry_date'| translate }}</th>
+      <th>{{'meza_card.activity_Date'| translate }}</th>
+      <th>{{'meza_card.embossed_name'| translate }}</th>
+      <th>{{'meza_card.status'| translate }}</th>
+      <th>{{'meza_card.branch_name'| translate }}</th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let card of mezaCards.resultsAcmMezaCards, let i=index">
+        <td>
+          <input class="form-control-lg" type="checkbox" [(ngModel)]="selectCardsIndex[i]">
+        </td>
+        <td>
+          {{card.merchantID}}
+        </td>
+        <td>
+          {{card.cardType}}
+        </td>
+        <td>
+          {{card.cardNumber}}
+        </td>
+        <td>
+          {{card.account}}
+        </td>
+        <td>
+          {{card.expirtyDate | date: 'dd/MM/yyyy'}}
+        </td>
+        <td>
+          {{card.activityDate | date: 'dd/MM/yyyy'}}
+        </td>
+        <td>
+          {{card.embossedName}}
+        </td>
+        <td *ngIf = "card.status === 'UPLOAD'"> {{'meza_card.uploaded'| translate }} </td>
+        <td *ngIf = "card.status === 'SENT'">{{'meza_card.meza_sent'| translate | uppercase }} </td>
+        <td *ngIf = "card.status === 'ACTIVATE'">{{'meza_card.activated'| translate }}</td>
+        <td>
+          {{card.branchName}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="col-xl-12 col-md-12 px-0 mx-0 row">
+      <div class="col-xl-9 col-md-9">
+        <ngb-pagination [collectionSize]="totalElements" [(page)]="pageNumber" [pageSize]="pageSize" size="sm"
+                        [maxSize]="3" [boundaryLinks]="true" (pageChange)="reloadFilter(pageNumber)">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-3 col-md-3 px-0 d-flex justify-content-end">
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize"
+                (ngModelChange)="reloadFilter(pageNumber)">
+          <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+          <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+          <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+          <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer d-flex justify-content-end">
+    <button class="btn btn-primary" (click)="openModal(modalAssignBranch)">{{'button.send'| translate }}</button>
+  </div>
+</div>
+
+<ng-template #modalAssignBranch let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'meza_card.assign_branch'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div class="position-relative form-group">
+          <label>{{'customer_management.branch'| translate }}</label>
+          <span class="text-danger">*</span>
+          <select class="form-control" [(ngModel)]="selectedBranch">
+            <option [ngValue] = "null">{{'customer_management.branch_default_select'| translate }}</option>
+            <option [ngValue]="branchEntity" *ngFor="let branchEntity of branchEntitys">
+              {{branchEntity.description}}
+            </option>
+          </select>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-end">
+      <button class="btn btn-primary" (click)="assignBranch()">{{'meza_card.sent'| translate }}</button>
+    </div>
+  </div>
+</ng-template>

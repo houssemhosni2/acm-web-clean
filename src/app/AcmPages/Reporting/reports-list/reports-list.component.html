@@ -1,0 +1,314 @@
+<!--title-->
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon"><i class="icon pe-7s-drawer icon-gradient bg-happy-itmeo"></i></div>
+      <div>{{'reporting.title'| translate }}</div>
+    </div>
+  </div>
+</div>
+
+<!--report list table-->
+<div class="main-card mb-2 card">
+  <div class="card-header">
+    <i class="lnr-file-empty pr-2"> </i>
+    {{'reporting.report_list'| translate }}
+  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="align-middle mb-0 table table-hover">
+        <thead>
+          <tr class="text-center">
+            <th>{{'reporting.report_name'| translate }}</th>
+            <th>{{'reporting.view_report'| translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="text-center" *ngIf="!sharedService.habilitationButton('LOAN_STATUT',currentPath)">
+            <td [ngClass]="{'font-weight-bold' : showReportCriteria ===  true && reportCode === 1 }">
+              {{'reporting.report_loan_statut'| translate }}
+            </td>
+            <td>
+              <button class="btn btn-warning" (click)="openCriteria(1)">
+                <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+              </button>
+            </td>
+          </tr>
+          <tr class="text-center" *ngIf="!sharedService.habilitationButton('COLLECTION_FOLLOW_UP',currentPath)">
+            <td [ngClass]="{'font-weight-bold' : showReportCriteria ===  true && reportCode === 2 }">
+              {{'reporting.report_collection_follow_up'| translate }}
+            </td>
+            <td>
+              <button class="btn btn-warning" (click)="openCriteria(2)">
+                <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+              </button>
+            </td>
+          </tr>
+          <tr class="text-center" *ngIf="!sharedService.habilitationButton('MEZA_CARD',currentPath)">
+            <td>
+              {{'reporting.report_meza_card'| translate }}
+            </td>
+            <td>
+              <button class="btn btn-success" (click)="generateMezaCardReport()">
+                <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+              </button>
+            </td>
+          </tr>
+          <tr class="text-center" *ngIf="!sharedService.habilitationButton('I_SCORE',currentPath)">
+            <td [ngClass]="{'font-weight-bold' : showReportCriteria ===  true && reportCode === 3 }">
+              {{'reporting.report_iscore_follow_up'| translate }}
+            </td>
+            <td>
+              <button class="btn btn-success" (click)="openDateSelection()">
+                <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!--form search-->
+<div class="card-hover-shadow-2x mb-1 card" *ngIf="showReportCriteria">
+  <div class="card-header">
+    <i class="lnr-magnifier px-2"> </i>
+    {{'reporting.report_criteria'| translate }}
+  </div>
+  <div class="card-body">
+    <form [formGroup]="reportForm">
+      <div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'reporting.products'| translate }}</label>
+              <ngx-select-dropdown tabindex="0" formControlName="products" [multiple]="true" [(ngModel)]="productsArray"
+                [options]="products" [config]="configProducts">
+              </ngx-select-dropdown>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'reporting.branches'| translate }}</label>
+              <ngx-select-dropdown tabindex="0" formControlName="branches" [multiple]="true" [(ngModel)]="branchesArray"
+                [options]="branches" [config]="configBranches" (change)="selectionChanged()">
+              </ngx-select-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_officer'| translate }}</label>
+              <ngx-select-dropdown tabindex="0" formControlName="loanOfficer" [disabled]="selectedBranch"
+                [multiple]="true" [(ngModel)]="loanOfficersArray" [options]="loanOfficers" [config]="configUsers">
+              </ngx-select-dropdown>
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_status'| translate }}</label>
+              <ngx-select-dropdown tabindex="0" formControlName="loanStatus" [multiple]="true" [(ngModel)]="statusArray"
+                [options]="status" [config]="configStatus">
+              </ngx-select-dropdown>
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===2">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_status'| translate }}</label>
+              <ngx-select-dropdown tabindex="0" formControlName="loanStatus" [multiple]="true"
+                [(ngModel)]="statusABACUSArray" [options]="statusABACUS" [config]="configStatus">
+              </ngx-select-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_amount_min'| translate }}</label>
+              <input class="form-control" formControlName="loanAmountMin" type="number" (change)="changeLoanAmount()">
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_amount_max'| translate }}</label>
+              <input class="form-control" formControlName="loanAmountMax" type="number">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_application_creation_date_min'| translate }}</label>
+              <input class="form-control" formControlName="loanApplicationDateMin" type="date"
+                (change)="changeloanApplicationDateMax()">
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_application_creation_date_max'| translate }}</label>
+              <input class="form-control" formControlName="loanApplicationDateMax" type="date"
+                [min]="changeloanApplicationDate()">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_issue_date_min'| translate }}</label>
+              <input class="form-control" formControlName="loanIssueDateMin" type="date"
+                (change)="changeloanIssueDateMax()">
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.loan_issue_date_max'| translate }}</label>
+              <input class="form-control" formControlName="loanIssueDateMax" type="date" [min]="changeloanIssueDate()">
+            </div>
+          </div>
+          <!-- instalmentDate -->
+          <div class="col-md-5" *ngIf="reportCode===2">
+            <div class="position-relative form-group">
+              <label>{{'reporting.instalment_date_min'| translate }}</label>
+              <input class="form-control" formControlName="instalmentDateMin" type="date"
+                (change)="changeinstalmentDateMax()">
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===2">
+            <div class="position-relative form-group">
+              <label>{{'reporting.instalment_date_max'| translate }}</label>
+              <input class="form-control" formControlName="instalmentDateMax" type="date"
+                [min]="changeinstalmentDate()">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-10" *ngIf="reportCode===1">
+            <div class="position-relative form-group">
+              <label>{{'reporting.customer_number'| translate }}</label>
+              <input class="form-control" formControlName="customerNumber" type="text">
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===2">
+            <div class="position-relative form-group">
+              <label>{{'reporting.customer_number'| translate }}</label>
+              <input class="form-control" formControlName="customerNumber" type="text">
+            </div>
+          </div>
+          <div class="col-md-5" *ngIf="reportCode===2">
+            <div class="position-relative form-group">
+              <label>{{'reporting.group_number'| translate }}</label>
+              <input class="form-control" formControlName="groupNumber" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-10" *ngIf="reportCode===2">
+            <label>{{'reporting.sourceOfFunds'| translate }}</label>
+            <ngx-select-dropdown tabindex="0" formControlName="sourceOfFundss" [multiple]="true"
+              [(ngModel)]="sourceOfFundssArray" [options]="sourceOfFundss" [config]="configSourceOfFunds">
+            </ngx-select-dropdown>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'reporting.group_by'| translate }}</label>
+              <select class="form-control" formControlName="groupBy">
+                <option value="Product" [selected]="true">{{'reporting.product'| translate }}</option>
+                <option value="Branch">{{'reporting.branche'| translate }}</option>
+                <option value="Loan Officer">{{'reporting.loan_officer'| translate }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'reporting.display_mode'| translate }}</label>
+              <select class="form-control" formControlName="displayMode">
+                <option value="Detail" [selected]="true">{{'reporting.detail'| translate }}</option>
+                <option value="Summary">{{'reporting.summary'| translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+      </div>
+    </form>
+  </div>
+  <div class="d-flex flex-row d-flex align-items-end mx-5">
+    <div class="col-md-5">
+      <div class="position-relative form-group">
+        <label>{{'reporting.save_filter'| translate }}</label>
+        <input class="form-control" placeholder="Filter Name" [(ngModel)]="filterName">
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="position-relative form-group">
+        <button class="btn btn-primary" (click)="saveFilter()">save</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-12 mx-5 mb-2 row no-gutters">
+    <label>{{'reporting.load_filet'| translate }}</label><br>
+    <span *ngFor="let reportSearchHistoryEntity of reportSearchHistoryEntitys" class="px-2">
+      <button class="btn btn-primary"
+        (click)="loadFiltre(reportSearchHistoryEntity)">{{reportSearchHistoryEntity.labelSearchHistory}}</button>
+    </span>
+  </div>
+  <div class="d-block text-end card-footer p-2 row no-gutters">
+    <div class="d-flex justify-content-end px-2">
+      <span class="text-danger px-3">{{'reporting.warning_filter'| translate }}</span>
+      <span class="mx-2">
+        <button class="btn btn-danger" (click)="resetForm()">{{'button.refresh'| translate }}</button>
+      </span>
+      <span>
+        <button class="btn btn-primary" (click)="submit()">{{'button.download'| translate }}</button>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <button class="m-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+</div>
+
+
+<ng-template #modalSelectDate let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title" >{{ 'reporting.select_date' | translate }}
+      </h5>
+      <button type="button" class="close ACM-modal-header-en" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body">
+      <form class="form" [formGroup]="eventForm"> 
+        
+        <div class="position-relative">
+          <label> {{'task.start_date'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group">
+            <input type="date" class="form-control" [min]="minDate" formControlName="startDate">            
+          </div>
+          
+        </div>
+        <div class="position-relative">
+          <label> {{'task.end_date'| translate }}</label>
+          <span class="text-danger">*</span>
+          <div class="input-group">
+            <input type="date" class="form-control" [min]="eventForm.controls.startDate.value" formControlName="endDate">            
+          </div>
+        </div>
+        
+        <div class="modal-footer py-1">
+          <button class="mb-2 mx-2 btn btn-outline-danger" type="reset" (click)="close()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-2 btn btn-primary"
+            (click)="generateFileIScore()">{{'button.download' |
+            translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

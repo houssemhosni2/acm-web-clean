@@ -1,0 +1,179 @@
+@media print {
+
+}
+
+.english-report{
+	display: none;
+}
+
+.header-text {
+	float: right;
+	text-align: right;
+	direction: rtl;
+}
+
+.header-logo {
+	float: left;
+	background: URL('../images/ALJISR_arabic_logo.png') no-repeat;
+	background-size: 350px;
+	background-position: top left;
+}
+
+/*generic table styles*/
+
+.report-table tr td, .report-inner-title div {
+	min-height: 20px;	
+    padding: 3px;
+    font-family: sans-serif;
+    font-size: 11pt;
+    height: 20px;
+	word-wrap: break-word;
+    overflow-wrap: break-word;
+	height: auto;
+}
+.report-table tr:nth-child(even) td {
+    background: rgba(77, 162, 219, 0.51);
+}
+.report-table tr:nth-child(odd) td {
+    background: rgb(241, 245, 252);
+}
+/*generic table styles*/
+
+/*custom table styles*/
+
+table.report-table tr:nth-child(1) td {
+    text-align: center;
+    font-weight: bold;
+}
+table.report-table tr td:first-child {
+    width: 60px;
+    padding-right: 10px;
+}
+
+div.report-table table.t4002 tr :not(:first-child) td:nth-child(1) {
+    text-align: right !important;
+}
+div.report-table table.t4002 tr :first-child td {
+    text-align: right !important;
+}
+div.report-table table.t4002 tr  td {
+	width: 15%
+}
+div.report-table table.t4002 tr  td:nth-child(odd) {
+	text-align: left;
+}
+div.report-table table.t4002 tr  td:nth-child(even) {
+	word-break: break-all; 
+}
+
+/*custom table styles*/
+
+/*columns*/
+
+div.report-table table.report-table tr td:not(:last-child),
+div.report-table table.report-table-1002 tr td:not(:last-child),
+div.report-table table.report-table-1004 tr td:not(:last-child),
+div.report-table table.report-table-1005 tr td:not(:last-child) {
+    border-left-style: solid;
+    border-left-width: thin;
+    border-left-color: rgb(255, 255, 255);
+}
+
+.report-table table.group {
+    border-left-style: solid;
+    border-left-width: thin;
+    border-left-color: rgb(77, 162, 219);
+    border-right-style: solid;
+    border-right-width: thin;
+    border-right-color: rgb(77, 162, 219);
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: rgb(77, 162, 219);
+    border-top-style: solid;
+    border-top-width: thin;
+    border-top-color: rgb(77, 162, 219);
+}
+
+div.wrapper div:nth-child(4) div.report-table table:not(:nth-child(1)) tr:nth-child(2) td,
+div.wrapper div:nth-child(5) div.report-table table:not(:nth-child(1)) tr:nth-child(2) td {
+    text-align: center;
+}
+#\39 01 tr:not(:nth-child(1)) td:nth-child(1),
+#\31 001 tr:not(:nth-child(1)) td:nth-child(1),
+#\35 001 tr td:nth-child(1),
+#\37 000 tr:not(:nth-child(1)) td:nth-child(1),
+#\38 000 tr:not(:nth-child(1)) td:nth-child(1),
+#\39 000 tr:not(:nth-child(1)) td:nth-child(1) {
+    text-align: left;
+}
+/*columns*/
+
+/*legend tables*/
+
+.legend {
+    width: 75%;
+    padding-left: 70px;
+    margin: auto;
+    margin-bottom: 20px;
+    font-size: 13pt;
+}
+.legend table {
+    width: 100%;
+    margin: auto;
+}
+.legend table tr td:nth-child(odd) {
+    text-align: center;
+}
+.legend table tr td {
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-width: thin;
+    font-size: 11pt;
+    padding: 1px;
+    background: rgb(203, 220, 233);
+}
+/*legend tables*/
+
+table.table-legend {
+    /* text-align: right; */
+    text-align: left;
+}
+ul#button-icons {
+    z-index: 999;
+    right: -30px;
+    bottom: 10px;
+    position: fixed;
+}
+ul#button-icons li {
+    border-radius: 3px;
+    margin-bottom: 5px;
+    list-style-Type: none;
+    background: rgb(77, 162, 219);
+    padding: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    box-shadow: 3px 4px 5px 0px rgba(180, 205, 223, 0.75);
+}
+ul#button-icons li#to-top {
+    display: none;
+}
+ul#button-icons li:hover {
+    box-shadow: 3px 4px 5px 0px black;
+    color: black;
+}
+
+
+
+@media print {
+ul#button-icons {
+    display: none !important;
+}
+.report-item {
+    box-shadow: none;
+}
+.section-title span {
+    box-shadow: none;
+}
+}

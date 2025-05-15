@@ -1,0 +1,83 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseSchedule"
+      aria-expanded="true" aria-controls="collapseSchedule" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-calendar-full text-secondary px-2"></i>
+        {{'schedule.schedule'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseSchedule" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+      <div class="card-body">
+        <div *ngIf="!loading" class="d-flex justify-content-end">
+          <button
+          class="mb-2 mx-2 my-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+          (click)="downloadSchedule()">
+            <i ngbTooltip="{{'schedule.dowloand_schedule'| translate }}"
+               class="pe-7s-cloud-download btn-icon-wrapper"></i>
+          </button>
+      </div>
+    </div>
+        <div class="table-responsive">
+          <table class="mb-0 table green px-0">
+            <thead>
+              <tr>
+                <th>{{'schedule.period'| translate }}</th>
+                <th>{{'schedule.repayment_date'| translate }}</th>
+                <th>{{'schedule.total_repayment'| translate }}</th>
+                <th>{{'schedule.interest'| translate }}</th>
+                <th>{{'schedule.principal'| translate }}</th>
+                <th>{{'schedule.balance'| translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let schedule of schedules | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                  {{ schedule.period}}</td>
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                  {{ schedule.repaymentDate}}</td>
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                  {{ schedule.totalRepayment | number : this.decimalPlaces:'fr'}}
+                  {{ loan?.currencySymbol }}</td>
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                  {{ schedule.interestRepayment | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}
+                </td>
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                  {{ schedule.loanRepayment | number : this.decimalPlaces:'fr'}}{{ loan?.currencySymbol }}
+                </td>
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"
+                 *ngIf="schedule !== lastLine">{{ schedule.balance | number : this.decimalPlaces:'fr'}}
+                 {{ loan?.currencySymbol }}
+                </td>
+                <td [ngStyle]="schedule === lastLine ? {'font-weight': 'bold'} : {'font-weight': 'normal'}"
+                *ngIf="schedule === lastLine">
+              </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <ngb-pagination [collectionSize]="schedules.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+              [maxSize]="3" [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <div class="d-flex justify-content-lg-end">
+              <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

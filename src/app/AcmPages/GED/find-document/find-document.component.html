@@ -1,0 +1,237 @@
+<!--title-->
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon"><i class="icon pe-7s-drawer icon-gradient bg-happy-itmeo"></i></div>
+      <div>{{'upload_document.find_document'| translate }}</div>
+    </div>
+  </div>
+</div>
+<!--form search-->
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header">
+    <i class="lnr-magnifier px-2"> </i>
+    {{'upload_document.search'| translate }}</div>
+  <div class="card-body">
+    <form [formGroup]="searchForm">
+      <div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'upload_document.document_type'| translate }}</label>
+              <select class="form-control" formControlName="documentType" name="documentType">
+                <option selected value>{{'upload_document.default_select'| translate }}</option>
+                <option *ngFor="let d of documentTypes" [ngValue]="d.libelle">{{d.libelle}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'upload_document.Account_Number'| translate }}</label>
+              <p-autoComplete *ngIf="cutomerselectedInput === false" dataKey="accountNumber"
+              (completeMethod)="accountChange($event)" formControlName="loanAccount"
+              placeholder="{{'upload_document.Loan_Account'| translate }}" [suggestions]="loanByCustomer"
+              field="accountNumber" [size]="30" [minLength]="1" [forceSelection]="false" [style]="{'width':'100%'}"
+              [inputStyle]="{'width': '100%'}">
+            </p-autoComplete>
+
+            <select formControlName="loanAccount" class="form-control" id="selectloan" *ngIf="cutomerselectedInput === true"
+              name="selectloan" (ngModelChange)="selectAccountNumber()">
+              <option *ngIf="loanFound" [ngValue]=null>{{'upload_document.account'| translate }}</option>
+              <option *ngIf="!loanFound">{{'upload_document.noAccount'| translate }}</option>
+              <option *ngFor="let l of loanByCustomer" [ngValue]="l.accountNumber">{{l.accountNumber}}</option>
+            </select>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'upload_document.Customer_Name'| translate }}</label>
+              <p-autoComplete [(ngModel)]="customerName" [suggestions]="customerPaginationEntity.resultsCustomers"
+              (completeMethod)="filterCustmorname($event)"  formControlName="customerName"
+              placeholder="{{'upload_document.Customer_Name'| translate }}" field="customerNameNoPipe" id="user-autocomplete" (onSelect)="selectLoanByCustomer()"
+              [size]="30" [minLength]="1" [forceSelection]="false"
+              [style]="{'width':'100%'}"
+              [inputStyle]="{'width': '100%'}">
+                <ng-template let-filteredCustomer pTemplate="item">
+                  {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+                </ng-template>
+              </p-autoComplete>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'upload_document.Date'| translate }}</label>
+              <input type="date" class="form-control" formControlName="creationDate" name="creationDate">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row d-flex justify-content-center">
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'upload_document.customer_number'| translate }}</label>
+              <input placeholder="{{'upload_document.customer_number'| translate }}" formControlName="customerNumber" (change)="selectLoanByCustomer()"
+                     name="customerNumber" type="text" class="form-control"/>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="position-relative form-group">
+              <label>{{'upload_document.customer_identity'| translate }}</label>
+              <input placeholder="{{'upload_document.customer_identity'| translate }}" formControlName="customerIdentity"  (change)="selectLoanByCustomer()"
+                     name="customerIdentity" type="text" class="form-control"/>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="d-block text-end card-footer p-2">
+    <button class="btn btn-light mx-2" (click)="resetForm()">
+      <i class="pe-7s-refresh-2 btn-icon-wrapper"></i>
+      {{'upload_document.refresh'| translate }}</button>
+    <button class="btn btn-primary " (click)="onSubmit()" type="button">{{'upload_document.search'| translate }}</button>
+  </div>
+</div>
+<!--all document table-->
+<div class="main-card mb-2 card" *ngIf="showTable">
+  <div class="card-header">
+    <i class="lnr-file-empty pr-2"> </i>
+    {{'upload_document.All_documents'| translate }}
+  </div>
+  <div>
+    <div class="table-responsive" *ngIf="allDocuments.length!=0">
+      <table class="align-middle mb-0 table table-hover">
+        <thead>
+        <tr>
+          <th>{{'upload_document.Account_Number'| translate }}</th>
+          <th>{{'upload_document.Customer_Name'| translate }}</th>
+          <th>{{'upload_document.document_type'| translate }}</th>
+          <th>{{'upload_document.Name'| translate }}</th>
+          <th>{{'upload_document.Description'| translate }}</th>
+          <th>{{'upload_document.Date'| translate }}</th>
+          <th>{{'upload_document.inserted_by'| translate }}</th>
+          <th>{{'upload_document.customer_number'| translate}}</th>
+          <th>{{'upload_document.customer_identity'| translate}}</th>
+          <th>{{'button.details' | translate }}</th>
+          <th>{{'upload_document.version-history' | translate }}</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let document of allDocuments">
+          <td>{{document.accountNumberExtern}}</td>
+          <td>{{document.customerName}}</td>
+          <td>{{document.titre}}</td>
+          <td>{{document.name}}</td>
+          <td>{{document.description}}</td>
+          <td>{{document.dateCreation | date: 'dd/MM/yyyy'}}</td>
+          <td>{{document.insertBy}}</td>
+          <td>{{document.customerNumber}}</td>
+          <td>{{document.customerIdentity}}</td>
+          <td>
+            <button class="btn btn-warning" (click)="view(document.idDocumentGED)">
+              <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+            </button>
+          </td>
+          <td>
+            <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus" type="button"
+              (click)="openLargePupupHistoryDoc(contentHistory,document)">
+              <i class="pe-7s-folder btn-icon-wrapper"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <h6 class="text-danger pt-3"
+        *ngIf="allDocuments.length===0">{{'upload_document.no_document_founded' | translate }} </h6>
+  </div>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="totalElements" [pageSize]="pageSize" [(page)]="page" [boundaryLinks]="true"
+                        [ellipses]="true" [rotate]="true" [maxSize]="2" aria-label="Custom pagination"
+                        (pageChange)="changePagination(page)">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize"
+                  (ngModelChange)="changePagination(page)">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <button class="m-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+</div>
+
+<ng-template #contentHistory let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new note-->
+    <form>
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'upload_document.document-history'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="c(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <!--Date-->
+        <div class="table-responsive">
+          <table class="align-middle mb-0 table table-hover">
+            <thead>
+              <tr>
+                <th class="text-center ACM-document-table-column">{{'upload_document.Name'| translate }}</th>
+                <th class="text-center ACM-document-table-column">{{'upload_document.Date'| translate }}</th>
+                <th class="text-center ACM-document-table-column">{{'customer_decision.addedBy'| translate }}
+                </th>
+                <th class="text-center ACM-document-table-column-button"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let hd of historyDocuments; let i = index">
+                <td>
+                  <div class="text-center">
+                    {{hd.name}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    {{hd.dateCreation | date : 'dd/MM/yyyy hh:mm a'}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    {{hd.insertBy}}
+                  </div>
+                </td>
+                <td class="text-center px-0">
+                  <button class="btn btn-warning" (click)="view(hd.idDocumentGED)">
+                    <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="resetPupupHistoryDoc()">{{'button.cancel' |
+          translate}}</button>
+
+      </div>
+    </form>
+  </div>
+</ng-template>

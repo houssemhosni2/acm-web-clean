@@ -1,0 +1,122 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between">
+    <div>
+      <i class="lnr-paw text-secondary pr-2"></i>
+      {{'setting.group_management.list_groupe'| translate }}
+    </div>
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addGroup()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'button.create_groupe' | translate}}
+      </button>
+    </div>
+  </div>
+
+  <p-table #dt [responsive]="true" [autoLayout]=true [value]="groupePaginationEntity.resultsGroupes"
+    (onLazyLoad)="reloadGroupesList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+    [totalRecords]="groupePaginationEntity.totalElements"
+    [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns">
+
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+          <div class="center-elem text-center">
+            {{col.header | translate}}
+            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+          </div>
+        </th>
+        <th style='width: 40px;'></th>
+        <th style='width: 40px;'></th>
+      </tr>
+      <tr>
+        <th *ngFor="let col of columns" [ngSwitch]="col.field">
+          <input *ngSwitchCase="'code'" class="form-control placeholder" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'libelle'" class="form-control" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+          <input *ngSwitchCase="'description'" class="form-control" type="text"
+            (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <select *ngSwitchCase="'enabled'" class="form-control ACM-Dashbord-productDescription-col"
+            (change)="dt.filter($event.target.value, col.field, 'equals')" >
+            <option value="null">{{'category_loan.all' | translate}}</option>
+            <option value="true">{{"setting.on" | translate}}</option>
+            <option value="false">{{"setting.off" | translate}}</option>
+          </select>
+          <select *ngSwitchCase="'linkedPortfolio'" class="form-control ACM-Dashbord-productDescription-col"
+            (change)="dt.filter($event.target.value, col.field, 'equals')" >
+            <option value="null">{{'category_loan.all' | translate}}</option>
+            <option value="true">{{"setting.on" | translate}}</option>
+            <option value="false">{{"setting.off" | translate}}</option>
+          </select>
+        </th>
+        <th style='width: 40px;'></th>
+        <th style='width: 40px;'></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-groupes let-rowData let-columns="columns">
+      <tr [pSelectableRow]="rowData">
+        <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+          <div *ngSwitchCase="'code'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'libelle'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+          <div *ngSwitchCase="'enabled'">
+            <bSwitch [(ngModel)]="groupes.enabled" [switch-size]="'mini'" [switch-handle-width]="40" (click)="openDialog(rowData)"
+            [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0" ></bSwitch>
+          </div>
+          <div *ngSwitchCase="'linkedPortfolio'">
+            <bSwitch [(ngModel)]="groupes.linkedPortfolio" [switch-size]="'mini'" [switch-handle-width]="40" (click)="openDialogLinkedPortfolio(rowData)"
+            [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0" ></bSwitch>
+          </div>
+        </td>
+        <td>
+          <button class="btn btn-warning text-white" (click)="editGroup(rowData)">
+            <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title" *ngIf="updateId === 0">{{ 'setting.group_management.new_group' | translate }}</h5>
+      <h5 class="modal-title" *ngIf="updateId !== 0">{{ 'setting.group_management.modify_group' | translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="card-body">
+      <form class="form" [formGroup]="groupForm" (ngSubmit)="d(onSubmit())">
+        <div class="position-relative pb-4">
+          <label> {{'setting.code'| translate }}</label>
+          <div *ngIf="updateId === 0">
+            <input type="text" class="form-control" formControlName="code">
+          </div>
+          <div *ngIf="updateId !== 0">
+            <input type="text" class="form-control" formControlName="code" disabled>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.label'| translate }}</label>
+          <div>
+            <input type="text" class="form-control" formControlName="label">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.description'| translate }}</label>
+          <div>
+            <textarea rows="3" cols="20" pInputTextarea class="form-control" formControlName="description">
+          </textarea>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <button class="mb-2 mx-2 btn btn-outline-danger" type="reset"
+            (click)="reset()">{{'button.cancel' | translate}}</button>
+          <button class="mb-2 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

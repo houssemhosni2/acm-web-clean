@@ -1,0 +1,558 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerAccount"
+      aria-expanded="true" aria-controls="collapseCustomerAccount" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-chart-bars text-secondary px-2"></i>
+        {{'customer.customer_account'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomerAccount" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+
+      <div *ngIf="customerAccounts.length > 0">
+        <div>
+          <ngx-loading [show]="loading"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+          <div class="table-responsive">
+            <table class="mb-0 table green">
+              <thead>
+                <tr>
+                  <th>{{'customer.account'| translate }}</th>
+                  <th>{{'customer.issued_amount'| translate }}</th>
+                  <th>{{'loan.issue_date'| translate }}</th>
+                  <th>{{'customer.portfolio'| translate }}</th>
+                  <th>{{'customer.account_rating'| translate }}</th>
+                  <th>{{'schedule.balance'| translate }}</th>
+                  <th>{{'customer.status'| translate }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of customerAccounts | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                  <td> {{ item.account }}</td>
+                  <td>{{ item.issueAmount | number: this.decimalPlaces:'fr' }} {{ item.currencyCode }}</td>
+                  <td>{{ item.issueDate | date: 'dd/MM/yyyy'}}</td>
+                  <td>{{ item.portfolioDescription }}</td>
+                  <td>{{ item.accountRating }}</td>
+                  <td>{{ item.balance | number: this.decimalPlaces:'fr' }} {{ item.currencyCode }}</td>
+                  <td>
+                    <div class="badge bg-warning"
+                         *ngIf="item.statutId === 1">{{'customer_account.status_1'| translate }}</div>
+                    <div class="badge bg-success"
+                         *ngIf="item.statutId === 2">{{'customer_account.status_2'| translate }}</div>
+                    <div class="badge bg-success"
+                         *ngIf="item.statutId === 4">{{'customer_account.status_4'| translate }}</div>
+                    <div class="badge bg-primary" 
+                        *ngIf="item.statutId === 8"> {{ item.issuedStatut }} </div>
+                    <div class="badge bg-danger"
+                         *ngIf="item.statutId === 16">{{'customer_account.status_16'| translate }}</div>
+                    <div class="badge bg-primary"
+                         *ngIf="item.statutId === 32">{{'customer_account.status_32'| translate }}</div>
+                    <div class="badge bg-danger"
+                         *ngIf="item.statutId === 64">{{'customer_account.status_64'| translate }}</div>
+                    <div class="badge bg-info"
+                         *ngIf="item.statutId === 128">{{'customer_account.status_128'| translate }}</div>
+                    <div class="badge bg-info"
+                         *ngIf="item.statutId === 256">{{'customer_account.status_256'| translate }}</div>
+                    <div class="badge bg-info"
+                        *ngIf="item.statutId === 512">{{'customer_account.status_512'| translate }}</div>
+                    <div class="badge bg-info"
+                        *ngIf="item.statutId === 1024">{{'customer_account.status_1024'| translate }}</div>
+                    <div class="badge bg-info"
+                        *ngIf="item.statutId === 2048">{{'customer_account.status_2048'| translate }}</div>
+                  </td>
+                  <td>
+                    <button class="btn btn-warning mx-2" (click)="openLarge(content6, item)">
+                      <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                    </button>
+                    <button class="btn btn-primary mx-2" (click)="addTopupRefinanceLoan(item)" *ngIf="((item.topupProduct || item.refinanceProduct) && !loanSharedService.habilitationButton('TOPUP_REFINANCE',currentPath) && fromCustomer360)
+                      || loanSharedService.getAuthorized()" [disabled]="!item.canTopup"
+                      [ngbTooltip]="(item.topupProduct  && !item.refinanceProduct) ?
+                        'Topup Loan' : (!item.topupProduct  && item.refinanceProduct) ? 'Refinance Loan' : 'Topup / Refinance Loan'">
+                      <i class="pe-7s-plus btn-icon-wrapper text-white"></i>
+                    </button>
+                    <button
+                      *ngIf="item.statutId !==64 && item.statutId!=4 && !loanSharedService.habilitationButton('PAYMENT_FROM_ACM','customer-360-details')"
+                      class="btn btn-outline-success mx-2" style="background-color: white;"
+                      (click)="openLargePayment(content8, item, false)" 
+                      [disabled]="item.paid == true">
+                      {{'transaction.pay'|translate}}
+                    </button>
+
+                    <button
+                      *ngIf="item.statutId !==64 && item.statutId!=4 && !loanSharedService.habilitationButton('PAYMENT_FROM_ACM','customer-360-details')"
+                      class="btn btn-outline-danger mx-2"
+                      (click)="openLargePayment(content8, item, true)" 
+                      [disabled]="item.paid == true || item.statutId != 8">
+                      {{'pay-out'|translate}}
+                    </button>
+
+                    <button
+                      *ngIf="item.statutId==4 && !loanSharedService.habilitationButton('PAYMENT_FROM_ACM','customer-360-details') && loanSharedService.habilitationButton('DEPOSIT_FROM_ACM','customer-360-details')"
+                      class="btn btn-outline-success mx-2" style="background-color: white;"
+                      (click)="openLargePayment(content8, item, false)">
+                      {{'button.details'|translate}}
+                    </button>
+
+                    <button
+                      *ngIf="item.statutId==4 && !loanSharedService.habilitationButton('DEPOSIT_FROM_ACM','customer-360-details')"
+                      class="btn btn-outline-success mx-2" style="background-color: white;"
+                      (click)="openLargePayment(content8, item, false)">
+                      {{'transaction.payment'|translate}}
+                    </button>
+
+                    <button
+                      *ngIf="item.statutId==4 &&  item.balance <= 0 && !loanSharedService.habilitationButton('DOCUMENT_FROM_ACM','customer-360-details')"
+                      class="btn btn-outline-success mx-2" style="background-color: white;"
+                      (click)="openDocuments(content9, item)">
+                      {{'button.documents'|translate}}
+                    </button>
+                  </td>
+                  <ng-template #content6 let-c="close" let-d="dismiss">
+                    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+                      <div class="card">
+                        <div class="card-header py-2">
+                          <i class="lnr-calendar-full text-secondary px-2 pr-2"></i>
+                          {{'schedule.schedule'| translate }}
+                        </div>
+                        <div *ngIf="!loading" class="d-flex justify-content-end">
+                          <button
+                            class="mb-2 mx-2 my-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                            type="button" (click)="downloadSchedule(item)">
+                            <i ngbTooltip="{{'schedule.dowloand_schedule'| translate }}"
+                              class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                          </button>
+                        </div>
+                        <div>
+                          <perfect-scrollbar style="height: 500px;">
+                            <div class="table-responsive">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th class="text-center">{{'schedule.period'| translate }}</th>
+                                    <th class="text-center">{{'schedule.repayment_date'| translate }}</th>
+                                    <th class="text-center">{{'schedule.total_repayment'| translate }}</th>
+                                    <th class="text-center">{{'schedule.interest'| translate }}</th>
+                                    <th class="text-center">{{'schedule.principal'| translate }}</th>
+                                    <th class="text-center">{{'schedule.penalityDue'| translate }}</th>
+                                    <th class="text-center">{{'schedule.balance'| translate }}</th>
+                                    <th class="text-center">{{'schedule.interestAmtPaid'| translate }}</th>
+                                    <th class="text-center">{{'schedule.loanRepaymentPaid'| translate }}</th>
+                                    <th class="text-center">{{'schedule.status'| translate }}</th>
+                                    <th class="text-center">{{'schedule.repaidOn'| translate }}</th>
+                                    <th class="text-center">{{'schedule.penalityPaid'| translate }}</th>
+                                    <th class="text-center">{{'schedule.amountWrittenOff'| translate }}</th>
+                                    <th class="text-center">{{'schedule.lateDays'| translate }}</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let schedule of item?.scheduleDTOs ; let index = index">
+                                    <td class="text-center"
+                                      [ngClass]="{'font-weight-bold' : index ===  item?.scheduleDTOs.length -1 }">{{
+                                      schedule.period}}</td>
+                                    <td class="text-center"
+                                      [ngClass]="{'font-weight-bold' : index ===  item?.scheduleDTOs.length -1 }">{{
+                                      schedule.repaymentDate}}</td>
+                                    <td class="text-center"
+                                      [ngClass]="{'font-weight-bold' : index ===  item?.scheduleDTOs.length -1 }">{{
+                                      schedule.totalRepayment | number : this.decimalPlaces}} {{ loan?.currencySymbol }}
+                                    </td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.interestRepayment | number : this.decimalPlaces:'fr'}} {{
+                                      loan?.currencySymbol }}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.loanRepayment | number : this.decimalPlaces:'fr'}} {{
+                                      loan?.currencySymbol }}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.penalityDue}}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.balance | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol
+                                      }}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.interestPaid }}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.principalPaid }}</td> 
+                                    <td class="text-center">
+                                      <div class="badge bg-success" *ngIf="schedule.statusLabel==='PAID'">
+                                        {{'customer_account.schedule.status_1'| translate }}</div>
+                                      <div class="badge bg-warning" *ngIf="schedule.statusLabel==='PARTAILLY PAID'">
+                                        {{'customer_account.schedule.status_2'| translate }}</div>
+                                      <div class="badge bg-danger"
+                                        *ngIf="schedule.statusLabel=== 'UNPAID' && !compareWithTodayDate(schedule.repaymentDate) ">
+                                        {{'customer_account.schedule.status_4'| translate }}</div>
+                                      <div class="badge bg-light"
+                                        *ngIf="schedule.statusLabel=== 'UNPAID' && compareWithTodayDate(schedule.repaymentDate) ">
+                                        {{'customer_account.schedule.status_3'| translate }}</div>
+                                    </td> 
+                                    <td class="text-center"
+                                      [ngClass]="{'font-weight-bold' : index ===  item?.scheduleDTOs.length -1 }">
+                                      <div *ngIf="schedule.repaidOn !== '1900-01-01T00:00:00.000+0000'; else elseBlock">
+                                        {{ schedule.repaidOn | date: 'dd/MM/yyyy'}}
+                                      </div>
+                                    </td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.penalityPaid}}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.amountWrittenOff}}</td>
+                                    <td class="text-center"
+                                      [ngStyle]="index ===  item?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                      {{ schedule.nbArrearsDays}}</td>
+                                    <ng-template #elseBlock>-</ng-template>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </perfect-scrollbar>
+                        </div>
+                        <div class="card-footer py-2 d-flex justify-content-end">
+                          <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' |
+                            translate}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <ng-template #content81 let-c="close" let-d="dismiss">
+                    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+                      <div class="card">
+                        <div class="card-header py-2">
+                          <i class="lnr-calendar-full text-secondary px-2 pr-2"></i>
+                          {{'informations payment'|translate}}
+                        </div>
+                        <div *ngIf="!loading" class="d-flex justify-content-end">
+                        </div>
+                        <div>
+                          <perfect-scrollbar style="height: 500px;">
+                            <div class="px-2">
+                              <div class="row mb-2">
+                                <div>
+                                  <table class="table p-2">
+                                    <thead>
+                                      <tr>
+                                        <th class="text cu-px-th">{{'loan_management.calculators.opening_balance'|
+                                          translate }}</th>
+                                        <th class="text cu-px-th">{{'principal_due'|translate}}</th>
+                                        <th class="text cu-px-th"> {{'loan_management.calculators.closing_balance'|
+                                          translate }}</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <td class="text ">{{ informationPayment?.openingBalance}}</td>
+                                      <td class="text">{{ informationPayment?.principalDue}}</td>
+                                      <td class="text">{{ informationPayment?.closingBalance}}</td>
+                                      <ng-template #elseBlock>-</ng-template>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                              <div class="row ">
+                                <div>
+                                  <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th class="text cu-px-th">{{'interest_due'|translate}}</th>
+                                        <th class="text cu-px-th">{{'schedule.penalityDue'| translate }}</th>
+                                        <th class="text cu-px-th">{{'fees_due'|translate}}</th>
+                                        <th class="text cu-px-th">{{'schedule.nbArrearsDays'| translate }}</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <td class="text">{{ informationPayment?.interestDue}}</td>
+                                      <td class="text">{{ informationPayment?.penaltyDue}}</td>
+                                      <td class="text">{{ informationPayment?.feesDue}}</td>
+                                      <td class="text">{{ informationPayment?.arrearsDays}}</td>
+                                      <ng-template #elseBlock>-</ng-template>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                              <div class="row mb-2" style="padding: 10px;">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th class="text cu-px-th">{{'Total_Amount_to_be_paid'|translate}}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <td class="text">{{ informationPayment?.principalDue
+                                      +informationPayment?.interestDue+informationPayment?.penaltyDue
+                                      +informationPayment?.feesDue }}</td>
+
+                                    <!-- <td class="text-center">{{ informationPayment?.totalAmountTobePaid }}</td> -->
+                                    <ng-template #elseBlock>-</ng-template>
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              <div
+                                *ngIf="item.statutId==4 && !loanSharedService.habilitationButton('DEPOSIT_FROM_ACM','customer-360-details')"
+                                class="row mb-2" style="padding: 10px;">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th class="text cu-px-th"> {{'reject.note'| translate }} </th>
+                                      <th class="text cu-px-th">{{'dashboard.amount'|translate}} </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <td>
+                                      <input type="text" [ngClass]="{'form-control': true,'errForm': errorCheck}"
+                                        [(ngModel)]="notePayment" />
+                                    </td>
+                                    <td>
+                                      <input type="number" min="0"
+                                        [ngClass]="{'form-control': true,'errForm': errorCheck}"
+                                        [(ngModel)]="amountPayment" />
+                                    </td>
+                                    <ng-template #elseBlock>-</ng-template>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div class="row mb-2" style="padding: 10px;">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th class="text cu-px-th">{{'Total_Amount_to_be_paid'|translate}}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </perfect-scrollbar>
+                        </div>
+                        <div class="card-footer py-2 d-flex justify-content-end">
+
+                          <button class="mb-2 mx-2 btn btn-outline-danger" (click)=" closeModal()">{{'button.cancel' |
+                            translate}}</button>
+                          <button
+                            *ngIf="item.statutId!=4 && item.statutId!=64 &&!loanSharedService.habilitationButton('PAYMENT_FROM_ACM','customer-360-details')"
+                            type="button" class="mb-2 mx-2 btn btn btn-success"
+                            (click)="payment(notePayment,amountPayment,item)"> Submit </button>
+                          <button
+                            *ngIf="item.statutId==4 && !loanSharedService.habilitationButton('DEPOSIT_FROM_ACM','customer-360-details')"
+                            type="button" class="mb-2 mx-2 btn btn btn-success"
+                            (click)="deposit(notePayment,amountPayment,item)"> Submit </button>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template #content8 let-c="close" let-d="dismiss">
+                    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+                      <div class="card">
+                        <div class="card-header py-2">
+                          <i class="lnr-calendar-full text-secondary px-2 pr-2"></i>
+                          {{'informations payment'|translate}}
+                        </div>
+
+                        <div class="card-body">
+                          <div class="col-xl-12 col-sm-12 row no-gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 px-1">
+                              <div class="position-relative form-group">
+                                <label> {{'schedule.lateDays'| translate }} </label>
+                                <input class="form-control" [value]="  informationPayment?.arrearsDays " disabled>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-xl-12 col-sm-12 row no-gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 px-1">
+                              <div class="position-relative form-group">
+                                <label> {{'schedule.number_unpaid_installments'| translate }} </label>
+                                <input class="form-control" [value]="  informationPayment?.numberUnpaidInstallments "
+                                  disabled>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-xl-12 col-sm-12 row no-gutters">
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 px-1">
+                              <div class="position-relative form-group">
+                                <label> {{'loan_management.calculators.opening_balance'| translate }} </label>
+                                <input class="form-control" [value]="informationPayment?.openingBalance" disabled>
+                              </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 px-1">
+                              <div class="position-relative form-group">
+                                <label> {{'principal_due'|translate}} </label>
+                                <input class="form-control" [value]="  informationPayment?.principalDue " disabled>
+                              </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 px-1">
+                              <div class="position-relative form-group">
+                                <label> {{'loan_management.calculators.closing_balance'| translate }} </label>
+                                <input class="form-control" [value]="informationPayment?.closingBalance" disabled>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-xl-12 col-sm-12 row no-gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 px-1">
+                              <div class="position-relative form-group">
+                                <label> {{'interest_due'|translate}} </label>
+                                <input class="form-control" [value]="informationPayment?.interestDue" disabled>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th width="50%">{{ 'penalty-fee' | translate}}</th>
+                                  <th width="50%">{{ 'amount' | translate}}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td width="50%">{{ informationPayment?.penaltyChargeFeesDTO?.label}}</td>
+                                  <td width="50%">{{ informationPayment?.penaltyChargeFeesDTO?.amount | number :
+                                    this.decimalPlaces}} {{ loan?.currencySymbol }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th width="50%">{{ 'fee' | translate}}</th>
+                                  <th width="50%">{{ 'amount' | translate}}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr 
+                                  *ngFor="let oldChargeFee of  informationPayment?.oldChargeFeesDTOs ; let index = index">
+                                  <td width="50%">{{ oldChargeFee.label}}</td>
+                                  <td width="50%">{{ oldChargeFee.unpaidAmount | number : this.decimalPlaces}} {{
+                                    loan?.currencySymbol }}
+                                  </td>
+                                </tr>
+                                <tr *ngIf="isPayOut">
+                                  <td width="50%">{{ informationPayment?.payOutChargeFeesDTO?.label}}</td>
+                                  <td width="50%">{{ informationPayment?.payOutChargeFeesDTO?.amount}}
+                                    {{ loan?.currencySymbol }}
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="col-xl-12 col-sm-12 row no-gutters">
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 px-1" >
+                              <div class="position-relative form-group">
+                                <label> {{ 'total-amount' | translate }}</label>
+                                <input class="form-control" [value]="informationPayment?.amountToBePaid" disabled>
+                              </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 px-1" *ngIf="!isPayOut">
+                              <div class="position-relative form-group">
+                                <label> {{ 'amount-to-be-paid' | translate }}</label>
+                                <input class="form-control" type="number" [max] ="informationPayment?.maxAmountToBePayed" [(ngModel)]="informationPayment.payedAmount">
+                                <span class="text-danger"> {{'schedule.max_amount_to_pay'| translate }}  {{ informationPayment?.maxAmountToBePayed }}</span>
+                            </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card-footer py-2 d-flex justify-content-end">
+                          <button class="mb-2 mx-2 btn btn-success" (click)="pay(informationPayment)" *ngIf="!isPayOut">
+                            {{ 'pay' | translate }} </button>
+                          <button class="mb-2 mx-2 btn btn-success" (click)="payOut(informationPayment)" *ngIf="isPayOut">
+                            {{ 'post' | translate }} </button>
+                          <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' |
+                            translate}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="customerAccounts.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                [maxSize]="3" [boundaryLinks]="true">
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="customerAccounts.length === 0">
+        <div class="card-body">
+          <h6 style="color: red;" class="pt-3">{{ 'customer.missing_customer_account' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content9 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <i class="lnr-calendar-full text-secondary px-2 pr-2"></i>
+        {{'download_Case_Closure_Document'| translate }}
+      </div>
+      <div *ngIf="!loading" class="d-flex justify-content-end">
+
+      </div>
+      <div>
+        <perfect-scrollbar style="height: 300px;">
+          <div class="table-responsive">
+            <table class="table">
+
+              <tbody>
+                <tr *ngFor="let document of listDocuments ; let index = index">
+                  <td [ngClass]="{'font-weight-bold' : index ===  item?.scheduleDTOs.length -1 }">{{
+                    document.settingDocumentTypeDTO?.description}}</td>
+                  <td class="text-center" [ngClass]="{'font-weight-bold' : index ===  item?.scheduleDTOs.length -1 }">
+                    <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                      type="button" (click)="downloadTemplate(document)">
+
+                      <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                    </button>
+                  </td>
+
+                  <ng-template #elseBlock>-</ng-template>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </perfect-scrollbar>
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' |
+          translate}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<app-transition-account [expanded]="true" [fromCustomer360]="true"
+  *ngIf="transitionsAccountes"></app-transition-account> 
+
+<app-customer-receipts  [expanded]="true"></app-customer-receipts>

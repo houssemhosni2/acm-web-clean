@@ -1,0 +1,140 @@
+<div class="card">
+    <div class="card-header"> 
+        {{'setting.currency-setting.currency-setting'| translate }} 
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="d-inline-flex align-items-center btn btn-primary"  (click)="addCurrency(modalContent)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                {{'setting.setting_configuration_product.add'| translate }} </button>
+        </div>
+    </div>
+
+    <div>
+        <div class="table-responsive">
+            <table class="mb-0 t table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{'setting.currency-setting.code'| translate }}</th>
+                        <th>{{'setting.currency-setting.description'| translate }}</th>
+                        <th>{{'setting.currency-setting.symbol'| translate }}</th>
+                        <th>{{'setting.currency-setting.decimal-places'| translate }}</th>
+                        <th>{{'setting.currency-setting.rounding'| translate }}</th>
+                        <th>{{'setting.currency-setting.round-decimal'| translate }}</th>
+                        <th>{{'setting.currency-setting.active'| translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        *ngFor="let currencySetting of currencyList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                        <td>{{ currencySetting.code }}</td>
+                        <td>{{ currencySetting.description }}</td>
+                        <td>{{ currencySetting.symbol }}</td>
+                        <td>{{ currencySetting.decimalPlaces }}</td>
+                        <td>{{ currencySetting.rounding }}</td>
+                        <td>{{ currencySetting.roundDecimal }}</td>
+                        <td>
+                            <bSwitch [(ngModel)]="currencySetting.active" [switch-size]="'mini'" [switch-handle-width]="40"
+                                [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0" (click)="endableDisable(currencySetting)">
+                            </bSwitch>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning text-white mx-1" (click)="editCurrency(modalContent,currencySetting)">
+                                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                            <button class="btn btn-sm btn-danger text-white" (click)="disableCurrency(currencySetting)">
+                                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <ngb-pagination [collectionSize]="currencyList?.length" [(page)]="page" [pageSize]="pageSize"
+                    size="sm" [maxSize]="3" [boundaryLinks]="true">
+                </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <div class="d-flex justify-content-lg-end">
+                    <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                        <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                        <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                        <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                        <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title"> {{ (action === 'update' ? 'setting.currency-setting.update-currency-setting' :
+                'setting.currency-setting.add-currency-setting') | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModale()">&times;</span>
+            </button>
+        </div>
+
+        <form class="form" [formGroup]='groupForm' (ngSubmit)="onSubmit()">
+            <div class="card-body">
+                <div class="position-relative pb-4">
+                    <label>{{'setting.currency-setting.code'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="code">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.currency-setting.description'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="description">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.currency-setting.symbol'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="symbol">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.currency-setting.decimal-places'| translate }}</label>
+                    <div class="form-group">
+                        <input type="number" class="form-control" formControlName="decimalPlaces">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.currency-setting.rounding'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="rounding">
+                            <option value="DOWN">{{'setting.currency-setting.round_down'| translate }}</option> 
+                            <option value="UP">{{'setting.currency-setting.round_up'| translate }}</option>
+                            <option value="HALF_UP">{{'setting.currency-setting.round_half_up'| translate }}</option>
+                            <option value="HALF_DOWN">{{'setting.currency-setting.round_half_down'| translate }}</option> 
+                            <option value="DO_NOT_ROUND">{{'setting.currency-setting.dont_round'| translate }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.currency-setting.round-decimal'| translate }}</label>
+                    <div class="form-group">
+                        <input type="number" class="form-control" formControlName="roundDecimal">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <input class="form-check-input" type="checkbox" formControlName="active"  >
+                    <label class="custom-control-label ms-2">{{'setting.currency-setting.active'| translate }} </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModale()">{{'button.cancel'
+                    | translate}}</button>
+                <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

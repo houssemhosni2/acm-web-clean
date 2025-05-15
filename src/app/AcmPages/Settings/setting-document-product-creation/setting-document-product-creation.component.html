@@ -1,0 +1,53 @@
+<!--Setting Document Type-->
+<div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header">
+      <i class="lnr-cog px-2"> </i>
+      {{'setting.setting_document_type.setting_document_type'| translate }}
+    </div>
+    <div>
+      <div class="card-body">
+        <p-table #sdt [autoLayout]=true [responsive]="true"
+          [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10"
+          [value]="settingDocumentCreation" [lazy]="false" [lazyLoadOnInit]="false">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{'setting.code'| translate }}</th>
+              <th>{{'setting.label'| translate }}</th>
+              <th>{{'setting.description'| translate }}</th>
+              <th>{{'setting.category'| translate }}</th>
+              <th>{{'setting.status'| translate }}</th>
+              <th>{{'setting.setting_document_product.mandatory'| translate }}</th>
+              <th>{{'setting.setting_document_product.report_name'| translate }}</th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-document let-rowIndex="rowIndex">
+            <tr>
+              <th>{{document.settingDocumentTypeDTO.code}}</th>
+              <td>{{document.settingDocumentTypeDTO.libelle}}</td>
+              <td>{{document.settingDocumentTypeDTO.description}}</td>
+              <td>{{'document_type_categories.' + document.categorie| translate }}</td>
+              <td>
+                <bSwitch [(ngModel)]="document.enabled"
+                         [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'" class="px-2 mb-0"
+                         ></bSwitch>
+              </td>
+              <td>
+                <bSwitch [(ngModel)]="document.mandatory" [switch-size]="'mini'" [switch-animate]="true"
+                         [switch-off-color]="'danger'" class="px-2 mb-0" 
+                         ></bSwitch>
+              </td>
+              <td>
+                <form [formGroup]=reportNameForm>
+                  <div class="ACM_table_input" *ngIf="document.settingDocumentTypeDTO.categorie ===2||document.settingDocumentTypeDTO.categorie ===4||document.settingDocumentTypeDTO.categorie ===5 || document.settingDocumentTypeDTO.categorie ===11">
+                    <input class="form-control col-8" formControlName="reportName{{rowIndex}}" type="text"
+                           (change)="changeReportName(rowIndex)">
+                  </div>
+                </form>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>

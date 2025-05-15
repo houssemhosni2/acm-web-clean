@@ -1,0 +1,21 @@
+<div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header">
+      <i class="lnr-cog px-2"> </i>
+      {{'setting.setting_client'| translate }}
+    </div>
+    <div  class="card-body">
+        <div class="col-xl-2 col-sm-3 text-center pb-3">
+           <img [src]='image' alt="image" class="img-thumbnail">
+              <button type="button" class="mb-2 mx-2 btn-icon btn-icon-only btn-pill btn btn-light ACM_top-left"
+                      (click)="fileInput.click()" [style]="{marginTop:'4.5rem',left:'0.2rem'}">
+                <i class="lnr-camera btn-icon-wrapper"> </i>
+              </button>
+              <input #fileInput type="file" [name]="'file'" accept="image/x-png"  (change)="addImageClient($event)"
+               style="display:none;">
+          </div>
+          <span class="text-secondary text-center pt-2 ACM-image-client">{{'setting.image_client'| translate }}</span>
+    </div>
+    <div class="card-footer">
+
+    </div>
+  </div>

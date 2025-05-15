@@ -1,0 +1,572 @@
+<app-page-title [heading]=" 'sidebar.issuance_and_repayment_incentives'| translate " [icon]="'pe-7s-gift'"
+    [account]="''" [status]="-1">
+</app-page-title>
+
+<div class="card row">
+    <div class="card-header ">
+        <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+            <div class="card-title m-0">{{'incentive.issuance_and_repayment.issuance_and_repayment_incentives_settings'|
+                translate }}</div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="row pt-3">
+            <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+                <div class="row">
+                    <div class="col-md-2 col-lg-2 col-sm-2">
+                        <label>{{'incentive.select_category' | translate}} : </label>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-4 justify-content-start">
+                        <div class="input-group">
+                            <select class="form-control"
+                            [(ngModel)]="productEntity" (ngModelChange)="selectProduct($event)">
+
+                            <option *ngFor="let product of productEntitys" [ngValue]="product">
+                                {{product.description}}
+                            </option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-2 d-flex justify-content-start">
+                        <div>
+                            <div class="input-group">
+                                <bSwitch [(ngModel)]="enabled" [switch-size]="'small'" [switch-animate]="true"
+                                    [switch-off-color]="'danger'" class="px-2 mb-0 "
+                                    (click)="changeStatusRepaymentSetting()">
+                                </bSwitch>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+                <div class="row">
+                    <div class="col-md-2 col-lg-2 col-sm-2">
+                        <label>{{'incentive.select_frequency' | translate}} : </label>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-4 justify-content-start">
+                        <div class="input-group">
+                            <select class="form-control"
+                                [(ngModel)]="frequency" (ngModelChange)="selectFrequency($event)">
+                                <option *ngFor="let freq of frequencies" [ngValue]="freq">
+                                    {{freq.description}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="pt-5" *ngIf="productSelected && frequencySelected">
+            <!-- START BLOCK ACTIVE CUSTOMER -->
+            <div class="card-header-incentive">
+                {{'incentive.issuance_and_repayment.active_customer_setting' | translate}}
+            </div>
+            <form class="py-5" [formGroup]="activeCustomerForm">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                        <table class="table">
+                            <tr>
+                                <th>{{'incentive.issuance_and_repayment.from' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.to' | translate}}</th>
+                                <th></th>
+                            </tr>
+                            <tr *ngFor="let activeCustomer of activeCustomers, let i = index">
+                                <td *ngIf="!activeCustomer.delete"><input type="number" class="form-control"
+                                        formControlName="from{{i}}"></td>
+                                <td *ngIf="!activeCustomer.delete"><input type="number" class="form-control"
+                                        formControlName="to{{i}}"></td>
+                                <td *ngIf="!activeCustomer.delete">
+                                    <div class="row d-flex justify-content-end px-3">
+                                        <div class="px-2">
+                                            <button class="btn btn-success" (click)="saveActiveCustomer(i)">
+                                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-danger" (click)="deleteActiveCustomer(i)">
+                                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <div class ="scroll-incentive" #scrollToNewActiveCustomer>
+                            </div>
+                        </table>
+
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <button [disabled]="saveNewActive"
+                            class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                            (click)="addActiveCustomer(scrollToNewActiveCustomer)">
+                            <fa class="mx-2" name="plus">
+                                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                            </fa>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- END BLOCK ACTIVE CUSTOMERS-->
+            <!--  START BLOCK PRODUCTIVITY-->
+            <div class="card-header-incentive">
+                {{'incentive.issuance_and_repayment.productivity_setting' | translate}}
+            </div>
+            <form class="py-5" [formGroup]="productivityForm">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                        <table class="table">
+                            <tr>
+                                <th>{{'incentive.issuance_and_repayment.from' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.to' | translate}}</th>
+                                <th></th>
+                            </tr>
+                            <tr *ngFor="let productivity of productivities, let i = index">
+                                <td *ngIf="!productivity.delete"><input type="number" class="form-control"
+                                        formControlName="from{{i}}"></td>
+                                <td *ngIf="!productivity.delete"><input type="number" class="form-control"
+                                        formControlName="to{{i}}"></td>
+                                <td *ngIf="!productivity.delete">
+                                    <div class="row d-flex justify-content-end px-3">
+                                        <div class="px-2">
+                                            <button class="btn btn-success" (click)="saveProductivity(i)">
+                                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-danger" (click)="deleteProductivity(i)">
+                                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class ="scroll-incentive" #scrollToNewProductivity>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <button [disabled]="saveNewProductivity"
+                            class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                            (click)="addProductivity(scrollToNewProductivity)">
+                            <fa class="mx-2" name="plus">
+                                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                            </fa>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- END BLOCK PRODUCTIVITY-->
+            <!-- START BLOCK RISK LEVEL -->
+            <div class="card-header-incentive">
+                {{'incentive.issuance_and_repayment.risk_level_setting' | translate}}
+            </div>
+            <form class="py-5" [formGroup]="riskLevelForm">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                        <table class="table">
+                            <tr>
+                                <th>{{'incentive.issuance_and_repayment.from' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.to' | translate}}</th>
+                                <th></th>
+                            </tr>
+                            <tr *ngFor="let riskLevel of riskLevels, let i = index">
+                                <td *ngIf="!riskLevel.delete"><input type="number" class="form-control"
+                                        formControlName="from{{i}}"></td>
+                                <td *ngIf="!riskLevel.delete"><input type="number" class="form-control"
+                                        formControlName="to{{i}}"></td>
+                                <td *ngIf="!riskLevel.delete">
+                                    <div class="row d-flex justify-content-end px-3">
+                                        <div class="px-2">
+                                            <button class="btn btn-success" (click)="saveRiskLevel(i)">
+                                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-danger" (click)="deleteRiskLevel(i)">
+                                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class ="scroll-incentive" #scrollToNewRisk>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <button [disabled]="saveNewRisk"
+                            class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                            (click)="addRiskLevel(scrollToNewRisk)">
+                            <fa class="mx-2" name="plus">
+                                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                            </fa>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- END BLOCK RISK LEVEL -->
+            <!-- START BLOCK DISCOUNT -->
+            <div class="card-header-incentive">
+                {{'incentive.issuance_and_repayment.discount_from_total_settings' | translate}}
+            </div>
+            <form class="py-5" [formGroup]="discountForm">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                        <table class="table">
+                            <tr>
+                                <th>{{'incentive.issuance_and_repayment.from' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.to' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.discount' | translate}}</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr *ngFor="let discount of discounts, let i = index">
+                                <td *ngIf="!discount.delete">{{discount.ordre}}</td>
+                                <td *ngIf="!discount.delete"><input type="number" class="form-control"
+                                        formControlName="from{{i}}"></td>
+                                <td *ngIf="!discount.delete"><input type="number" class="form-control"
+                                        formControlName="to{{i}}"></td>
+                                <td *ngIf="!discount.delete"><input type="number" class="form-control"
+                                        formControlName="discount{{i}}"></td>
+                                <td *ngIf="!discount.delete">
+                                    <div class="row d-flex justify-content-end px-3">
+                                        <div class="px-2">
+                                            <button class="btn btn-success" (click)="saveDiscount(i)">
+                                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-danger" (click)="deleteDiscount(i)">
+                                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class ="scroll-incentive" #scrollToNewDiscount>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <button [disabled]="saveNewDiscount"
+                            class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                            (click)="addDiscount(scrollToNewDiscount)">
+                            <fa class="mx-2" name="plus">
+                                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                            </fa>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- END BLOCK DISCOUNT -->
+            <!-- START BLOCK BRANCH PROD LEVEL -->
+            <div class="card-header-incentive">
+                {{'incentive.issuance_and_repayment.branch_productivity_levels_setting' | translate}}
+            </div>
+            <form class="py-5" [formGroup]="branchProdForm">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                        <table class="table">
+                            <tr>
+                                <th>{{'incentive.role' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.minAmount' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.minCustomers' | translate}}</th>
+                                <th></th>
+                            </tr>
+                            <tr *ngFor="let branchProdLevel of branchProdLevels, let i = index">
+                                <td *ngIf="!branchProdLevel.delete">
+                                    <select class="form-control" formControlName="role{{i}}">
+                                        <option *ngFor="let groupeEntity of groupeEntitys"
+                                            [ngValue]="groupeEntity.code">
+                                            {{groupeEntity.libelle}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td *ngIf="!branchProdLevel.delete">
+                                    <input type="number" class="form-control" formControlName="minAmount{{i}}">
+                                </td>
+                                <td *ngIf="!branchProdLevel.delete">
+                                    <input type="number" class="form-control" formControlName="minCustomers{{i}}">
+                                </td>
+                                <td *ngIf="!branchProdLevel.delete">
+                                    <div class="row d-flex justify-content-end px-3">
+                                        <div class="px-2">
+                                            <button class="btn btn-success" (click)="saveBranchProdLevel(i)">
+                                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-danger" (click)="deleteBranchProdLevel(i)">
+                                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class ="scroll-incentive" #scrollToNewBranchProd>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <button [disabled]="saveBranchProd"
+                            class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                            (click)="addBranchProdLevel(scrollToNewBranchProd)">
+                            <fa class="mx-2" name="plus">
+                                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                            </fa>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- END BLOCK BRANCH LEVEL -->
+
+            <!-- START INCENTIVE REPAYMENT AND ISSUANCE BLOCK -->
+            <div class="card-header-incentive">
+                {{'incentive.issuance_and_repayment.issuance_and_repayment_incentives_settings' | translate}}
+            </div>
+            <div class="row pt-3 px-1">
+                <div class="col-xl-3 col-sm-4   d-flex justify-content-start">
+                    <div class="input-group">
+                        <label class="pt-2 px-3">
+                            {{'incentive.issuance_and_repayment.apply_discount' | translate}}</label>
+                    </div>
+                    </div>
+                    <div class="col d-flex justify-content-start">
+
+                    <div class="input-group">
+                        <bSwitch [(ngModel)]="applyDiscount" [switch-size]="'small'" [switch-animate]="true"
+                        [switch-off-color]="'danger'" class="px-2 mb-0 "
+                        (click)="applyDiscountRule()">
+                    </bSwitch>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-1">
+
+                    <div class="col-xl-3 col-sm-4  d-flex justify-content-start">
+
+                    <div class="input-group">
+                        <label class="pt-2 px-3">{{'incentive.issuance_and_repayment.apply_branch' | translate}}</label>
+
+                    </div>
+                </div>
+                <div class="col d-flex justify-content-start">
+
+                    <div class="input-group">
+                        <bSwitch [(ngModel)]="applyBranch" [switch-size]="'small'" [switch-animate]="true"
+                            [switch-off-color]="'danger'" class="px-2 mb-0 "
+                            (click)="applyBranchRule()">
+                        </bSwitch>
+                    </div>
+                </div>
+            </div>
+            <div class="divider mb-0"></div>
+            <ngb-accordion  >
+                <ngb-panel id="static-1" >
+                  <ng-template  ngbPanelTitle>
+                    <span class="card-header--title">
+                        {{'incentive.advanced_search'| translate }}
+                    </span>
+                  </ng-template>
+                  <ng-template ngbPanelContent>
+                    <form [formGroup]="repaymentFilterForm">
+                        <div>
+                          <div class="d-flex flex-row d-flex justify-content-center">
+                            <div class="col">
+                                <div class="position-relative form-group">
+                                  <label>{{'incentive.role'| translate }}</label>
+                                  <select class="form-control" formControlName="role" name="role">
+                                    <option *ngFor="let groupeEntity of groupeEntitys"
+                                            [ngValue]="groupeEntity.code">
+                                            {{groupeEntity.libelle}}
+                                        </option>
+                                  </select>
+                                </div>
+                              </div>
+                            <div class="col">
+                              <div class="position-relative form-group">
+                                <label>{{'incentive.issuance_and_repayment.active_customer'| translate }}</label>
+                                <select class="form-control" formControlName="activeCustomer" name="activeCustomer">
+                                    <option *ngFor="let activeCustomer of listActiveCustomers"
+                                    [ngValue]="activeCustomer.id">
+                                    {{activeCustomer.from}} - {{activeCustomer.to}}
+                                    </option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col">
+                                <div class="position-relative form-group">
+                                    <label>{{'incentive.issuance_and_repayment.productivity'| translate }}</label>
+                                    <select class="form-control" formControlName="productivity" name="productivity">
+                                        <option *ngFor="let productivity of listProductivities"
+                                        [ngValue]="productivity.id">
+                                        {{productivity.from}} - {{productivity.to}}
+                                    </option>
+                                    </select>
+                                  </div>
+                            </div>
+                            <div class="col">
+                                <div class="position-relative form-group">
+                                    <label>{{'incentive.issuance_and_repayment.risk_level'| translate }}</label>
+                                    <select class="form-control" formControlName="riskLevel" name="riskLevel">
+                                        <option *ngFor="let riskLevel of listRiskLevels" [ngValue]="riskLevel.id">
+                                            {{riskLevel.from}} - {{riskLevel.to}}
+                                        </option>
+                                    </select>
+                                  </div>
+                            </div>
+                            <div class="col">
+                                <div class="position-relative form-group">
+                                    <label>{{'incentive.incentive_type'| translate }}</label>
+                                    <select class="form-control" formControlName="incentiveType" name="incentiveType">
+                                        <option *ngFor="let incentiveType of incentiveTypes" [ngValue]="incentiveType">
+                                        {{incentiveType.description}}
+                                    </option>
+                                    </select>
+                                  </div>
+                            </div>
+                            <div class="col">
+                                <div class="position-relative form-group">
+                                    <label>{{'incentive.based_on'| translate }}</label>
+                                    <select class="form-control" formControlName="basedOn" name="basedOn">
+                                      <option *ngFor="let repaymentBasedOn of repaymentsBasedOn"
+                                      [ngValue]="repaymentBasedOn">
+                                      {{repaymentBasedOn.description}}
+                                  </option>
+                                    </select>
+                                  </div>
+                            </div>
+                            <div class="col">
+                                 <div class=" d-flex position-relative form-group pt-4 mt-1">
+                                        <div class="px-2">
+                                            <button class="btn btn-primary " (click)="onSubmit()">
+                                                {{'upload_document.search'| translate }}
+                                            </button>
+                                        </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-danger " (click)="reset()">
+                                                reset
+                                            </button>
+                                        </div>
+                                    </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                  </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
+            <form [formGroup]="repaymentForm">
+                <div class="row">
+                    <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+                        <table class="table">
+                            <tr>
+                                <th>{{'incentive.role' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.active_customer' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.productivity' | translate}}</th>
+                                <th>{{'incentive.issuance_and_repayment.risk_level' | translate}}</th>
+                                <th>{{'incentive.incentive_type' | translate}}</th>
+                                <th>{{'incentive.incentive_value' | translate}}</th>
+                                <th>{{'incentive.based_on' | translate}}</th>
+                                <th></th>
+                            </tr>
+                            <tr *ngFor="let repayment of repayments, let i = index">
+                                <td *ngIf="!repayment.delete"><select class="form-control" formControlName="role{{i}}">
+                                        <option *ngFor="let groupeEntity of groupeEntitys"
+                                            [ngValue]="groupeEntity.code">
+                                            {{groupeEntity.libelle}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td *ngIf="!repayment.delete">
+                                    <select class="form-control" formControlName="activeCustomer{{i}}">
+                                        <option *ngFor="let activeCustomer of listActiveCustomers"
+                                            [ngValue]="activeCustomer.id">
+                                            {{activeCustomer.from}} - {{activeCustomer.to}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td *ngIf="!repayment.delete">
+                                    <select class="form-control" formControlName="productivity{{i}}">
+                                        <option *ngFor="let productivity of listProductivities"
+                                            [ngValue]="productivity.id">
+                                            {{productivity.from}} - {{productivity.to}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td *ngIf="!repayment.delete">
+                                    <select class="form-control" formControlName="riskLevel{{i}}">
+                                        <option *ngFor="let riskLevel of listRiskLevels" [ngValue]="riskLevel.id">
+                                            {{riskLevel.from}} - {{riskLevel.to}}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td *ngIf="!repayment.delete">
+                                    <select class="form-control" formControlName="incentiveType{{i}}"
+                                        [compareWith]="compareIncentiveType">
+                                        <option *ngFor="let incentiveType of incentiveTypes" [ngValue]="incentiveType">
+                                            {{incentiveType.description}}
+                                        </option>
+                                    </select>
+                                </td>
+
+                                <td *ngIf="!repayment.delete"><input type="text" class="form-control"
+                                        formControlName="incentiveValue{{i}}"></td>
+
+                                <td *ngIf="!repayment.delete">
+                                    <select class="form-control" formControlName="basedOn{{i}}"
+                                        [compareWith]="compareBasedOn">
+                                        <option *ngFor="let repaymentBasedOn of repaymentsBasedOn"
+                                            [ngValue]="repaymentBasedOn">
+                                            {{repaymentBasedOn.description}}
+                                        </option>
+                                    </select>
+                                </td>
+
+                                <td *ngIf="!repayment.delete">
+                                    <div class="row">
+                                        <div class="col-xl-6 col-sm-12 py-1 px-0 d-flex justify-content-center">
+                                            <button class="btn btn-success " (click)="saveRepaymentSettings(i)">
+                                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-xl-6 col-sm-12 py-1 px-0 d-flex justify-content-center">
+                                            <button class="btn btn-danger " (click)="deleteIncentiveRepayment(i)">
+                                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class ="scroll-incentive" #scrollToNewRepayment>
+                        </div>
+                        <div class="col-xl-12 col-md-12 px-0 mx-0 row">
+                            <div class="col-xl-9 col-md-9">
+                                <ngb-pagination [collectionSize]="totalElements" [(page)]="pageNumber"
+                                    [pageSize]="pageSize" size="sm" [maxSize]="3" [boundaryLinks]="true"
+                                    (pageChange)="reloadRepaymentIncentive(pageNumber,'NUMBER')">
+                                </ngb-pagination>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1">
+                        <button [disabled]="saveRepayment" class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                            (click)="addRepayment(scrollToNewRepayment)">
+                            <fa class="mx-2" name="plus">
+                                <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                            </fa>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- END INCENTIVE REPAYMENT AND ISSUANCE BLOCK -->
+    </div>
+</div>

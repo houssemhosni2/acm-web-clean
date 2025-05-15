@@ -1,0 +1,47 @@
+<div class="accordion mb-1" id="accordionExample">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+        aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+        <div>
+          <i class="lnr-book text-secondary px-2"></i>
+          {{'aml.list_of_suspicious_transactions'| translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+        aria-labelledby="headingOne">
+        <div class="table-responsive" *ngIf="acmDoubtfulTransactions?.length > 0" >
+          <table class="mb-0 table green px-0">
+            <thead>
+              <tr>
+                <th>{{'setting.account_number'| translate }}</th>
+                <th>{{'transaction.receipt_number'| translate }}</th>
+                <th>{{'transaction.amount'| translate }}</th>
+                <th>{{'transaction.value_date'| translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let doubtfulTransaction of acmDoubtfulTransactions">
+                <td>
+                  {{doubtfulTransaction.accountNumber}}
+                </td>
+                <td>
+                  {{doubtfulTransaction.receiptNo}}
+                </td>
+                <td>
+                  {{doubtfulTransaction.amount}}
+                </td>
+                <td>
+                  {{doubtfulTransaction.valueDate| date: 'dd/MM/yyyy'}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  

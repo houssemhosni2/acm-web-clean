@@ -1,0 +1,19 @@
+<div class="app-drawer-wrapper" [ngClass]="{'drawer-open' : toggleDrawer}">
+  <div class="drawer-nav-btn">
+    <button type="button" class="hamburger hamburger--elastic" [ngClass]="{'is-active' : globals.toggleDrawer}"
+            (click)="toggleDrawer()">
+      <span class="hamburger-box"><span class="hamburger-inner"></span></span>
+    </button>
+  </div>
+  <div class="drawer-content-wrapper">
+    <section class="scrollbar-container">
+      <perfect-scrollbar [autoPropagation]="true">
+        <h3 class="drawer-heading">Calendar</h3>
+        <div class="drawer-section">
+        </div>
+      </perfect-scrollbar>
+    </section>
+  </div>
+</div>
+
+<div class="app-drawer-overlay" (click)="toggleDrawer()"></div>

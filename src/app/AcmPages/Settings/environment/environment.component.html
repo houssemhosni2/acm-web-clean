@@ -1,0 +1,270 @@
+<div class="card" *ngIf="userConnected.login === 'Super.Admin'">
+  <div class="card-header">
+    {{'setting.setting_technical.setting_technical'| translate }}
+  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{'setting.setting_environments.key'| translate }}</th>
+            <th>{{'setting.setting_environments.value'| translate }}</th>
+            <th>{{'setting.description'| translate }}</th>
+            <th>{{'setting.status'| translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let acmEnvironnementEntity of technicalAcmEnvironnements | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+            <td>{{acmEnvironnementEntity.key}}</td>
+            <!-- column value-->
+            <td *ngIf="acmEnvironnementEntity.type ==='CHECKBOX'">
+              <input type="checkbox" disabled
+                    [checked]="acmEnvironnementEntity.value === '1'"
+                    class="custom-control-input"></td>
+            
+             <td *ngIf="acmEnvironnementEntity.type !=='CHECKBOX' ">{{acmEnvironnementEntity.value }}</td>
+
+             <!-------->
+            <td>{{acmEnvironnementEntity.description }}</td>
+            <td>
+              <bSwitch [(ngModel)]="acmEnvironnementEntity.enabled" [switch-size]="'mini'" [switch-animate]="true"
+                [switch-off-color]="'danger'" class="px-2 mb-0" [switch-handle-width]="40" (click)="endableDisable(acmEnvironnementEntity)">
+              </bSwitch>
+            </td>
+            <td>
+              <button class="btn btn-warning text-white"
+                (click)="updateAcmEnvironment(modalContent, acmEnvironnementEntity)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="technicalAcmEnvironnements.length" [(page)]="page" [pageSize]="pageSize"
+          size="sm" [maxSize]="3" [boundaryLinks]="true">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- FUNCTIONAL SETTINGS-->
+<div class="card py-2">
+  <div class="card-header">
+    {{'setting.setting_functional.setting_functional'| translate }}
+   </div>
+   <div>
+     <div>
+       <div class="table-responsive">
+         <table class="align-middle mb-0 table table-hover">
+           <thead>
+             <tr>
+               <th>{{'setting.setting_environments.key'| translate }}</th>
+               <th>{{'setting.setting_environments.value'| translate }}</th>
+               <th>{{'setting.description'| translate }}</th>
+               <th>{{'setting.status'| translate }}</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+           <tr
+             *ngFor="let acmEnvironnementEntity of functionalAcmEnvironnements | slice: (page2-1) * pageSize2 : (page2-1) * pageSize2 + pageSize2; let i = index ">
+             <td>{{acmEnvironnementEntity.key}}</td>
+            <!-- column value-->
+            <td *ngIf="acmEnvironnementEntity.type ==='CHECKBOX'">
+              <div class="custom-checkbox custom-control">
+                <input class="custom-control-input" id="eCheckbox1" type="checkbox" [checked]="acmEnvironnementEntity.value === '1'"
+                       disabled>
+                <label class="custom-control-label" for="eCheckbox1"></label>
+              </div>
+             </td>
+             <td *ngIf="acmEnvironnementEntity.type !=='CHECKBOX'">{{acmEnvironnementEntity.value }}</td>
+             <!-------->
+             <td>{{acmEnvironnementEntity.description }}</td>
+             <td>
+              <bSwitch [(ngModel)]="acmEnvironnementEntity.enabled" [switch-size]="'mini'" [switch-animate]="true"
+                [switch-off-color]="'danger'" class="px-2 mb-0" [switch-handle-width]="40" (click)="endableDisable(acmEnvironnementEntity)">
+              </bSwitch>
+            </td>
+
+             <td>
+              <button class="btn btn-warning text-white"
+                (click)="updateAcmEnvironment(modalContent, acmEnvironnementEntity)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+           </tr>
+           </tbody>
+         </table>
+       </div>
+     </div>
+   </div>
+   <div class="card-footer pb-0">
+     <div class="row no-gutters w-100">
+       <div class="col-xl-6 col-lg-6 col-md-12">
+         <ngb-pagination [collectionSize]="functionalAcmEnvironnements.length" [(page)]="page2" [pageSize]="pageSize2"
+           size="sm" [maxSize]="3" [boundaryLinks]="true">
+         </ngb-pagination>
+       </div>
+       <div class="col-xl-6 col-lg-6 col-md-12">
+         <div class="d-flex justify-content-lg-end">
+           <select class="custom-select" style="width: auto" name="pageSize2" [(ngModel)]="pageSize2">
+             <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+             <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+             <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+             <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+           </select>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+ <!-- REMINDER SETTINGS -->
+ <div class="card py-2">
+  <div class="card-header">
+    {{'setting.setting_reminder.setting_reminder'| translate }}
+   </div>
+   <div>
+     <div>
+       <div class="table-responsive">
+         <table class="align-middle mb-0 table table-hover">
+           <thead>
+             <tr>
+               <th>{{'setting.setting_environments.key'| translate }}</th>
+               <th>{{'setting.setting_environments.value'| translate }}</th>
+               <th>{{'setting.description'| translate }}</th>
+               <th>{{'setting.status'| translate }}</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+           <tr
+             *ngFor="let acmEnvironnementEntity of reminderAcmEnvironnements | slice: (page3-1) * pageSize3 : (page3-1) * pageSize3 + pageSize3; let i = index ">
+             <td>{{acmEnvironnementEntity.key}}</td>
+             <!-- column value-->
+             <td *ngIf="acmEnvironnementEntity.type ==='CHECKBOX'">
+              <input type="checkbox" disabled
+                    [checked]="acmEnvironnementEntity.value === '1'"
+                    class="custom-control-input"></td>
+             <td *ngIf="acmEnvironnementEntity.type !=='CHECKBOX'">{{acmEnvironnementEntity.value }}</td>
+             <!-------->
+             <td>{{acmEnvironnementEntity.description }}</td>
+             <td>
+              <bSwitch [(ngModel)]="acmEnvironnementEntity.enabled" [switch-handle-width]="40" [switch-size]="'mini'" [switch-animate]="true"
+                [switch-off-color]="'danger'" class="px-2 mb-0" (click)="endableDisable(acmEnvironnementEntity)">
+              </bSwitch>
+            </td>
+             <td>
+              <button class="btn btn-warning text-white"
+                (click)="updateAcmEnvironment(modalContent, acmEnvironnementEntity)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+           </tr>
+           </tbody>
+         </table>
+       </div>
+     </div>
+   </div>
+   <div class="card-footer pb-0">
+     <div class="row no-gutters w-100">
+       <div class="col-xl-6 col-lg-6 col-md-12">
+         <ngb-pagination [collectionSize]="reminderAcmEnvironnements.length" [(page)]="page3" [pageSize]="pageSize3"
+           size="sm" [maxSize]="3" [boundaryLinks]="true">
+         </ngb-pagination>
+       </div>
+       <div class="col-xl-6 col-lg-6 col-md-12">
+         <div class="d-flex justify-content-lg-end">
+           <select class="custom-select" style="width: auto" name="pageSize3" [(ngModel)]="pageSize3">
+             <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+             <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+             <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+             <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+           </select>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'setting.setting_motif.update_setting_motifs'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='groupForm' (ngSubmit)="onSubmit()">
+      <div class="card-body">
+        <div class="position-relative pb-4">
+          <label>{{'setting.setting_environments.key'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="key"
+              [attr.disabled]="action === 'update'? '': null">
+          </div>
+        </div>
+
+        <td *ngIf="acmEnvironnementEntity.type ==='LISTVALUES'">
+          <p-multiSelect [filter]="false" [options]="valueList" [styleClass]="'full-width'"
+          formControlName="value"  ></p-multiSelect>
+         </td>   
+
+        <div *ngIf="acmEnvironnementEntity.type !== 'CHECKBOX' && acmEnvironnementEntity.type !== 'LISTVALUES' &&!displayListMotifRejet" class="position-relative pb-4">
+          <label>{{'setting.setting_environments.value'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="value">
+          </div>
+        </div>
+        <div *ngIf="acmEnvironnementEntity.type !== 'CHECKBOX'&&displayListMotifRejet" class="position-relative pb-4">
+          <label>{{'setting.description'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control"  formControlName="value" disabled>
+          </div>
+        </div>
+        <div  *ngIf="acmEnvironnementEntity.type === 'CHECKBOX'" class="position-relative pb-4">
+          <label>{{'setting.status'| translate }}</label>
+          <div class="input-group form-group">
+            <bSwitch [(ngModel)]="checkbox" formControlName="value" [switch-handle-width]="40" [switch-size]="'mini'" [switch-animate]="true"
+            [switch-off-color]="'danger'" class="px-2 mb-0" >
+          </bSwitch>
+          </div>
+        </div>
+        <div *ngIf="!displayListMotifRejet" class="position-relative pb-4">
+          <label>{{'setting.description'| translate }}</label>
+          <div class="input-group form-group">
+            <input type="text" class="form-control" formControlName="description">
+          </div>
+        </div>
+        <div *ngIf="displayListMotifRejet" class="position-relative pb-4">
+          <label>{{'reject.reject_reason'|translate}}</label>
+          <div class="input-group form-group">
+            <select class="form-control" formControlName="description" (change)="codeMotifReject($event)">
+                <option *ngFor="let motif of settingMotifRejetsEntitys"    [value]="motif.libelle">{{ motif.libelle }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="mb-1 mx-2 btn btn-outline-danger"
+          (click)="closeModale()">{{'button.cancel' | translate}}</button>
+        <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

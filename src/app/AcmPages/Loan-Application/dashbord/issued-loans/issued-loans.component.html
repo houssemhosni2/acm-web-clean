@@ -1,0 +1,130 @@
+<app-page-title [heading]="'sidebar.issued_loans' | translate " [icon]="'lnr-home'" [account]="''" [status]="0">
+</app-page-title>
+<div class="row mr-30">
+  <div class="col-xl-12">
+    <mat-tab-group class="page-mat-tabs">
+      <mat-tab class="col-xl-2">
+        <ng-template matTabLabel>
+          <span class="loans-lenght text-success">{{loansStatut.status8Issued}}</span>
+          <span class="control-label">{{ 'dashboard.issued' | translate }}</span>
+        </ng-template>
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+              <p-table #dt [responsive]="true" [autoLayout]=true [value]="loanPaginationEntity.resultsLoans"
+                (onLazyLoad)="reloadLoansList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+                [totalRecords]="loanPaginationEntity.totalElements"
+                [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns"
+                [showCurrentPageReport]="true" [(selection)]="loan" selectionMode="single">
+
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <!-- actions button -->
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                      <div class="center-elem text-center">
+                        {{col.header | translate}}
+                        <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+                      </div>
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                  </tr>
+                  <tr>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                      <select *ngSwitchCase="'customerType'" class="form-control ACM-Dashbord-customertype-col"
+                        (change)="dt.filter($event.target.value, col.field, 'equals')">
+                        <option value="null">{{'category_loan.all' | translate}}</option>
+                        <option value="INDIV">{{'category_loan.individual' | translate}}</option>
+                        <option value="ORG">{{'category_loan.organisation' | translate}}</option>
+                        <option value="GRP">{{'category_loan.groupe' | translate}}</option>
+                      </select>
+                      <input *ngSwitchCase="'accountNumber'" class="form-control placeholder" type="text"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                      <select *ngSwitchCase="'productDescription'" class="form-control ACM-Dashbord-productDescription-col"
+                        (change)="dt.filter($event.target.value, col.field, 'equals')">
+                        <option value="null">{{'category_loan.all' | translate}}</option>
+                        <option *ngFor="let product of products" value="{{product.value}}">{{product.label}}</option>
+                      </select>
+                      <select *ngSwitchCase="'branchName'" class="form-control ACM-Dashbord-branchName-col"
+                        (change)="dt.filter($event.target.value, col.field, 'equals')">
+                        <option value="null">{{'category_loan.all' | translate}}</option>
+                        <option *ngFor="let branch of branches" value="{{branch.value}}">{{branch.value}}</option>
+                      </select>
+                      <input *ngSwitchCase="'customerNameNoPipe'" class="form-control ACM-Dashbord-customername-col" type="text"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                      <input *ngSwitchCase="'applyAmountTotal'" class="form-control" type="number" min="0" step="50"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                      <input *ngSwitchCase="'applyDate'" class="form-control ACM-Dashbord-Date-col" type="date"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                      <input *ngSwitchCase="'portfolioDescription'" class="form-control" type="text"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                      <input *ngSwitchCase="'ownerName'" class="form-control" type="text"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'groupOwnerName'" class="form-control" type="text"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <div *ngIf="!issuedScreen">
+                    </div>
+                      <input *ngSwitchCase="'dateLastUpdate'" class="form-control ACM-Dashbord-Date-col" type="date"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')">
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+                  <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+                      <div *ngSwitchCase="'customerType'">
+                        <div *ngIf="rowData[col.field] === 'INDIV'">
+                          <i class="lnr-user"> </i>
+                        </div>
+                        <div *ngIf="rowData[col.field] === 'GRP'">
+                          <i class="lnr-users"> </i>
+                        </div>
+                        <div *ngIf="rowData[col.field] === 'ORG'">
+                          <i class="lnr-apartment"> </i>
+                        </div>
+                      </div>
+                      <div *ngSwitchCase="'accountNumber'">{{rowData[col.field]}}</div>
+                      <div *ngSwitchCase="'productDescription'">{{rowData[col.field]}}</div>
+                      <div *ngSwitchCase="'customerNameNoPipe'" class="ACM-Dashbord-customernametd-col">{{rowData[col.field]}}
+                      </div>
+                      <div *ngSwitchCase="'applyAmountTotal'">
+                        {{rowData[col.field] | number : this.devToolsServices.getDecimalPlaces(loans.currencyDecimalPlaces):'fr' }}
+                        {{ loans?.currencySymbol }} </div>
+                      <div *ngSwitchCase="'applyDate'">{{rowData[col.field] | date: 'dd/MM/yyyy'}}</div>
+                      <div *ngSwitchCase="'portfolioDescription'">{{rowData[col.field]}}</div>
+                      <div *ngSwitchCase="'ownerName'">{{rowData[col.field]}}</div>
+                      <div *ngSwitchCase="'groupOwnerName'">{{rowData[col.field]}}</div>
+                      <div *ngSwitchCase="'branchName'">{{rowData[col.field]}}</div>
+                      <div *ngSwitchCase="'dateLastUpdate'">
+                        {{rowData[col.field] | date: 'dd/MM/yyyy'}} </div>
+                    </td>
+                    <td class="pl-0">
+                      <i *ngIf="rowData['assignCustomer'] === true" ngbTooltip="{{'assign_customer.assign_customer'| translate }}"
+                        class="pe-7s-user ACM-icon-assign-customer text-success"></i>
+                    </td>
+                    <td>
+                      <button (click)='loanDetails(rowData)' pButton type='button' icon='fa fa-edit'></button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+              <div class="text-center opacity-6 pt-1 pb-0">
+                <b> {{'dashboard.total' | translate}} {{loanPaginationEntity.totalElements}} </b>
+              </div>
+              <div class="text-center opacity-6 pt-1 pb-0" *ngIf="loanPaginationEntity?.resultsLoans !== undefined && loanPaginationEntity.totalAmount !== 0 ">
+                <b> {{'dashboard.total_amount' | translate}}
+                    {{loanPaginationEntity.totalAmount | number : this.devToolsServices.getDecimalPlaces(loanPaginationEntity?.resultsLoans[0]?.currencyDecimalPlaces)}}
+                    {{ loanPaginationEntity?.resultsLoans[0]?.currencySymbol }} </b>
+              </div>
+              <div class="text-center opacity-6 pt-1 pb-0" *ngIf="loanPaginationEntity?.resultsLoans !== undefined && loanPaginationEntity.totalAmount === 0 ">
+                <b> {{'dashboard.total_amount' | translate}}
+                    {{loanPaginationEntity.totalAmount | number : this.devToolsServices.getDecimalPlaces(0)}}
+                    </b>
+              </div>
+            </div>
+          </div>
+    </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

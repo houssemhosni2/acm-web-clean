@@ -1,0 +1,142 @@
+<div *ngIf="showComponent===true" class="accordion mb-1">
+  <div class="card">
+    <div class="card-header-tab card-header d-flex justify-content-between" data-target="#collapseOne"
+         aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+      <div *ngIf="source!='COLLECTION'&& source!='GENERIC_WORKFLOW'" class="card-header-title">
+        <i class="lnr-user text-secondary px-2"></i>
+     {{currentStepName}} :   {{'collections.collections_legal.legal_third_party'|translate}}
+      </div>
+      <div *ngIf="source=='COLLECTION'" class="card-header-title">
+        <i class="lnr-user text-secondary px-2"></i>
+     {{currentStepName}} :   {{'collections.collections_legal.collection_third_party'|translate}}
+      </div>
+      <div *ngIf="source=='GENERIC_WORKFLOW'" class="card-header-title">
+        <i class="lnr-user text-secondary px-2"></i>
+     {{currentStepName}} :  {{ 'setting.third-party.third-party' | translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseOne" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+         aria-labelledby="headingOne"
+         data-parent="#accordionExample">
+      <!-- bouton popup-->
+      <div class="page-title-actions p-4 d-flex justify-content-end">
+
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                (click)="openLarge(content2)">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'button.add' | translate}}
+        </button>
+      </div>
+      <div *ngIf="listParticipants.length > 0">
+        <div class="p-0">
+          <!-- tableau notes -->
+          <div class="table-responsive-md">
+            <table class="table">
+              <thead>
+              <tr>
+                <th class="text-center">{{'collaterol.type'|translate}}</th>
+                <th class="text-center">{{'setting.setting_users.first-name'|translate}}</th>
+                <th class="text-center">{{'setting.setting_users.last-name'|translate}}</th>
+                <th class="text-center">{{'customer.telephone'|translate}}</th>
+                <th class="text-center">{{'customer.email'|translate}}</th>
+                <th class="text-center">{{'customer.address'|translate}} </th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container
+                *ngFor="let item of listParticipants | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize, let i = index">
+                <tr *ngIf="item.action !== 'D'">
+                  <td class="text-center">{{ item.type }}</td>
+                  <td class="text-center">{{ item.firstName }}</td>
+                  <td class="text-center">{{ item.lastName}}</td>
+                  <td class="text-center">{{ item.phoneNumber }}</td>
+                  <td class="text-center">{{ item.email }}</td>
+                  <td class="text-center">{{ item.addressParty }}</td>
+                  <td>
+                    <div class="row d-flex justify-content-end px-3">
+                      <div class="col-4 px-1">
+                        <button class="btn btn-danger" (click)='deleteThirdParty(i,item.id)'>
+                          <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="listParticipants.length === 0">
+        <div class="card-body">
+          <h6 style="color: red;" class="pt-3"> {{'collections.collections_legal.missing_third_party'|translate}}</h6>
+        </div>
+      </div>
+
+      <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <ngb-pagination [collectionSize]="listParticipants.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                            [maxSize]="3" [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <div class="d-flex justify-content-lg-end">
+              <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <h4 *ngIf="source=='LEGAL'" class="modal-title"> {{'collections.collections_legal.legal_third_party'|translate}}</h4>
+        <h4 *ngIf="source=='COLLECTION'" class="modal-title"> {{'collections.collections_legal.collection_third_party'|translate}}</h4>
+
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+                (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-2 mx-2 btn btn-outline-danger"
+                (click)="c('close')">{{'button.cancel' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div class="main-card card">
+    <div class="card-header py-2">
+      <h4 *ngIf="source!='COLLECTION'" class="modal-title"> {{'collections.collections_legal.legal_third_party'|translate}}</h4>
+      <h4 *ngIf="source=='COLLECTION'" class="modal-title"> {{'collections.collections_legal.collection_third_party'|translate}}</h4>
+
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+              (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <app-third-party-search  [participants]="listParticipants"  [source]="source" (selectedThirdParty)="addThirdParty($event)"></app-third-party-search>
+  </div>
+</ng-template>
+
+
+
+

@@ -1,0 +1,96 @@
+<div class="card">
+  <ngx-loading [show]="loading"
+    [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+  </ngx-loading>
+  <div class="card-header">
+    {{'setting.setting_iscore_validation.setting_iscore_validation' | translate}}
+  </div>
+  <form class="form col-xl-12 col-md-12 px-0" [formGroup]="iScoreAmlForm" (ngSubmit)="onSubmit()">
+  <div class="card-body">
+
+
+      <div class="modal-body row no-gutters">
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.iscore_expiry_days'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreExpiryDays" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.iscore_max_score'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreMaxScore" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.iscore_min_score'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreMinScore" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.iscore_max_active_loans'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreMaxActiveLoans" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.min_active_loans'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreMinActiveLoans" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.iscore_max_due_days'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreMaxDueDays" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.iscore_min_due_days'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="iscoreMinDueDays" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <label>{{'setting.setting_iscore_validation.aml_check_pourcentage'| translate}}</label>
+        </div>
+        <div class="position-relative form-group col-xl-6 col-md-6">
+          <div class="input-group">
+            <input class="form-control col-md-4" formControlName="amlCheckPourcentage" type="number" min="0" (focusout)="changeValue()">
+          </div>
+        </div>
+
+      </div>
+
+
+
+  </div>
+  <div class="card-footer" *ngIf="isEditMode">
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button type="submit" class=" btn btn-primary text-white" [disabled]="!checkChangedValues">{{'button.save' | translate}}</button>
+    </div>
+  </div>
+</form>
+</div>

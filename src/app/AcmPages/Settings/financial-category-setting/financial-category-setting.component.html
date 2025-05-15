@@ -1,0 +1,155 @@
+<div class="card">
+    <div class="card-header">
+        {{'setting.financial-category-setting.financial-category-setting'| translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="d-inline-flex align-items-center btn btn-primary"
+                (click)="addFinancialCategory(modalContent)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                {{'setting.setting_configuration_product.add'| translate }} </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <p-table #dt [responsive]="true" [autoLayout]=true [value]="acmFinancialCategoryPagination.results"
+            (onLazyLoad)="reloadFinancialCategoryList($event)" [lazy]="true" [lazyLoadOnInit]="false"
+            sortMode="multiple" [totalRecords]="acmFinancialCategoryPagination.totalElements"
+            [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="cols"
+            [(selection)]="financialCategory" selectionMode="single">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                        <div class="center-elem text-center">
+                            {{ col.header | translate}}
+                            <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                </tr>
+                <tr>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <input *ngSwitchCase="'code'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'description'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <select *ngSwitchCase="'category'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option value="Income"> {{'setting.financial-category-setting.income'| translate }}
+                            </option>
+                            <option value="Expense"> {{'setting.financial-category-setting.expense'| translate }}
+                            </option>
+                            <option value="Asset"> {{'setting.financial-category-setting.asset'| translate }} </option>
+                            <option value="Liability"> {{'setting.financial-category-setting.liability'| translate }}
+                            </option>
+                            <option value="Capital/Reserve"> {{'setting.financial-category-setting.capital-reserve'|
+                                translate }} </option>
+                        </select>
+                        <select *ngSwitchCase="'level'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let _ of levelArray; let i = index" [value]="i+1">
+                                {{'setting.financial-category-setting.level'| translate }} {{i+1}}
+                            </option>
+                        </select>
+                        <input *ngSwitchCase="'parentLevelCode'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                    </th>
+                    <th style='width: 40px;'></th>
+                    <th style='width: 40px;'></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <div *ngSwitchCase="'code'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'description'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'category'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'level'"> {{'setting.financial-category-setting.level'| translate }} {{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'parentLevelCode'">{{rowData[col.field]}}</div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning text-white mx-1" (click)="updateFinancialCategory(modalContent, rowData)">
+                            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                        </button>
+                    </td>
+                    <td>   
+                        <button class="btn btn-sm btn-danger text-white" (click)="disableFinancialCategory(rowData)">
+                            <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title"> {{ (action === 'update' ?
+                'setting.financial-category-setting.update-financial-category-setting' :
+                'setting.financial-category-setting.add-financial-category-setting') | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModale()">&times;</span>
+            </button>
+        </div>
+        <form class="form" [formGroup]='groupForm'>
+            <div class="card-body">
+                <div class="position-relative pb-4">
+                    <label>{{'setting.financial-category-setting.code'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="code">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.financial-category-setting.description'| translate }}</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="description">
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.financial-category-setting.category'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="category">
+                            <option value="Income"> {{'setting.financial-category-setting.income'| translate }}
+                            </option>
+                            <option value="Expense"> {{'setting.financial-category-setting.expense'| translate }}
+                            </option>
+                            <option value="Asset"> {{'setting.financial-category-setting.asset'| translate }} </option>
+                            <option value="Liability"> {{'setting.financial-category-setting.liability'| translate }}
+                            </option>
+                            <option value="Capital/Reserve"> {{'setting.financial-category-setting.capital-reserve'|
+                                translate }} </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.financial-category-setting.level'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="level"
+                        (change)="onChange()">
+                            <option *ngFor="let _ of levelArray; let i = index" [ngValue]="i+1">
+                                {{'setting.financial-category-setting.level'| translate }} {{i+1}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.financial-category-setting.parent-level'| translate }}</label>
+                    <div class="form-group">
+                        <select class="form-control form-group" formControlName="idParentLevel">
+                            <option *ngFor="let level of levelParentList" [ngValue]="level.id">
+                                {{ level.code }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModale()">{{'button.cancel'
+                    | translate}}</button>
+                <button class="mb-1 btn btn-primary" type="submit" (click)="onSubmit()">{{'button.save' | translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

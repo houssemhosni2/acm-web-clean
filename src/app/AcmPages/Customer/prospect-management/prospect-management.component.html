@@ -1,0 +1,192 @@
+<app-page-title [heading]="'customer_management.add_prospect'| translate"
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [status]="-1"></app-page-title>
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+    aria-controls="collapseCustomerAccount">
+    <div>
+      <i class="lnr-user text-secondary pr-2"></i>
+      {{ 'customer_management.prospect_information' | translate }}
+    </div>
+  </div>
+  <div aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div class="card-body">
+      <ng-container >
+      <form [formGroup]="addProspectForm">
+        <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-xl-12 col-sm-12 row no-gutters">
+            <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.prospectionSource'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="sourceProspection" name="sourceProspection" 
+                  (change)="selectSourceProspection($event)">
+                  <option selected value>
+                    {{'customer_management.prospection_default_select'| translate }}</option>
+                    <option *ngFor="let prospection of ProspectionListValues" value={{prospection.value}}>
+                      {{ prospection.description }}
+                    </option>             
+                   </select>
+              </div>
+            </div>
+            <div [hidden]="!supplierCheck" class="col-xl-4 col-sm-6 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{'sidebar.supplier'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="supplier" name="supplier">
+                  <option selected value>
+                    {{'customer_management.fournisseur_default_select'| translate }}</option>
+                  <option *ngFor="let supplierEntity of supplierEntitys" [ngValue]="supplierEntity">
+                    {{supplierEntity.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div [hidden]="supplierCheck" class="col-xl-4 col-sm-6 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'customer_management.prospectionComment' | translate }}</label>
+                <input placeholder="{{ 'customer_management.prospectionComment' | translate }}" formControlName="prospectionComment"
+                name="prospectionComment" type="text" class="form-control" />
+              </div>
+            </div>
+            <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{'customer_management.branch'| translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="branch" name="branch">
+                  <option selected value>
+                    {{'customer_management.branch_default_select'| translate }}</option>
+                  <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity">
+                    {{brancheEntity.description}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-xl-12 col-sm-12 row no-gutters">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.branch'| translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="branch" name="branch">
+                <option selected value>
+                  {{'customer_management.branch_default_select'| translate }}</option>
+                <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity">
+                  {{brancheEntity.description}}
+                </option>
+              </select>
+            </div>
+          </div> -->
+          <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.name_part1'| translate }}</label>
+              <span class="text-danger">*</span>
+              <input placeholder="{{'customer_management.name_part1'| translate }}" formControlName="namePart1"
+                name="namePart1" type="text" class="form-control" />
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.name_part2'| translate }}</label>
+              <!-- <span class="text-danger">*</span> -->
+              <input placeholder="{{'customer_management.name_part2'| translate }}" formControlName="namePart2"
+                name="namePart2" type="text" class="form-control" />
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.name_part3'| translate }}</label>
+              <!-- <span class="text-danger">*</span> -->
+              <input placeholder="{{'customer_management.name_part3'| translate }}" formControlName="namePart3"
+                name="namePart3" type="text" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.name_part4'| translate }}</label>
+              <span class="text-danger">*</span>
+              <input placeholder="{{'customer_management.name_part4'| translate }}" formControlName="namePart4"
+                name="namePart4" type="text" class="form-control" />
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.gender'| translate }}</label>
+              <span class="text-danger">*</span>
+              <mat-radio-group labelPosition="after" formControlName="gender" class="d-flex flex-row bd-highlight mb-3">
+                <mat-radio-button class="pt-2 px-3 bd-highlight" value="M">
+                  {{'customer_management.male'| translate }}
+                </mat-radio-button>
+                <mat-radio-button class="pt-2 px-3 bd-highlight" value="F">
+                  {{'customer_management.female'| translate }}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label> {{'customer_management.date_of_birth'| translate }}</label>
+              <input class="form-control" placeholder="{{'customer_management.date_of_birth'| translate }}" type="date"
+                formControlName="birthday" >
+
+
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label> {{'customer_management.mobile'| translate }}</label>
+              <span class="text-danger">*</span>
+              <input class="form-control" placeholder="{{'customer_management.mask_tunisia_phone_number'| translate }}"
+                type="text" [maxlength]="phoneNumberMaskLength"  formControlName="mobile" (input)="checkMobileNumberInput()">
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label> {{'customer_management.email'| translate }}</label>
+              <input class="form-control" placeholder="{{'customer_management.email'| translate }}" type="email"
+                formControlName="email">
+            </div>
+          </div>
+          <!-- <div class="col-xl-4 col-sm-6 col-md-6 px-1">
+                        <div class="position-relative form-group">
+                            <label>{{'customer_management.nationality'| translate }}</label>
+                            <span class="text-danger">*</span>
+                            <select class="form-control" formControlName="nationality">
+                                <option selected value disabled>
+                                    {{'customer_management.nationality_default_select'| translate }}
+                                </option>
+                                <ng-container *ngFor="let nat of udfFields[0]?.fieldListValuesDTOs ">
+                                    <option [ngValue]="nat">
+                                        {{nat.description}}
+                                    </option>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div> -->
+          <div class="col-xl-4 col-sm-6 col-md-4 px-1">
+            <div class="position-relative form-group">
+              <label>{{'customer_management.national_ID'| translate }}</label>
+              <!-- <span class="text-danger">*</span> -->
+              <input class="form-control" formControlName="national_id" [maxLength]="maxNationalId"
+                placeholder="{{'customer_management.mask_tunisia_national_id'| translate }}" type="text" (input)="checkNatioanlIdInput()">
+            </div>
+          </div>
+          </div>
+        </div>
+      </form>
+      <app-udf-step-workflow [source]="updateMode" [category]="'PROSPECT'"></app-udf-step-workflow>
+      <!--<app-customer-address [expanded]="true" [mode]="!updateMode"></app-customer-address>-->
+      <div class="d-block text-end card-footer p-2">
+        <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+        <button class="mx-2 btn btn-success" type="submit" (click)="externalSubmit()" >{{'button.save'| translate
+          }}</button>
+          <button class="mx-2 btn btn-success" *ngIf="updateMode ==='edit'"  (click)="customerUpdate()" >{{'button.convertirCustomer'| translate
+          }}</button>
+      </div>
+    </ng-container>
+    </div>
+  </div>
+</div>

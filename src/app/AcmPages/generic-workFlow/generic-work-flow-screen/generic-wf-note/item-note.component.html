@@ -1,0 +1,155 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+      aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-book text-secondary px-2"></i>
+        {{'customer_decision.customer_note'| translate }}
+      </div>
+
+
+    </div>
+    <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne">
+      <div *ngIf="arrayItemNote.length > 0">
+        <div class="card-body">
+
+          <!-- bouton popup-->
+          <div class="page-title-actions mb-3 d-flex justify-content-end">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+              (click)="openLarge(content6)">
+
+              {{'button.add' | translate}}
+            </button>
+          </div>
+
+        </div>
+        <!-- tableau notes -->
+        <div class="table-responsive">
+          <table class="mb-0 table green">
+            <thead>
+              <tr>
+                <th>{{'customer_decision.Date'| translate }}</th>
+                <th>{{'customer_decision.addedBy'| translate }}</th>
+                <th class="text-center">{{'step'| translate}}</th>
+                <th>{{'customer_decision.Note'| translate }}</th>
+                <th class="text-center">{{'button.details'| translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let noteItem of arrayItemNote | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                <td class="ACM-table-historyNote-td-1">
+                  {{noteItem.dateInsertion | date : 'dd/MM/yyyy hh:mm a'}}
+                </td>
+                <td class="ACM-table-historyNote-td-2">
+                  {{noteItem.insertBy}}
+                </td>
+                <td class="ACM-table-historyNote-td-3 text-center">
+                  <div *ngIf="noteItem.action === 'REVIEW'"  class="badge bg-warning ng-star-inserted">
+                    {{noteItem.action}}
+                  </div>
+
+                  <div *ngIf="noteItem.action === 'REJECTED'"  class="badge bg-danger ng-star-inserted">
+                    {{noteItem.action}}
+                  </div>
+
+                  <div *ngIf="noteItem.action !== 'REJECTED' && noteItem.action !== 'REVIEW'"  class="badge bg-info ng-star-inserted">
+                    {{noteItem.action}}
+                  </div>
+
+
+
+
+
+
+
+
+
+
+                </td>
+                <td class="ACM-table-historyNote-td-4 text-truncate ACM-table-historyNote-comments"
+                  [innerHTML]="displayComment(noteItem.comment)">
+                  <div>
+                    {{displayComment(noteItem.comment)}}
+                  </div>
+                </td>
+                <td class="ACM-table-historyNote-td-5 text-center">
+                  <button class="btn btn-shadow btn-primary " (click)="displayNote(noteItem, content6)">
+                    <i class="pe-7s-more btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="arrayItemNote.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                [maxSize]="3" [boundaryLinks]="true">
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option selected [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="arrayItemNote.length === 0">
+        <div class="card-body">
+          <div class="page-title-actions mb-3 d-flex justify-content-end">
+            <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+              (click)="openLarge(content6)">
+
+              {{'button.add' | translate}}
+            </button>
+          </div>
+          <h6 style="color: red;" class="pt-3">{{ 'customer_decision.missing_customer_note' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--popup-->
+<ng-template #content6 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form add new note-->
+    <form [formGroup]="popupForm" (ngSubmit)="addNewNote()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'customer_decision.Note'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="c(reset())">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <!--Date-->
+        <div class="col-xl-10">
+          <label> <strong>{{'customer_decision.date'| translate }} </strong> :
+            {{ contactDate | date : 'dd/MM/yyyy'}}</label>
+        </div>
+
+        <!--input comments-->
+        <div class="col-xl-12">
+          <label for="comments"><strong>{{'customer_decision.comment'| translate }} </strong> </label>
+          <angular-editor [config]="configEditor" formControlName="comments">
+          </angular-editor>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="reset()">{{'button.cancel' | translate}}</button>
+        <button *ngIf="configEditor.editable==true" [disabled]="!popupForm.valid" type="submit"
+          class="btn btn-primary">{{'button.add' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

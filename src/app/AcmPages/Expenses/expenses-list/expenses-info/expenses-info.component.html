@@ -1,0 +1,263 @@
+<app-page-title [heading]=" 'expenses.expenses_details'| translate " [icon]="'pe-7s-note2'" [account]="''"
+    [status]="-1">
+</app-page-title>
+
+    <div class="col-md-12 col-xl-12 px-1">
+
+        <div class="card mb-1">
+            <div class="card-header d-flex justify-content-between">
+                <div>
+                    <i class="lnr-file-empty text-secondary pr-2"></i>
+                    {{'expenses.expenses_details'| translate }}
+                </div>
+            </div>
+            <div class="card-body px-5">
+                <!-- row -->
+                <div class="row no-gutters pb-3">
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_type'| translate}}</div>
+                                        <div class="widget-subheading"> {{expenses.expensesTypeLibelle}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_amount'| translate }} </div>
+                                        <div class="widget-subheading">{{expenses.expensesAmount| number: this.decimalPlaces:'fr'}} </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_teller'| translate }}</div>
+                                        <div class="widget-subheading">
+                                            {{expenses.teller}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- row -->
+                <div class="row no-gutters pb-2">
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_description'| translate }}
+                                        </div>
+                                        <div class="widget-subheading">
+                                            {{expenses.description}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_branch'| translate }}</div>
+                                        <div class="widget-subheading">
+                                            {{expenses.branchDescription}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.applied_date'| translate }}</div>
+                                        <div class="widget-subheading"> {{expenses.applyDate | date: 'dd/MM/yyyy'}} </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- row -->
+                <div class="row no-gutters pb-2">
+                    <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.requested_by'| translate }}
+                                        </div>
+                                        <div class="widget-subheading">
+                                            {{expenses.tellerName}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_status'| translate }}
+                                        </div>
+                                        <div *ngIf="expenses.statut === 0 " class="widget-subheading">
+                                            {{'expenses.expenses_requested'| translate }}
+                                        </div>
+                                        <div *ngIf="expenses.statut === 1 " class="widget-subheading">
+                                            {{'expenses.expenses_accepted'| translate }}
+                                        </div>
+                                        <div *ngIf="expenses.statut === -1 " class="widget-subheading">
+                                            {{'expenses.expenses_rejected'| translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="expenses.statut === -1 " class="col-xl-4 col-sm-4">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-outer">
+                                <div class="widget-content-wrapper">
+                                    <div class="widget-content-left">
+                                        <div class="widget-heading">{{'expenses.expenses_reject_reason'| translate }}
+                                        </div>
+                                        <div  class="widget-subheading">
+                                            {{expenses.note}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="table-responsive">
+                      <table class="align-middle mb-0 table table-hover">
+                        <thead>
+                        <tr>
+                          <th class="text-left">{{'upload_document.document_type'| translate }}</th>
+                          <th class="text-center">{{'upload_document.Name'| translate }}</th>
+                          <th class="text-center">{{'upload_document.Description'| translate }}</th>
+                          <th class="text-center">{{'upload_document.Date'| translate }}</th>
+                          <th class="text-center"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td>
+                            <div class="widget-content p-0">
+                              <div class="widget-content-wrapper">
+                                <div class="widget-content-left flex2">
+                                  <div class="widget-heading">{{expensesDocument.titre}}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="text-center">
+                                {{expensesDocument.name}}
+                            </div>
+                          </td>
+                          <td>
+                            <div class="text-center">
+                                {{expensesDocument.description}}
+                            </div>
+                          </td>
+                          <td>
+                            <div class="text-center">
+                                {{expensesDocument.dateCreation | date: 'dd/MM/yyyy'}}
+                            </div>
+                          </td>
+
+                          <td class="text-center">
+                            <button class="btn btn-warning" (click)="getDocument()">
+                              <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                            </button>
+                          </td>
+
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="d-block text-right px-2 py-2">
+                <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+                <button *ngIf="(!sharedService.habilitationButton('REJECT',currentPath) || sharedService.getAuthorized() || this.expenses.owner === sharedService.getUser().login) && this.expensesStatus === 0"
+                class="mb-2 mx-2 btn btn-danger" (click)="rejectModal(rejectModalContent)">{{'button.reject' |
+                    translate}}</button>
+                <button *ngIf="(!sharedService.habilitationButton('ACCEPT',currentPath) || sharedService.getAuthorized() || this.expenses.owner === sharedService.getUser().login) && this.expensesStatus === 0"
+                 class="mb-2 btn btn-primary" (click)="submitExpenses('ACCEPT')">{{'button.accept' | translate}}</button>
+                    </div>
+        </div>
+    </div>
+
+    <ng-template #rejectModalContent let-c="close" let-d="dismiss">
+        <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+            <form class="form col-xl-12 col-md-12 px-0" [formGroup]="rejectForm" (ngSubmit)="submitExpenses('REJECT')">
+                <div class="modal-header py-2">
+                    <h4 class="modal-title">{{'reject.reject_loan'| translate }}</h4>
+                    <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+                        (click)="d('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body row no-gutters">
+                    <div class="position-relative form-group col-xl-12 col-md-12">
+                        <label>{{'reject.reject_reason'| translate }}</label>
+                    <div class="input-group">
+                    <select class="form-control" formControlName="reason">
+                      <option selected value> </option>
+                        <option *ngFor="let settingMotifReviewEntity of settingMotifReviewEntitys" [ngValue]="settingMotifReviewEntity">
+                            {{settingMotifReviewEntity.libelle}}
+                        </option>
+                    </select>
+                    </div>
+                    </div>
+                    <div class="position-relative form-group col-xl-12 col-md-12">
+                        <label> {{'reject.note'| translate }} </label>
+                        <div class="input-group">
+                            <textarea class="form-control" formControlName="note"></textarea>
+                        </div>
+                    </div>
+                    <div class="position-relative form-group">
+                        <div>
+                            <div class="custom-checkbox custom-control">
+                                <input class="custom-control-input" id="exampleCustomCheckbox" type="checkbox"
+                                    formControlName="confirm">
+                                <label class="custom-control-label ms-2"
+                                    for="exampleCustomCheckbox">{{'button.confirm_checkbox' | translate}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer py-1">
+                    <button type="reset" class="btn btn-outline-danger"
+                        (click)="c('Close click')">{{'button.close' | translate}}</button>
+                    <button type="submit" class="btn btn-danger">{{'button.reject' | translate}}</button>
+                </div>
+            </form>
+        </div>
+    </ng-template>

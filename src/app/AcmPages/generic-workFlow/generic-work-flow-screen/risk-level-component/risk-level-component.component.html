@@ -1,0 +1,38 @@
+<div  class="card" *ngIf=" listStepRiskSetting.length>0">
+  <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+    aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+    <div>
+      <i class="lnr-book text-secondary px-2"></i>
+      {{ 'generic-wf.risk-analysis' | translate }}
+        </div>
+  </div>
+  <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+    aria-labelledby="headingOne">
+  </div>
+  <table class="mb-0 t table table-hover">
+    <thead>
+      <tr>
+        <th> {{ 'generic-wf.risk' | translate }}</th>
+        <th>Echelle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let risk of listStepRiskSetting">
+        <td class="col-sm-5">
+          <div class="input-group">
+            {{risk.settingTypeRisk.description}}
+
+          </div>
+        </td>
+        <td class="col-sm-5">
+          <select  class="form-control" [disabled]="!risk.editable"
+            [(ngModel)]="risk.idSelectedEchelle">
+            <option *ngFor="let l of risk.settingTypeRisk.echelleTypeRisks" [ngValue]="l.id">{{l.label}}
+            </option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

@@ -1,0 +1,276 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne"
+         data-target="#collapseFinancialAnalysis" aria-expanded="true" aria-controls="collapseFinancialAnalysis"
+         (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-pie-chart px-2"></i>
+        {{'financial_analysis.financial_analysis'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseFinancialAnalysis" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+         aria-labelledby="headingOne">
+      <div class="card-body">
+        <ngx-loading [show]="loading"
+                     [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+        <div class="col-xl-12">
+          <div class="widget-content col-md-3 px-0 pt-0 pb-1">
+            <div class="widget-content-outer">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left">
+                  <div class="widget-heading"> {{'financial_analysis.balance_sheet'| translate }} </div>
+                  <div class="col-xl-12">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <mat-grid-list cols="2" rowHeight="50px" class="text-white">
+            <mat-grid-tile [colspan]="1" [rowspan]="3" [style.background]="'#3ac47d'"
+                           ngbTooltip="{{'financial_analysis.current_Assets' | translate}}: {{financialAnalysisEntity?.currentAssets | number : this.decimalPlaces}} {{ loan?.currencySymbol }}
+                           , {{'financial_analysis.fixed_assets' | translate}}: {{financialAnalysisEntity?.fixedAssets | number : this.decimalPlaces}} {{ loan?.currencySymbol }}">
+              <div class="widget-content col-xl-11 p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div [ngClass]="{'widget-content-left': translate.currentLang !== 'ar', 'widget-content-right': translate.currentLang === 'ar'}">
+                      <div class="widget-heading"> {{'financial_analysis.total_revenue'| translate }} </div>
+                      <!-- <div class="widget-subheading">{{'financial_analysis.total_assets'| translate }} </div> -->
+                    </div>
+                    <div [ngClass]="{'widget-content-right': translate.currentLang !== 'ar', 'widget-content-left': translate.currentLang === 'ar'}">
+                      <div class="widget-numbers">{{ financialAnalysisEntity?.assets | number : this.decimalPlaces}}
+                        {{ loan?.currencySymbol }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="2" [style.background]="'#3f6ad8'"
+                           ngbTooltip="{{'financial_analysis.current_liabilities' | translate}}: {{financialAnalysisEntity?.currentLiabilities | number : this.decimalPlaces}} {{ loan?.currencySymbol }}
+                           , {{'financial_analysis.fixed_liabilities' | translate}}: {{financialAnalysisEntity?.fixedAssets | number : this.decimalPlaces}} {{ loan?.currencySymbol }}">
+              <div class="widget-content col-xl-11 p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div [ngClass]="{'widget-content-left': translate.currentLang !== 'ar', 'widget-content-right': translate.currentLang === 'ar'}">
+                      <div class="widget-heading">{{'financial_analysis.total_expenses'| translate }} </div>
+                      <!-- <div class="widget-subheading">{{'financial_analysis.total_liabilities'| translate }}</div> -->
+                    </div>
+                    <div [ngClass]="{'widget-content-right': translate.currentLang !== 'ar', 'widget-content-left': translate.currentLang === 'ar'}">
+                      <div class="widget-numbers">
+                        {{ financialAnalysisEntity?.totalLiabilities | number : this.decimalPlaces}}
+                        {{ loan?.currencySymbol }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="1" [style.background]="'#6c757d'">
+              <div class="widget-content col-xl-11 p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div [ngClass]="{'widget-content-left': translate.currentLang !== 'ar', 'widget-content-right': translate.currentLang === 'ar'}">
+                      <div class="widget-heading">{{'financial_analysis.calculated_repayment_capacity'| translate }}</div>
+                    </div>
+                    <div [ngClass]="{'widget-content-right': translate.currentLang !== 'ar', 'widget-content-left': translate.currentLang === 'ar'}">
+                      <div class="widget-numbers">{{ financialAnalysisEntity?.equity | number : this.decimalPlaces}}
+                        {{ loan?.currencySymbol }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </div>
+        <div class="col-xl-12">
+          <div class="widget-content col-md-3 px-0 pb-1">
+            <div class="widget-content-outer">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left">
+                  <div class="widget-heading">{{'financial_analysis.income_statement'| translate }}</div>
+                  <div class="col-xl-12">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <mat-grid-list cols="2" rowHeight="50px" class="text-white">
+            <mat-grid-tile [colspan]="1" [rowspan]="3" [style.background]="'#3ac47d'"
+                           ngbTooltip="{{'financial_analysis.monthly_sales' | translate}}: {{financialAnalysisEntity?.monthlySales | number : this.decimalPlaces}} {{ loan?.currencySymbol }}
+                           , {{'financial_analysis.costs_of_goods_sold' | translate}}: {{financialAnalysisEntity?.cotsOfGoodSold | number : this.decimalPlaces}} {{ loan?.currencySymbol }}">
+              <div class="widget-content col-xl-11 p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div [ngClass]="{'widget-content-left': translate.currentLang !== 'ar', 'widget-content-right': translate.currentLang === 'ar'}">
+                      <div class="widget-heading">{{'financial_analysis.recommended_monthly_repayment'| translate }}</div>
+                      <!-- <div class="widget-subheading">{{'financial_analysis.total_gross_profit'| translate }}</div> -->
+                    </div>
+                    <div [ngClass]="{'widget-content-right': translate.currentLang !== 'ar', 'widget-content-left': translate.currentLang === 'ar'}">
+                      <div class="widget-numbers">{{ financialAnalysisEntity?.grossProfit | number : this.decimalPlaces}}
+                        {{ loan?.currencySymbol }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="2" [style.background]="'#3f6ad8'">
+              <div class="widget-content col-xl-11 p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div [ngClass]="{'widget-content-left': translate.currentLang !== 'ar', 'widget-content-right': translate.currentLang === 'ar'}">
+                      <!-- <div class="widget-heading">{{'financial_analysis.debt_ratio'| translate }}</div> -->
+                      <div class="widget-heading">{{'financial_analysis.expense'| translate }}</div>
+                      <div class="widget-subheading">{{'financial_analysis.total_expense'| translate }}</div>
+                      <!-- <div class="widget-subheading">{{'financial_analysis.total_expense'| translate }}</div> -->
+                    </div>
+                    <div [ngClass]="{'widget-content-right': translate.currentLang !== 'ar', 'widget-content-left': translate.currentLang === 'ar'}">
+                      <div
+                        class="widget-numbers">{{ financialAnalysisEntity?.familyExpense | number : this.decimalPlaces}}
+                        {{ loan?.currencySymbol }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="1" [style.background]="'#6c757d'">
+              <div class="widget-content col-xl-11 p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div [ngClass]="{'widget-content-left': translate.currentLang !== 'ar', 'widget-content-right': translate.currentLang === 'ar'}">
+                      <div class="widget-heading">{{'financial_analysis.net_profit'| translate }}</div>
+                    </div>
+                    <div [ngClass]="{'widget-content-right': translate.currentLang !== 'ar', 'widget-content-left': translate.currentLang === 'ar'}">
+                      <div class="widget-numbers">{{ financialAnalysisEntity?.netProfit | number : this.decimalPlaces}}
+                        {{ loan?.currencySymbol }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </div>
+        <div class="col-xl-12">
+          <div class="widget-content col-md-3 px-0 pd-0">
+            <div class="widget-content-outer">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left">
+                  <div class="widget-heading">{{'financial_analysis.other_financial_information'| translate }}</div>
+                  <div class="col-xl-12">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-gutters">
+            <div class="col-xl-5">
+              <div class="card mb-1 widget-chart text-left">
+                <div class="icon-wrapper rounded-circle">
+                  <div class="icon-wrapper-bg opacity-10 bg-warning"></div>
+                  <i class="lnr-laptop-phone text-white"></i>
+                </div>
+                <div class="widget-chart-content">
+                  <div class="widget-subheading ACM-financial-analysis-card-{{translate.currentLang}}">{{'financial_analysis.household'| translate }}</div>
+                  <div class="widget-numbers ACM-financial-analysis-card-{{translate.currentLang}}">
+                    {{ this.financialAnalysisEntity?.householdSurplus | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }}
+                  </div>
+                </div>
+              </div>
+              <div class="card mb-1 widget-chart text-left">
+                <div class="icon-wrapper rounded-circle">
+                  <div class="icon-wrapper-bg opacity-10 bg-danger"></div>
+                  <i class="lnr-graduation-hat text-white"></i>
+                </div>
+                <div class="widget-chart-content">
+                  <div class="widget-subheading ACM-financial-analysis-card-{{translate.currentLang}}">{{'financial_analysis.excluded_assets'| translate }}</div>
+                  <div
+                    class="widget-numbers ACM-financial-analysis-card-{{translate.currentLang}}">{{ this.financialAnalysisEntity?.excludedAssets | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }}
+                  </div>
+                </div>
+              </div>
+              <div class="card mb-1 widget-chart text-left">
+                <div class="icon-wrapper rounded-circle">
+                  <div class="icon-wrapper-bg opacity-10 bg-primary"></div>
+                  <i class="lnr-apartment text-white"></i>
+                </div>
+                <div class="widget-chart-content">
+                  <div class="widget-subheading ACM-financial-analysis-card-{{translate.currentLang}}">{{'financial_analysis.collateral'| translate }}</div>
+                  <div class="widget-numbers ACM-financial-analysis-card-{{translate.currentLang}}">
+                    {{ this.financialAnalysisEntity?.collateralAmount | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-7" [ngClass]="{'pl-3': translate.currentLang !== 'ar', 'pr-3': translate.currentLang === 'ar'}">
+              <table class="table">
+                <thead>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>{{'financial_analysis.installment_amount'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.installement | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }} </td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.working_capital'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.workingCapital | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }}</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.gross_margin'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.grossMargin | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }}</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.debt_equity'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.debtEquity | number : this.decimalPlaces}}
+                    %</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.inventory_turnover'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.inventoryTurnover | number : this.decimalPlaces}}
+                    %</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.installemnt_coverage'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.installmentCoverage | number : this.decimalPlaces}}
+                    %</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.guarantor_coverage'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.guarantorCoverage | number : this.decimalPlaces}}
+                    %</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.risk_level'| translate }}</td>
+                  <td *ngIf ="this.financialAnalysisEntity.installmentCoverage == 0">Risque Acceptable</td>
+                  <td *ngIf ="this.financialAnalysisEntity.installmentCoverage == 1">Risque Moyen</td>
+                  <td *ngIf ="this.financialAnalysisEntity.installmentCoverage == 2">Risque Élevé</td>
+                </tr>
+                <tr>
+                  <td>{{'financial_analysis.debt_ratio'| translate }}</td>
+                  <!-- <td>{{ financialAnalysisEntity?.familyExpense / financialAnalysisEntity?.assets  }} %</td> -->
+                  <td> 0 %</td>
+                </tr>
+                <tr class="text-danger">
+                  <td>{{'financial_analysis.loan_recommend'| translate }}</td>
+                  <td>{{ this.financialAnalysisEntity?.loanRecommendation | number : this.decimalPlaces}}
+                    {{ loan?.currencySymbol }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

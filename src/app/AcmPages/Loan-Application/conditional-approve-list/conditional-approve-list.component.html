@@ -1,0 +1,76 @@
+<div  *ngIf ="conditionalApproveEntitys!==[] && conditionalApproveEntitys!==null && conditionalApproveEntitys!==undefined &&  conditionalApproveEntitys.length>0" class="accordion mb-1" id="accordionExample">
+  <div class="card">
+      <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+          aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+          <div>
+              <i class="lnr-book text-secondary px-2"></i>
+              {{'aproval.' | translate}} {{ 'approval.conditionnal-approve' | translate }}
+          </div>
+      </div>
+      <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+          aria-labelledby="headingOne">
+
+          <div>
+              <div>
+                  <!-- bouton popup-->
+                  <div class="table-responsive">
+                      <table class="mb-0 table green">
+                          <thead>
+                              <tr>
+                                <th>{{'task.description'| translate }}</th>
+                                <th>{{'customer_decision.addedBy'| translate }}</th>
+                                  <th>{{'task.to_user'| translate }}</th>
+                                  <th class = "text-center">{{'dashboard.status'| translate }}</th>
+                                  <th class="text-center"></th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr
+                                  *ngFor="let conditionalApprove of conditionalApproveEntitys ">
+
+                                  <td class="ACM-table-historyNote-td-3">
+
+                                          {{conditionalApprove.description}}
+
+                                  </td>
+                                  <td class="ACM-table-historyNote-td-2">
+                                      {{conditionalApprove.insertBy}}
+                                  </td>
+                                  <td class="ACM-table-historyNote-td-2">
+                                      {{conditionalApprove.user.fullName}}
+                                  </td>
+
+                                  <td class="ACM-table-historyNote-td-2 text-center ">
+                                    <div *ngIf="conditionalApprove.status === 'NEW'" class="badge bg-primary ng-star-inserted">
+                                        {{conditionalApprove.status}}
+                                    </div>
+                                    <div *ngIf="conditionalApprove.status === 'COMPLETED'" class="badge bg-success ng-star-inserted">
+                                        {{conditionalApprove.status}}
+                                    </div>
+                                    <div *ngIf="conditionalApprove.status === 'CLOSED'" class="badge bg-success ng-star-inserted">
+                                      {{conditionalApprove.status}}
+                                  </div>
+                                </td>
+                                  <td class="ACM-table-historyNote-td-2  text-center">
+                                    <button *ngIf="connectedUser.login == conditionalApprove.user?.login" [disabled]="conditionalApprove?.status !== 'NEW'"
+                                    class="btn btn-shadow btn-success mr-4 " (click)="completeTask(conditionalApprove,'COMPLETED')">
+                                    {{'button.done'| translate }} </button>
+                                    <button  *ngIf="conditionalApprove.usernameInsertedBy==connectedUser.login"
+
+                                        class="btn btn-shadow btn-success mr-4"  (click)="completeTask(conditionalApprove,'CLOSED')" [disabled]= "conditionalApprove.conditionnalValidation !== false && conditionalApprove.conditionnalValidation !== null">
+                                        {{'button.close'| translate }} </button>
+                                        <button *ngIf="conditionalApprove.usernameInsertedBy==connectedUser.login"
+                                      class="btn btn-shadow btn-danger" (click)="reopenTask(conditionalApprove)" [disabled]="conditionalApprove.status !== 'COMPLETED'" >
+                                      {{'button.reopen'| translate }} </button>
+                                </td>
+
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>

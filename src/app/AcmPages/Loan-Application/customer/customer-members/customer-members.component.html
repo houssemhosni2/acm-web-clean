@@ -1,0 +1,77 @@
+
+<app-loader></app-loader>
+<div class="card" *ngIf ="customerMembers.length > 0">
+    <ngx-loading [show]="loading"
+        [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+    </ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseOne"
+        aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+        <div>
+            <i class="lnr-users text-secondary pr-2"></i>
+            {{'customer.members'| translate }}
+        </div>
+        <div>
+            <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+    </div>
+    <div id="collapseOne" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div>
+            <div class="table-responsive">
+                <table class="mb-0 t table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{{"customer.customer_name" | translate}}</th>
+                            <th>{{"customer_management.date_of_birth" | translate}}</th>
+                            <th>{{"customer_management.unique_id" | translate}}</th>
+                            <th>{{"customer.telephone" | translate}}</th>
+                            <th>{{"customer.portfolio" | translate}}</th>
+                            <th>{{"customer.branch" | translate}}</th>
+                            <th>{{"customer.address" | translate}}</th>
+                            <th *ngIf="customer.customerType === 'GRP'">{{"customer.role" | translate}}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let customerMember of customerMembers">
+                            <td>{{customerMember.member.firstName }} {{customerMember.member.secondName }} {{customerMember.member.middleName }} {{customerMember.member.lastName }}</td>
+                            <td>{{ customerMember.member.dateOfBirth | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{customerMember.member.listUDFGroup[0]?.value}}</td>
+                            <td *ngIf="customerMember.member.telephone">{{ customerMember.member.telephone}}</td>
+                            <td *ngIf="!customerMember.member.telephone">{{'customer.msg_telephone'| translate }}</td>
+                            <td>{{ customerMember.member.accountPortfolioDescription}}</td>
+                            <td>{{ customerMember.member.branchesName}}</td>
+                            <td>{{ customerMember.member.customerAddress}}</td>   
+                            <td  *ngIf="customer.customerType === 'GRP'">{{ customerMember.linkRelationshipType}}</td>
+                            <td>
+                                <button class="btn btn-warning" (click)='customerDetails(customerMember.member)'>
+                                <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer pb-0">
+            <div class="row no-gutters w-100">
+                <div class="col-xl-6 col-lg-6 col-md-12">
+                    <ngb-pagination [collectionSize]="customerMembers.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                        [maxSize]="3" [boundaryLinks]="true">
+                    </ngb-pagination>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12">
+                    <div class="d-flex justify-content-lg-end">
+                        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,872 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div
+      class="card-header d-flex justify-content-between"
+      id="headingOne"
+      data-target="#collapseSchedule"
+      aria-expanded="true"
+      aria-controls="collapseSchedule"
+      (click)="toggleCollapse()"
+    >
+      <div>
+        <i class="lnr-file-empty text-secondary px-2"></i>
+        {{ "customer.customer_analysis" | translate }}
+      </div>
+      <div>
+        <i
+          [ngClass]="
+            expanded === true
+              ? 'lnr-chevron-up text-secondary'
+              : 'lnr-chevron-down text-secondary'
+          "
+        ></i>
+      </div>
+    </div>
+
+    <div
+      id="collapseSchedule"
+      [ngClass]="expanded === true ? 'collapse show' : 'collapse'"
+      aria-labelledby="headingOne"
+    >
+      <div class="card-body px-4" style="padding-bottom: unset !important">
+        <div class="otherInformation">
+          <label>{{
+            "other_information.personelInformations" | translate
+          }}</label>
+        </div>
+        <div style="padding: 10px 10px 10px 25px">
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.loan_purpose" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ loan?.loanReasonDescription }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.marital_status" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ personalInformation?.materialStatus }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.residential_status" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ personalInformation?.residentialStatus }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'other_information.job'|translate}}</div>
+                    <div class="widget-subheading">{{ personalInformation?.job }}</div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.accomedation_type" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ personalInformation?.housingType }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.nb_family_members" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ personalInformation?.nbFamilyMembers }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'other_information.familyMemberWithEducationalFees'|translate}}</div>
+                    <div class="widget-subheading">{{ personalInformation?.familyMemberWithEducationalFees }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'other_information.nbChildren'|translate}}</div>
+                    <div class="widget-subheading">{{ personalInformation?.nbChildren }}</div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+          </div>
+          <!-- <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'other_information.nbDomesticWorkers'|translate}}</div>
+                    <div class="widget-subheading">{{ personalInformation?.nbDomesticWorkers }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <div class="px-5">
+        <hr class="hr" />
+      </div>
+      <div class="card-body px-4">
+        <div class="otherInformation">
+          <label>{{ "other_information.Work Information" | translate }}</label>
+        </div>
+
+        <div style="padding: 10px 10px 10px 25px">
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.labor_sector" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ workInformation?.workSection }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.employer_name" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ workInformation?.employerName }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.date_joining" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ workInformation?.dateJoining }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.military_rank" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ workInformation?.militaryRank }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="px-5">
+        <hr class="hr" />
+      </div>
+      <div class="card-body px-4">
+        <div class="otherInformation">
+          <label>{{
+            "other_information.income Details Information" | translate
+          }}</label>
+        </div>
+
+        <div style="padding: 10px 10px 10px 25px">
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.extraIncome" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ incomeDetails?.extraIncome }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.monthlyAllowance" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ incomeDetails?.monthlyAllowance }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.housingAllowance" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ incomeDetails?.housingAllowance }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.basicSalary" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ incomeDetails?.basicSalary }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5">
+        <hr class="hr" />
+      </div>
+
+      <div class="card-body px-4">
+        <div class="otherInformation">
+          <label>{{
+            "other_information.expenses_Liabilities_Information" | translate
+          }}</label>
+        </div>
+        <div style="padding: 10px 10px 10px 25px">
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.monthly_installments" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.monthlyInstallment }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.food_expenses" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.foodExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.education_expenses" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.educExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{
+                        "other_information.communicationExpenses" | translate
+                      }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.communicationExpenses }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.transport_expenses" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.transportExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{
+                        "other_information.general_accompaniment_expenses"
+                          | translate
+                      }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.accopExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{
+                        "other_information.domestic_labor_expenses" | translate
+                      }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.domesticExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{
+                        "other_information.other_monthly_expenses" | translate
+                      }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.otherExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="widget-content p-0">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{
+                        "other_information.monthly_international_transfer"
+                          | translate
+                      }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ expensesLiabilities?.internationalExp }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5">
+        <hr class="hr" />
+      </div>
+      <!-- information third party dakhli-->
+
+      <div class="card-body px-4" *ngIf="isInformationMofeed == false">
+        <div class="otherInformation">
+          <label>
+            {{
+              "other_information.thirdParty_Information" | translate
+            }}
+            {{
+              "other_information.mofeed" | translate
+            }}
+          </label>
+        </div>
+        <div style="padding: 10px 10px 10px 25px">
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.basicWage" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ jsonDataDakhli?.employmentStatusInfo[0].basicWage }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.housingAllowance" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataDakhli?.employmentStatusInfo[0].housingAllowance
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.otherAllowance" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataDakhli?.employmentStatusInfo[0].otherAllowance
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.employerName" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ jsonDataDakhli?.employmentStatusInfo[0].employerName }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.workingMonths" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataDakhli?.employmentStatusInfo[0].workingMonths
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.employmentStatus" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataDakhli?.employmentStatusInfo[0].employmentStatus
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.kyc_score" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        kycScore
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- information third party mofeed-->
+
+
+
+      <div class="card-body px-4" *ngIf="isInformationMofeed">
+        <div class="otherInformation">
+          <label>{{
+            "other_information.thirdParty_Information" | translate
+          }}
+          {{
+            "other_information.mofeed" | translate
+          }}
+        </label>
+        </div>
+        <div style="padding: 10px 10px 10px 25px">
+          <div class="row mb-2">
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.basicWage" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ jsonDataMofeed?.employmentStatusInfo[0].basicWage }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.fullWage" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].fullWage
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.housingAllowance" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].housingAllowance
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.otherAllowance" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].otherAllowance
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+
+          <div class="row mb-2">
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.employerName" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{ jsonDataMofeed?.employmentStatusInfo[0].employerName }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.workingMonths" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].workingMonths
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.employmentStatus" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].employmentStatus
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.dateOfJoining" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].dateOfJoining
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.salaryStartingDate" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].salaryStartingDate
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.establishmentActivity" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].establishmentActivity
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.commercialRegistrationNumber" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].commercialRegistrationNumber
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.commercialRegistrationNumber" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].commercialRegistrationNumber
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.legalEntity" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].legalEntity
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.gosinumber" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        jsonDataMofeed?.employmentStatusInfo[0].gosinumber
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="widget-content p-0 col-md-3">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">
+                      {{ "other_information.kyc_score" | translate }}
+                    </div>
+                    <div class="widget-subheading">
+                      {{
+                        kycScore
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

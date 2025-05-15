@@ -1,0 +1,119 @@
+<div class="card">
+  <div class="card-header">
+    {{'setting.setting_motif.setting_motifs'| translate }}
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addMotif(modalContent)">
+        <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+        {{'setting.setting_motif.add_motifs'| translate }}
+      </button>
+    </div>
+  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{'setting.category'| translate }}</th>
+            <th>{{'setting.code'| translate }}</th>
+            <th>{{'setting.label'| translate }}</th>
+            <th>{{'setting.description'| translate }}</th>
+            <th>{{'setting.status'| translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let SettingMotifRejetsEntity of settingMotifRejetsEntitys | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+            <td>{{SettingMotifRejetsEntity.categorie}}</td>
+            <td>{{SettingMotifRejetsEntity.code }}</td>
+            <td>{{ SettingMotifRejetsEntity.libelle }}</td>
+            <td>{{ SettingMotifRejetsEntity.description }}</td>
+            <td>
+              <bSwitch [(ngModel)]="SettingMotifRejetsEntity.enabled" [switch-size]="'mini'" [switch-animate]="true"
+                [switch-off-color]="'danger'" [switch-handle-width]="40" class="px-2 mb-0" (click)="endableDisable(SettingMotifRejetsEntity)">
+              </bSwitch>
+            </td>
+            <td>
+              <button class="btn btn-warning text-white" (click)="updateMotif(modalContent, SettingMotifRejetsEntity)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="settingMotifRejetsEntitys.length" [(page)]="page" [pageSize]="pageSize"
+          size="sm" [maxSize]="3" [boundaryLinks]="true">
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h5 class="modal-title">{{'setting.setting_motif.update_setting_motifs'| translate }}</h5>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+        <span aria-hidden="true" (click)="closeModale()">&times;</span>
+      </button>
+    </div>
+    <form class="form" [formGroup]='groupForm' (ngSubmit)="onSubmit()">
+      <div class="card-body">
+        <div class="position-relative pb-4">
+          <label>{{'setting.category'| translate }}</label>
+          <div>
+            <select (change)="onChange($event)" type="text" class="form-control form-group" formControlName="category">
+              <option *ngFor="let categorie of categories" value="{{categorie.categorie}}">{{categorie.categorie}}</option>
+            </select>
+          </div>
+        </div>
+        <div  *ngIf="isReject === true"  class="position-relative pb-4">
+         <label>{{'setting.idExterne'| translate }}</label>
+          <div class="input-group">
+            <select type="text" class="form-control form-group" formControlName="idExterne">
+              <option *ngFor="let e of externalIdsList" value="{{e.codeExternal}}">{{e.codeExternal}}  {{e.description}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.label'| translate }}</label>
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="label" (change)="genreretCodeForLabel()">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.code'| translate }}</label>
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="code" disabled>
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label>{{'setting.description'| translate }}</label>
+          <div class="input-group">
+            <textarea class="form-control" formControlName="description"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' |
+          translate}}</button>
+        <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

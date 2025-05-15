@@ -1,0 +1,94 @@
+<div class="card">
+    <div class="card-header"> {{'setting.product_filter.product_filters'| translate }} <div
+            class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button *ngIf="this.productFiltersList.length === 0"
+                class="d-inline-flex align-items-center btn btn-primary" (click)="addFilter(modalContent)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                {{'setting.product_filter.add_filter'| translate }} </button>
+        </div>
+    </div>
+    <div>
+        <div class="table-responsive" *ngIf="this.productFiltersList.length > 0">
+            <table class="mb-0 t table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{'setting.product_filter.instrument'| translate }}</th>
+                        <th>{{'setting.product_filter.product_type'| translate }}</th>
+                        <th>{{'setting.product_filter.activity'| translate }}</th>
+                        <th>{{'setting.product_filter.nature'| translate }} </th>
+                        <th>{{'setting.status'| translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let productFilter of productFiltersList">
+                        <td>{{ getLibelleArrayByIds(productFilter.instrument, instrumentList) }}</td>
+                        <td>{{ getLibelleArrayByIds(productFilter.productType, typeList) }}</td>
+                        <td>{{ getLibelleArrayByIds(productFilter.activity, activityList) }}</td>
+                        <td>{{ getLibelleArrayByIds(productFilter.nature, natureList) }}</td>
+                        <td>
+                            <bSwitch [(ngModel)]="productFilter.enabled" [switch-size]="'mini'" [switch-animate]="true"
+                                [switch-off-color]="'danger'" [switch-handle-width]="40" class="px-2 mb-0"
+                                (click)="enableDisable(productFilter)">
+                            </bSwitch>
+                        </td>
+                        <td>
+                            <button class="btn btn-warning text-white"
+                                (click)="editFilter(modalContent, productFilter)">
+                                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="this.productFiltersList.length === 0">
+            <div class="card-body">
+                <h6 style="color: red;" class="pt-3">{{ 'setting.product_filter.absent_filter' | translate }}</h6>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title"> {{ (action === 'update' ? 'setting.product_filter.update_filter' :
+                'setting.product_filter.add_filter') | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModale()">&times;</span>
+            </button>
+        </div>
+        <form class="form" [formGroup]='productFiltersForm' (ngSubmit)="onSubmit()">
+            <div class="card-body">
+                <div class="position-relative pb-4">
+                    <label>{{'setting.product_filter.instrument'| translate }}</label>
+                        <ngx-select-dropdown formControlName="instrument" [multiple]="true" [config]="dropdownConfig" [options]="instrumentList"
+                        (change)="onInstrumentChange($event.value, true)">
+                    </ngx-select-dropdown>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.product_filter.product_type'| translate }}</label>
+                    <ngx-select-dropdown formControlName="productType" [multiple]="true"[config]="dropdownConfig"  [options]="filtredTypeList"
+                        (change)="onProductChange($event.value, true)">
+                    </ngx-select-dropdown>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.product_filter.activity'| translate }}</label>
+                        <ngx-select-dropdown formControlName="activity" [multiple]="true" [config]="dropdownConfig" [options]="filtredActivityList"
+                        (change)="onActivityChange($event.value, true)">
+                    </ngx-select-dropdown>
+                </div>
+                <div class="position-relative pb-4">
+                    <label>{{'setting.product_filter.nature'| translate }}</label>
+                        <ngx-select-dropdown formControlName="nature" [multiple]="true" [config]="dropdownConfig" [options]="filtredNatureList">
+                    </ngx-select-dropdown>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModale()">{{'button.cancel'
+                    | translate}}</button>
+                <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

@@ -1,0 +1,258 @@
+<div class="card">
+  <!-- <div class="card-header">{{ 'setting.setting_topup_step' | translate }}</div> -->
+  <div class="p-3 d-flex justify-content-end">
+    <button class="btn-icon btn btn-success" (click)="addStep('TOPUP')">
+      <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+      {{ "add_new_step" | translate }}
+    </button>
+    <button class="btn-icon btn btn-warning" style="margin-left: 18px;" (click)="duplicateStep(content,'TOPUP')">
+      <i class="pe-7s-photo-gallery btn-icon-wrapper"></i>
+      {{ 'setting.setting_configuration_product.duplicate' | translate }}
+    </button>
+  </div>
+  <div class="card-body">
+    <div cdkDropList class="example-list-without-overflow" (cdkDropListDropped)="drop($event, 'TOPUP')">
+      <h6 class="text-danger p-4 m-0" *ngIf="topupSteps.length == 0">
+        {{'setting.setting_level.no_level_process_for_this_product'|translate}}
+      </h6>
+      <div class="example-box" *ngFor="let topupStep of topupSteps; let i = index" cdkDrag>
+        <div class="card col-12">
+          <div class="card-header" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <div class="px-3">
+              <p class="text-primary m-0">
+                {{ "step" | translate }} {{ i + 1 }}
+
+              </p>
+            </div>
+            <div class="col-9 row px-3">
+              <input type="text" [ngClass]="{
+                        'form-control': true,
+                        'input-error': !topupStep.stepName
+                      }" [(ngModel)]="topupStep.stepName" />
+            </div>
+            <span class="text-danger"> * </span>
+            <div class="mx-auto row">
+
+              <div class="col-5">
+                <button class="btn-icon btn-icon-only btn-outline-2x btn btn-outline-danger" (click)="deleteStep(i)">
+                  <i class="lnr-trash btn-icon-wrapper"></i>
+                </button>
+              </div>
+            </div>
+            <div class="mx-auto" (click)="toggleCollapse(i, 'TOPUP')">
+              <i [ngClass]="
+                        topupExpands[i] === true
+                          ? 'lnr-chevron-up text-secondary'
+                          : 'lnr-chevron-down text-secondary'
+                      "></i>
+            </div>
+          </div>
+          <div [ngClass]="
+                topupExpands[i] === true ? 'collapse show' : 'collapse'
+                  " aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body row">
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "loan.min_loan_amount" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <input type="number" class="form-control" [(ngModel)]="topupStep.minAmount" />
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "loan.max_loan_amount" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <input type="number" class="form-control" [(ngModel)]="topupStep.maxAmount" />
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "step_assgin" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{
+                        'form-control': true,
+                        'input-error': !topupStep.stepType
+                      }" [(ngModel)]="topupStep.stepType" (change)="stepTypeChanged('TOPUP',i)">
+                  <option [ngValue]="'group'">Assign to group</option>
+                  <option [ngValue]="'link'">Assign to User</option>
+                </select>
+              </div>
+
+              <div class="position-relative form-group col-4 col-md-4 py-2" *ngIf="topupStep.stepType === 'group'">
+                <label>{{ "group_users" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{
+                       'form-control': true,
+                       'input-error': !topupStep.groupSetting
+                     }" [(ngModel)]="topupStep.groupSetting" [compareWith]="compareGroup">
+                  <option *ngFor="let groupEntity of groupEntities" [ngValue]="groupEntity">
+                    {{ groupEntity.libelle }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="position-relative form-group col-4 col-md-4 py-2" *ngIf="topupStep.stepType === 'link'">
+                <label>{{ "user-step-link" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select required [ngClass]="{
+                       'form-control': true,
+                       'input-error': !topupStep.previousStep
+                     }" [(ngModel)]="topupStep.previousStep">
+                  <option *ngFor="let userLink of userLinks" [value]="userLink.linkValue"
+                  [disabled]="topupStep.order===0 && (userLink.linkValue==-1 || userLink.linkValue==-2)"
+                  [ngClass]="{ 'disabled-option': topupStep.order === 0 && (userLink.linkValue === -1 || userLink.linkValue === -2) }">
+                    {{ userLink.LinkName }}
+                  </option>
+                  <option *ngFor="
+                         let previousStep of previousSteps(topupSteps, i)
+                       " [value]="previousStep.order">
+                    {{ previousStep.stepName }}
+                  </option>
+                </select>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "screen_steps" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{
+                        'form-control': true,
+                        'input-error': !topupStep.screen
+                      }" [(ngModel)]="topupStep.screen">
+                  <option *ngFor="let root of ihmRoot" [value]="root.ihmRoute">
+                    {{ root.description }}
+                  </option>
+                </select>
+              </div>
+
+              <div *ngIf="topupStep.screen === '/screening'" class="position-relative form-group col-4 col-md-4 py-2">
+                <label>
+                  {{'sidebar.screening_component'|translate}}</label>
+                <ngx-select-dropdown (change)="getListOfScreenTopup($event, i)"
+                  [(ngModel)]="selectedScreenComponentsTopup[i]" [multiple]="true" [options]="screenigComponents"
+                  [config]="configScreenComponent">
+                </ngx-select-dropdown>
+              </div>
+
+              <div *ngIf="topupStep.screen === '/loan-approval'" class="position-relative form-group col-4 col-md-4 py-2">
+                <label>
+                  {{'approval_participants'|translate}}</label>
+                <ngx-select-dropdown tabindex="0" [multiple]="true" [(ngModel)]="
+                      topupStep.approvers
+                         " [options]="optionsGroupUsers" [config]="configCollectionParticipants">
+                </ngx-select-dropdown>
+              </div>
+
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "step_tab" | translate }}</label>
+                <span class="text-danger"> * </span>
+                <select [ngClass]="{'form-control': true,'input-error': !topupStep.codeStatutLoan}" [(ngModel)]="topupStep.codeStatutLoan" (change)="checkBoxCheckers(topupStep)">
+                  <option *ngFor="let tap of stepTap" [value]="tap.tapValue">
+                    {{ tap.tapName }}
+                  </option>
+                </select>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>
+                  {{
+                  "collections.collection-dashboard.participants"
+                  | translate
+                  }}:</label>
+                <ngx-select-dropdown tabindex="0" [multiple]="true" [(ngModel)]="topupStep.participants"
+                [options]="optionsGroupUsers" [config]="configCollectionParticipants">
+                </ngx-select-dropdown>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{
+                  "collections.collection-dashboard.documents"
+                  | translate
+                  }}:</label>
+                  <p-multiSelect [options]="settingLoanDocumentsByProduct" [(ngModel)]="topupSteps[i].documents"
+                  optionLabel="settingDocumentTypeDTO.libelle" ></p-multiSelect>
+              </div>
+
+              <div class="position-relative form-group col-4 col-md-4 mt-3" *ngIf="topupStep.codeStatutLoan == stepTap[3].tapValue">
+                <mat-checkbox [disabled]="readyForDisbCheckedForTopup && !topupStep.readyForDisb"
+                  [(ngModel)]="topupStep.readyForDisb" (change)="changeReadyForDisbursement($event,topupProcess)">
+                  {{ "loan_workflow_setting.ready_for_disbursement" | translate }}</mat-checkbox>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 mt-3" *ngIf="topupStep.codeStatutLoan == stepTap[3].tapValue">
+                <mat-checkbox [disabled]="approvalConditionCheckedForTopup && !topupStep.approvalConditions"
+                  [(ngModel)]="topupStep.approvalConditions" (change)="changeApprovalConditions($event,topupProcess)">{{
+                  'loan_workflow_setting.conditions-approval' | translate }} </mat-checkbox>
+              </div>
+              <div class="position-relative form-group col-4 col-md-4 mt-3">
+                <mat-checkbox [(ngModel)]="topupStep.generationTask">{{ 'loan_workflow_setting.generation_task' |
+                  translate }} </mat-checkbox>
+              </div>
+
+
+              <div *ngIf="serviceSMS" class="position-relative form-group col-4 col-md-4 py-2">
+                <label>{{ "setting.SMSTemplate" | translate }}</label>
+                <select [ngClass]="{'form-control': true}"
+                  [(ngModel)]="topupStep.codeAcmTemplateSms"
+                  >
+                  <option *ngFor="let sms of settingSMS" [value]="sms.codeSMSEvent">
+                    {{ sms.codeSMSEvent }}
+                  </option>
+                </select>
+              </div>
+
+
+
+              <div class="position-relative form-group col-12 ">
+                <app-udf-step-workflow-setting [idWorkflowStep]="topupStep.idWorkFlowStep"
+                [workflowStepUdfGroupe]="topupStep.workflowStepUdfGroupe"
+                type="1"></app-udf-step-workflow-setting>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="btn btn-primary text-white" (click)="saveProcess('TOPUP')">
+          {{ "button.save" | translate }}
+        </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" (ngSubmit)="onSubmit()" [formGroup]="duplicateGroup">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{ 'setting.duplicate-setting' | translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row no-gutters">
+        <div class="position-relative">
+          <label>{{'setting.product' | translate}}</label>
+          <div class="input-group">
+            <select class="form-control" id="selectedValue" formControlName="productValues"
+              [(ngModel)]="productEntityForDuplicate" required>
+              <option [value]="null" default disabled>{{'setting.select_product' | translate}}</option>
+              <option *ngFor="let productEntity of productEntitys" [ngValue]="productEntity">
+                {{productEntity.description}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <input class="form-check-input" id="exampleCustomCheckboxReject" type="checkbox" formControlName="confirm"
+                (change)="changeChecboxReject()">
+              <label class="form-check-label" for="exampleCustomCheckboxReject">{{'button.confirm_checkbox' |
+                translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-success text-white">{{ 'button.validate' | translate
+          }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

@@ -1,0 +1,72 @@
+<div id="loan-steps" class="card mt-1 mb-2">
+  <div class="card-header d-flex" data-target="#collapseLoanSteps" aria-expanded="true" aria-controls="collapseLoanSteps" (click)="toggleCollapseLoanSteps()">
+    <div [style]="{width : '98%'}">{{'setting.setting_loan_steps' | translate }}</div>
+    <div [style]="{width : '2%'}">
+      <i [ngClass]="(expandedLoanSteps===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedLoanSteps===true)?'collapse show':'collapse'" aria-labelledby="headingLoanSteps"
+    data-parent="#accordionExample" *ngIf="expandedLoanSteps===true">
+    <app-setting-loan-steps [productEntity]="productEntity" [productEntitys]="productEntitys" [optionsGroupUsers]="optionsGroupUsers" [ihmRoot]="ihmRoot" [ibIhmRoot]="ibIhmRoot"
+      [groupEntities]="groupEntities" [journalEntryTypes]="journalEntryTypes"></app-setting-loan-steps>
+  </div>
+</div>
+
+<div id="topup-step" class="card mb-2">
+  <div class="card-header d-flex" data-target="#collapseTopupSteps" aria-expanded="true" aria-controls="collapseTopupSteps" (click)="toggleCollapseTopupSteps()">
+    <div [style]="{width : '98%'}">{{ 'setting.setting_topup_step' | translate }}</div>
+    <div [style]="{width : '2%'}">
+      <i [ngClass]="(expandedTopupSteps===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedTopupSteps===true)?'collapse show':'collapse'" aria-labelledby="headingTopupSteps"
+    data-parent="#accordionExample" *ngIf="expandedTopupSteps===true">
+    <!-- <app-setting-topup-step [productEntity]="productEntity" [productEntitys]="productEntitys" [optionsGroupUsers]="optionsGroupUsers" [ihmRoot]="ihmRoot"
+    [groupEntities]="groupEntities">
+    </app-setting-topup-step> -->
+    <app-setting-loan-steps [productEntity]="productEntity" [productEntitys]="productEntitys" [optionsGroupUsers]="optionsGroupUsers" [ihmRoot]="ihmRoot" [ibIhmRoot]="ibIhmRoot"
+      [groupEntities]="groupEntities" [mode]="'TOPUP'" [journalEntryTypes]="journalEntryTypes"></app-setting-loan-steps>
+  </div>
+</div>
+
+<div id="collection-steps" class="card mb-2">
+  <div class="card-header d-flex" data-target="#collapseCollectionSteps" aria-expanded="true" aria-controls="collapseCollectionSteps" (click)="toggleCollapseCollectionSteps()">
+    <div [style]="{width : '98%'}">{{ "collections.setting_collection_step" | translate }}</div>
+    <div [style]="{width : '2%'}">
+      <i [ngClass]="(expandedCollectionSteps===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedCollectionSteps===true)?'collapse show':'collapse'" aria-labelledby="headingCollectionSteps"
+    data-parent="#accordionExample" *ngIf="expandedCollectionSteps===true">
+    <app-setting-collection-steps [productEntity]="productEntity" [productEntitys]="productEntitys" [optionsGroupUsers]="optionsGroupUsers" [ihmRoot]="ihmRoot"
+    [groupEntities]="groupEntities" [journalEntryTypes]="journalEntryTypes"></app-setting-collection-steps>
+  </div>
+</div>
+
+<div id="legal-collection-steps" class="card mb-2">
+  <div class="card-header d-flex" data-target="#collapseLegalCollectionSteps" aria-expanded="true" aria-controls="collapseLegalCollectionSteps" (click)="toggleCollapseLegalCollectionSteps()">
+    <div [style]="{width : '98%'}">{{"collections.collections_legal.setting_legal_collection_step"| translate}}</div>
+    <div [style]="{width : '2%'}">
+      <i [ngClass]="(expandedLegalCollectionSteps===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedLegalCollectionSteps===true)?'collapse show':'collapse'" aria-labelledby="headingLegalCollectionSteps"
+  data-parent="#accordionExample" *ngIf="expandedLegalCollectionSteps===true">
+  <app-setting-legal-collection-steps [productEntity]="productEntity" [productEntitys]="productEntitys" [optionsGroupUsers]="optionsGroupUsers" [ihmRoot]="ihmRoot"
+  [groupEntities]="groupEntities" [journalEntryTypes]="journalEntryTypes"></app-setting-legal-collection-steps>
+</div>
+</div>
+
+<div id="prospection-steps" class="card mb-2">
+  <div class="card-header d-flex" data-target="#collapseProspectionSteps" aria-expanded="true" aria-controls="collapseProspectionSteps" (click)="toggleCollapseProspectionSteps()">
+    <div [style]="{width : '98%'}">{{"setting.setting_prospection_step"| translate}}</div>
+    <div [style]="{width : '2%'}">
+      <i [ngClass]="(expandedProspectionSteps===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div [ngClass]="(expandedProspectionSteps===true)?'collapse show':'collapse'" aria-labelledby="headingProspectionSteps"
+  data-parent="#accordionExample" *ngIf="expandedProspectionSteps===true">
+  <app-setting-prospection-steps [productEntity]="productEntity" [productEntitys]="productEntitys" [optionsGroupUsers]="optionsGroupUsers" [ihmRoot]="ihmRoot"
+  [groupEntities]="groupEntities" [journalEntryTypes]="journalEntryTypes"></app-setting-prospection-steps>
+</div>
+</div>

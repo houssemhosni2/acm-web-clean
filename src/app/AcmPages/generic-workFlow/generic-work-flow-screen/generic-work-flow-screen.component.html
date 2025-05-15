@@ -1,0 +1,349 @@
+<app-page-title *ngIf="this.source!=='SCAN' && this.source!=='DOUBTFUL'" [heading]=" 'sidebar.generic_wf'| translate " [icon]="'pe-7s-note2'" [account]="item?.id" [status]="-3" [workflowStepName]="item?.genericWorkFlowObject?.name"></app-page-title>
+<app-page-title *ngIf="this.source==='SCAN'" [heading]=" 'sidebar.aml_file'| translate " [icon]="'pe-7s-note2'" [account]="item?.id" [status]="-3" [workflowStepName]="item?.genericWorkFlowObject?.name"></app-page-title>
+<app-page-title *ngIf="this.source==='DOUBTFUL'" [heading]=" 'aml.control_of_suspicious_transactions'| translate " [icon]="'pe-7s-note2'" [account]="item?.id" [status]="-3" [workflowStepName]="item?.genericWorkFlowObject?.name"></app-page-title>
+<div class="row">
+<div class="col-md-9 col-xl-9 px-1" id="loan-approval">
+  <app-customer  *ngIf="this.source==='SCAN'||this.source==='DOUBTFUL'" [expanded]="true"></app-customer>
+  <app-customer-account-360 *ngIf="this.source==='SCAN'||this.source==='DOUBTFUL'" [expanded]="false" [fromCustomer360] = "false"></app-customer-account-360>
+
+  <div *ngIf="amlData">
+    <app-aml-info *ngIf="this.source==='SCAN'" [amlCheck]="amlCheck" [amlData]="amlData" [expanded]="true" ></app-aml-info>
+  </div>
+  <app-suspicious-transactions-list [acmDoubtfulLoanAnalyticsEntity]="acmDoubtfulLoanAnalyticsEntity" *ngIf="this.source==='DOUBTFUL'" [expanded]="false" ></app-suspicious-transactions-list>
+
+  <app-item-note [expanded]="true"></app-item-note>
+  <app-event-table [expanded]="true" [source]="'GENERIC'"></app-event-table>
+  <app-udf-step-workflow [source]="'workflow'" [category]="'ITEM'"></app-udf-step-workflow>
+  <app-customer-analyse [expanded]="false" typeUDF="4" [itemEntity]="item"></app-customer-analyse>
+  <app-conditional-approve-list [category] = "'ITEM'" [expanded]="true"></app-conditional-approve-list>
+
+  <app-list-documents [source]="'GENERIC-WF'" [expanded]="true"></app-list-documents>
+  <app-generic-workFlow-document (requiredDocument)="requiredDocument($event)" [category]="'GENERIC-WF'" [expanded]="true"></app-generic-workFlow-document>
+  <app-risk-level-component></app-risk-level-component>
+  <app-third-party-hitsory [source]="'GENERIC_WORKFLOW'"></app-third-party-hitsory>
+  <app-legal-participants [source]="'GENERIC_WORKFLOW'" [itemInstace]="item?.actualStepInstance" [expanded]="true" [itemId]="item?.id" [saveParticipants]="saveParticipants"
+    (completeAction)="actionCompleted($event)" [originSource]="originSource" ></app-legal-participants>
+
+
+
+</div>
+  <div class="col-md-3 col-xl-3 px-1">
+    <app-item-process></app-item-process>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-xl-9 col-md-9 pr-0 mt-2">
+    <div class="d-block text-end" *ngIf="this.item && user.login">
+      <button class="mb-2 mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+
+      <button *ngIf="!this.item.groupOwner && this.item.status !== 5 && this.item.status !== 6 && user.login==item.owner &&this.item.status !== -1
+      && reviewSteps().length!=0" class="mb-2 mx-2 btn btn-warning text-white"
+        (click)="reviewModal(content2)"
+        >{{'button.review' | translate}}</button>
+
+
+      <button *ngIf="!this.item.groupOwner && this.item.status !== 5 && this.item.status !== 6 && user.login==item.owner  &&this.item.status !== -1 && this.source!=='SCAN'"
+        class="mb-2 mx-2 btn btn-danger" (click)="rejectModal(content1)"
+        >{{'button.reject' | translate}}</button>
+
+        <button *ngIf="!this.item.groupOwner && this.item.status !== 5 && this.item.status !== 6 && user.login==item.owner  &&this.item.status !== -1"
+        class="mb-2 mx-2 btn btn-success" (click)="approveModel(content)"
+       >{{'button.approve' | translate}}</button>
+       <button *ngIf="this.item.groupOwner && this.item.status !== 5 && this.item.status !== 6 && user.login==item.owner &&this.item.status !== -1"
+       class="mb-2 mx-2 btn btn-success" (click)="callSaveAllDataComponent()">
+        {{'button.save'| translate }}</button>
+        <button *ngIf="!this.item.groupOwner &&this.item.status !==-1 && this.item.status!==5  && this.item.status !== 6 && user.login==item.owner &&this.item.status !== -1 " class="mb-2 mx-2 btn btn-primary" (click)="skipModal(contentSkip)">
+          {{'button.skip' | translate}}
+       </button>
+       <button  *ngIf="this.source==='SCAN' && amlCheck.amlStatus!=='CLEARED' && !sharedService.habilitationButton('CLEAR_AML',currentPath)"  class="mb-2 mx-2 btn btn-success" (click)="changeStatusClearModal(contentCleared)">
+        {{'button.clear_aml' | translate}}
+     </button>
+     <button  *ngIf="this.source==='SCAN' && amlCheck.amlStatus!=='FLAGGED' && !sharedService.habilitationButton('CONFIRM_AML',currentPath)" class="mb-2 mx-2 btn btn-danger" (click)="changeStatusConfirmModal(contentConfirm)">
+      {{'button.confirm_aml' | translate}}
+      </button>
+      </div>
+    </div>
+  </div>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <h4>{{'loan_approval.approvel_calc'| translate }}</h4>
+      </div>
+      <div class="card-body px-0">
+        <perfect-scrollbar style="height: 500px;">
+          <!-- Calculator Topup/Refinance -->
+
+          <!-- Calculator of New application -->
+
+
+          <div class="col-xl-12 col-md-12 px-3">
+            <h5>{{'alert.conditional-approve' | translate}}</h5>
+            <app-conditional-approve [changing]="changingValue" [category]="'ITEM'" (validatorEvent)="validatorHandler($event)"></app-conditional-approve>
+          </div>
+        </perfect-scrollbar>
+      </div>
+      <div class="card-footer py-1 px-0">
+        <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="approveForm" (ngSubmit)="nextStep()">
+          <div class="modal-footer py-1">
+            <div class="col-xl-12">
+              <div class="row no-gutters center-elem">
+                <div class="col-xl-10 d-flex align-items-center">
+                  <div class="position-relative form-group">
+                    <div>
+                      <div class="form-group form-check">
+                        <label class="form-check-label" for="exampleCustomCheckboxApprove">{{'button.confirm_checkbox' |
+                          translate}}</label>
+                        <input class="form-check-input" id="exampleCustomCheckboxApprove" type="checkbox"
+                          formControlName="confirm" (change)="changeChecboxApprove()">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-2 d-flex justify-content-end">
+                  <div class="px-1">
+                    <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+                      translate}}</button>
+                  </div>
+                  <div class="px-1">
+                    <button type="submit" class="btn btn-success mx-1" >{{'button.approve'|
+                      translate }}</button>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #content1 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="reject()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'reject.reject_generic_wf'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'reject.reject_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifRejetsEntity of settingMotifRejetsEntitys"
+              [ngValue]="settingMotifRejetsEntity">
+              {{settingMotifRejetsEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'reject.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReject">{{'button.confirm_checkbox' |
+                translate}}</label>
+              <input class="form-check-input" id="exampleCustomCheckboxReject" type="checkbox" formControlName="confirm"
+                (change)="changeChecboxReject()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-danger">{{'button.reject' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #content2 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="review()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'review.review_generic_wf'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_reason'| translate }}</label>
+          <select class="form-control" formControlName="reason">
+            <option selected value> </option>
+            <option *ngFor="let settingMotifReviewEntity of settingMotifReviewEntitys"
+              [ngValue]="settingMotifReviewEntity">
+              {{settingMotifReviewEntity.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>{{'review.review_steps'| translate }}</label>
+          <select class="form-control" formControlName="step">
+            <option *ngFor="let step of reviewSteps()" [ngValue]="step">
+              {{step.libelle}}
+            </option>
+          </select>
+        </div>
+        <div class="position-relative col-xl-12 col-md-12">
+          <label> {{'review.note'| translate }} </label>
+          <textarea class="form-control" formControlName="note"></textarea>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="custom-checkbox custom-control">
+              <input class="form-check-input" id="CheckboxReviewOnlySelected" type="checkbox"
+                formControlName="reviewAllPreviousSteps">
+              <label class="custom-control-label ms-2"
+                for="exampleCustomCheckboxReview">{{'review.review_all_previous_steps'|translate}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="position-relative form-group">
+          <div class="form-group form-check">
+            <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+              (change)="changeChecboxReview()">
+            <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+              translate}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-warning text-white">{{'button.review' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #contentSkip  let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalSkipForm" (ngSubmit)="skip()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'review.skip'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative col-xl-12 col-md-12">
+          <label>step</label>
+          <span class="text-danger">*</span>
+          <select class="form-control" formControlName="step">
+            <option *ngFor="let step of skipSteps()" [ngValue]="step">
+              {{step.libelle}}
+            </option>
+          </select>
+        </div>
+
+        <div class="position-relative form-group">
+          <label>{{'setting.group_management.list_groupe'| translate }}</label>
+
+
+          <ngx-select-dropdown tabindex="0" formControlName="user" [multiple]="false"
+            [(ngModel)]="participantSelected" [options]="groupeEntitys" [config]="configUsers"></ngx-select-dropdown>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+                translate}}</label>
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+                (change)="changeConfirmChecbox()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary">{{'review.skip'| translate }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #contentConfirm  let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalAmlConfirmForm" (ngSubmit)="changeStatusAml('FLAGGED')">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'button.confirm_aml'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+
+        <div class="position-relative form-group">
+          <label>{{'aml.are_you_sure_you_want_to_confirm_aml'| translate }}</label>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+                translate}}</label>
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+                (change)="changeConfirmChecboxConfirm()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary">{{'button.confirm_aml'| translate }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #contentCleared  let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalAmlClearForm" (ngSubmit)="changeStatusAml('CLEARED')">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'button.clear_aml'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+
+        <div class="position-relative form-group">
+          <label>{{'aml.are_you_sure_you_want_to_clear_aml'| translate }}</label>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+                translate}}</label>
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm"
+                (change)="changeConfirmChecboxClear()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary">{{'button.clear_aml'| translate }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

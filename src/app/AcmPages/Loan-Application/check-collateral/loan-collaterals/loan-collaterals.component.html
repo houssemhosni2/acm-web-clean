@@ -1,0 +1,49 @@
+<div class="accordion" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseGuarantor"
+      aria-expanded="true" aria-controls="collapseGuarantor" (click)="toggleCollapseEmpty()">
+      <div>
+        <i class="lnr-user px-2"></i>
+        {{'customer-360.my_loan_guarantees' | translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseGuarantor" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+      <div *ngIf="collaterolEntitys.length > 0" class="card-body no-gutters row">
+        <table class="table">
+          <thead>
+            <tr>
+              <th> {{'upload_document.Loan_Account' | translate }}</th>
+              <th> {{ 'collaterol.reference' | translate }}</th>
+              <th>{{ 'collaterol.description' | translate }}</th>
+              <th>{{ 'collaterol.type' | translate }}</th>
+              <th>{{ 'collaterol.original_gross_value' | translate }}</th>
+              <th>{{ 'collaterol.gross_value' | translate }} </th>
+              <th>{{ 'collaterol.realised_value' | translate }} </th>
+              <th>{{ 'collaterol.net_value' | translate }} </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let collaterolEntity of collaterolEntitys; let i =index">
+              <td>{{ collaterolEntity?.accountNumber }}</td>
+              <td>{{ collaterolEntity?.reference }}</td>
+              <td>{{ collaterolEntity?.description }}</td>
+              <td>{{ collaterolEntity?.collateralTypeDescription}}</td>
+              <td>{{collaterolEntity?.originalGrossValue }}</td>
+              <td>{{collaterolEntity?.grossValue | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }} </td>
+              <td>{{collaterolEntity?.realisedValue | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }} </td>
+              <td>{{collaterolEntity?.netValue | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }} </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="collaterolEntitys.length === 0">
+        <div class="card-body">
+            <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>

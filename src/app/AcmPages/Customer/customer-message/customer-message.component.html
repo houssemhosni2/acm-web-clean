@@ -1,0 +1,241 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseOne"
+    aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+    <div>
+      <i class="pe-7s-repeat text-secondary pr-2 px-2"></i>
+      {{'customer-360.customer_messages'| translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div class="card-body d-flex justify-content-end ACM-header-right-{{translate.currentLang}}">
+      <button class="btn btn-secondary" (click)="answer(content8)">
+        <span class="opacity-7"><i class="pe-7s-paper-plane btn-icon-wrapper text-black"></i></span>
+        <span class="ms-2">{{ 'notifications.new_message' | translate}} </span>
+      </button>
+    </div>
+    <div *ngIf="contacts.length > 0">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="mb-0 table table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th scope="col" style="text-align: center">{{ 'contact.object' | translate }}</th>
+                <th scope="col" style="text-align: center">{{ 'contact.from' | translate }}</th>
+                <th scope="col" style="text-align: center">{{ 'contact.to' | translate }}</th>
+                <th scope="col" style="text-align: center">{{ 'contact.date_received' | translate }}</th>
+                <th scope="col" style="text-align: center">{{ 'contact.display' | translate }}</th>
+                <th scope="col" style="text-align: center">{{ 'contact.reply' | translate }}</th>
+                <th scope="col" style="text-align: center">{{ 'contact.conversation' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let contact of contacts | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize"
+                [ngClass]="{'font-weight-bold' : contact.read === false  && contact.sentCustomer === true}">
+                <td class="text-center ACM-table-notification-td-1">
+                  <div *ngIf="contact.sentCustomer === true">
+                    <button class="btn btn-light">
+                      <i class="pe-7s-next-2 opacity-5 text-black" (click)="updateStatusMsg(contact)"></i>
+                    </button>
+                  </div>
+                  <div *ngIf="contact.sentCustomer === false">
+                    <button class="btn btn-light">
+                      <i class="pe-7s-back-2 opacity-5 text-black" (click)="updateStatusMsg(contact)"></i>
+                    </button>
+                  </div>
+                </td>
+                <td class="text-left " (click)="updateStatusMsg(contact)">
+                  {{ contact.subject}}
+                </td>
+                <td class="text-left " (click)="updateStatusMsg(contact)">
+                  {{ contact.from}}
+                </td>
+                <td class="text-left " (click)="updateStatusMsg(contact)">
+                  {{ contact.to}}
+                </td>
+                <td class="text-left " (click)="updateStatusMsg(contact)">
+                  {{ contact.dateInsertion | date: 'dd/MM/yyyy hh:mm a' }}
+                </td>
+                <td class="text-center " style="text-align: center">
+                  <div>
+                    <button class="btn btn-warning" (click)="openLarge(content, contact);updateStatusMsg(contact)">
+                      <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+                <td style="text-align: center" style="text-align: center">
+                  <div>
+                    <button class="btn btn-primary" (click)="reply(content8, contact)">
+                      <i class="pe-7s-back btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+                <td class="text-center " style="text-align: center">
+                  <div>
+                    <button class="btn btn-warning" (click)="chargerReponses(contentReply,contact)">
+                      <i class="pe-7s-chat btn-icon-wrapper text-white"></i> </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer pb-0">
+        <div class="row w-100">
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <ngb-pagination [collectionSize]="contacts.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+              [maxSize]="3" [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <div class="d-flex justify-content-lg-end">
+              <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="contacts.length === 0">
+      <div class="card-body">
+        <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <h4 class="modal-title">{{'contact_customer.message'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="message-body">
+          <div>
+            <div>
+              <div class="widget-content p-0">
+                <div class="widget-content-wrapper">
+
+                  <div class="widget-content-left">
+                    <div class="widget-heading">From : {{contact.from}} </div>
+                  </div>
+                  <div class="widget-content-right">
+                    <div class="font-size-sm text-muted">
+                      {{contact.dateInsertion | date: 'dd/MM/yyyy hh:mm a' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="widget-content p-0">
+                <div class="widget-content-wrapper">
+
+                  <div class="widget-content-left">
+                    <div class="widget-heading">To : {{contact.to}} </div>
+                  </div>
+
+                </div>
+              </div>
+              <p class="card-text py-3 px-5"> {{contact.content}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #content8 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="form col-xl-12 col-md-12 px-0" [formGroup]="contactCustomerForm" (ngSubmit)="d(send())">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{ (Type === 'customer' ? 'contact_customer.contact_customer' : 'contact_supplier.contact_supplier') | translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label>{{'contact_customer.object'| translate }}</label>
+          <div class="input-group">
+            <input id="subject" type="text" formControlName="subject" name="subject" class="form-control">
+          </div>
+        </div>
+        <div class="position-relative form-group col-xl-12 col-md-12">
+          <label> {{'contact_customer.message'| translate }} </label>
+          <div class="input-group">
+            <textarea id="message" type="text" formControlName="message" name="message" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="reset" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.cancel' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="contactCustomerForm.invalid">{{'button.send' |
+          translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+<ng-template #contentReply let-c="close" let-d="dismiss">
+  <div>
+    <div class="modal-header py-2"> {{'contact_customer.contact_customer'| translate }}</div>
+    <div class="modal-body">
+      <div *ngFor="let m of listRepyLinkList">
+        <div class="accordion mb-1" id="accordionExample" [ngClass]="{'font-weight-bold' : m.read === false && m.sentCustomer === true}">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between" (click)="updateStatusMsg(m)">
+              <div class="d-flex justify-content-start" >
+              <div *ngIf="m.sentCustomer === true" >
+                <button class="btn btn-light" disabled>
+                  <i class="pe-7s-next-2 opacity-5 text-black"></i>
+                </button>
+              </div>
+              <div *ngIf="m.sentCustomer === false">
+                <button class="btn btn-light" disabled>
+                  <i class="pe-7s-back-2 opacity-5 text-black"></i>
+                </button>
+              </div>
+              <div class="align-self-center">
+                {{m.subject}}
+              </div>
+            </div>
+              <div class="d-flex justify-content-end">
+                {{m.dateInsertion | date: 'dd/MM/yyyy hh:mm a' }}
+              </div>
+            </div>
+            <div aria-labelledby="headingOne" data-parent="#accordionExample" (click)="updateStatusMsg(m)">
+              <div class="card-body">
+                {{m.content}}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="my-3">
+        <button class="btn btn-primary" (click)="replyandClose(content8,contentReply)">
+          <i class="pe-7s-back btn-icon-wrapper text-white"></i>   {{ 'contact.reply' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

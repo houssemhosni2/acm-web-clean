@@ -1,0 +1,86 @@
+import { SettingDocumentTypeProductEntity } from 'src/app/shared/Entities/settingDocumentTypeProduct.entity';
+import { GroupeEntity } from './groupe.entity';
+import { SettingJournalEntryTypeEntity } from './settingJournalEntryType.entity';
+import { ApplicationFeeEntity } from './applicationFee.entity';
+import { WorkflowStepUdfGroupeEntity } from './WorkflowStepUdfGroupe.entity';
+import { TypeRiskSettingWorkFlow } from './TypeRiskSettingWorkFlow.entity';
+import { PlaningDto } from './PlaningDto.entity';
+import { RiskSettingEntity } from './riskSetting.entity';
+import { SettingChargeFeeEntity } from './settingChargeFee.entity';
+import { SettingDocumentTypeEntity } from './settingDocumentType.entity';
+import { SelectItem } from 'primeng/api';
+import { GnericWorkflowObjectWorkflow } from './GnericWorkflowObjectWorkflow.entity';
+import { SettingWorkFlowStepConditions } from './SettingWorkFlowStepConditions.entity';
+
+export class StepEntity {
+  idCollectionStep: number;
+  idWorkFlowStep: number;
+  stepName: string;
+  order: number;
+  productId: number;
+  amount: number;
+  minAmount: number;
+  maxAmount: number;
+  stepType: string;
+  userGroup: string;
+  groupCode: string;
+  groupSetting: GroupeEntity;
+  previousStep: number;
+  enabled: boolean;
+  process: string;
+  screen: string;
+  codeStatutLoan: string;
+  startDate: number;
+  afterDate: string;
+  unpaidAmount: number;
+  lateDate: number;
+  reminder: number;
+  reminderSup: number;
+  participants: GroupeEntity[];
+  documents: SettingDocumentTypeProductEntity[];
+  typeThirdParty: string // | { nameParticipant: string; participantValue: number }[] | any;
+  participantsLoans: GroupeEntity[];
+  approvers: GroupeEntity[];
+  readyForDisb: boolean; // validate this step => make the loan ready for disbursement
+  approvalConditions: boolean;
+  screeningComponent: string;
+  generationTask: boolean;
+  journalEntryTypes: SettingJournalEntryTypeEntity[];
+  ibScreen: string;
+  checkMezaCard: boolean;
+  checkFees: boolean;
+  lstFees: ApplicationFeeEntity[] = [];
+  listChargeFees: SettingChargeFeeEntity[] = [];
+  automaticStep: boolean;
+  activeTimerLoan: boolean;
+  minScoreRejected: number;
+  maxScoreRejected: number;
+  minScoreAccepted: number;
+  maxScoreAccepted: number;
+  rejectionCondition: string;
+  acceptationCondition: string;
+  lstFeesListValue: any[] = [];
+  workflowStepUdfGroupe: WorkflowStepUdfGroupeEntity[] = [];
+  codeAcmTemplateSms: string;
+  stepTab: string;
+  typeRiskSettingWorkFlow: TypeRiskSettingWorkFlow[] = [];
+  planingDto: PlaningDto;
+  listRiskSetting: RiskSettingEntity[] = [];
+  selectedTypeRisk;
+  documentTypes: SettingDocumentTypeEntity[];
+  gnericWorkflowObjectWorkflows: GnericWorkflowObjectWorkflow[] = [];
+
+  editable: boolean;
+  genericWorkFlowParticipants: string;
+  selectedGenericWorkFlowParticipants: SelectItem[];
+  remainingInstallment: number;
+  forceStepDelay: number;
+  ibStepName: string;
+
+  settingWorkFlowStepConditions : SettingWorkFlowStepConditions[]=[];
+  cbsApi : string;
+  accountingEvent : string;
+  disbursmentFees: string;
+
+  disbursmentFeesList: SettingChargeFeeEntity[] = [];
+}

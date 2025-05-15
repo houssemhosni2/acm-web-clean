@@ -1,0 +1,39 @@
+<app-page-title [heading]="'claims.dashboard'| translate " [icon]="'pe-7s-culture'"
+  [account]="''" [status]="-1" [addClaims]="1" (refreshParentEvent)="refreshParentComponent()"></app-page-title>
+
+  <div class="col-xl-12">
+    <mat-tab-group class="page-mat-tabs" [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="changeTabs($event)" >
+
+        <mat-tab class="col-xl-2" index="0">
+            <ng-template matTabLabel>
+              <div class="col-xl-2">
+               <span class="loans-lenght text-info fa fa-hourglass-start icon-size-fa ng-star-inserted"></span>
+                <span class="size-text">{{ 'claims.new' | translate }}</span>
+              </div>
+            </ng-template>
+
+              <app-claims-table *ngIf="status=='NEW'"  [claimsListEntityLst]="claimsListEntityLst" [claimsStatus]="'NEW'" #refreshTable></app-claims-table>
+        </mat-tab>
+        <mat-tab class="col-xl-2" index="1">
+            <ng-template matTabLabel>
+              <div class="col-xl-2">
+               <span class="loans-lenght text-danger fa fa-pencil-square-o icon-size-fa ng-star-inserted"></span>
+                <span class="size-text">{{ 'claims.inprogress' | translate }}</span>
+              </div>
+            </ng-template>
+            <app-claims-table *ngIf="status=='IN PROGRESS'" [claimsListEntityLst]="claimsListEntityLst" [claimsStatus]="'IN PROGRESS'"></app-claims-table>
+        </mat-tab>
+        <mat-tab class="col-xl-2"  index="2">
+            <ng-template matTabLabel>
+              <div class="col-xl-2">
+               <span class="loans-lenght text-success fa fa-check-circle icon-size-fa ng-star-inserted"></span>
+                <span class="size-text">{{ 'claims.closed' | translate }}</span>
+              </div>
+            </ng-template>
+            <app-claims-table *ngIf="status=='CLOSED'" [claimsListEntityLst]="claimsListEntityLst" [claimsStatus]="'CLOSED'"></app-claims-table>
+        </mat-tab>
+
+
+    </mat-tab-group>
+
+</div>

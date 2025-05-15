@@ -1,0 +1,172 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <ngx-loading [show]="loading"
+                 [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerAccount"
+         aria-expanded="true" aria-controls="collapseCustomerAccount" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-chart-bars text-secondary px-2"></i>
+        {{'customer.customer_account'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomerAccount" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+         aria-labelledby="headingOne" data-parent="#accordionExample">
+
+      <div *ngIf="customerAccounts.length > 0">
+        <div class="card-body py-0">
+          <ngx-loading [show]="loading"
+                       [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+          <div class="table-responsive">
+              <p-table [value]="customerAccounts">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>{{'customer.account'| translate }}</th>
+                    <th>{{'customer.issued_amount'| translate }}</th>
+                    <th>{{'loan.issue_date'| translate }}</th>
+                    <th>{{'customer.portfolio'| translate }}</th>
+                    <th>{{'customer.account_rating'| translate }}</th>
+                    <th>{{'schedule.balance'| translate }}</th>
+                    <th>{{'customer.status'| translate }}</th>
+                    <th></th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-customerAccount >
+                  <tr>
+                    <td>{{ customerAccount.account }}</td>
+                    <td>{{ customerAccount.issueAmount | number: this.decimalPlaces:'fr' }}</td>
+                    <td>{{ customerAccount.issueDate | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{ customerAccount.portfolioId }}</td>
+                    <td>{{ customerAccount.accountRating }}</td>
+                    <td>{{ customerAccount.balance | number: this.decimalPlaces:'fr'}}</td>
+                    <td>
+                      <div class="badge bg-warning"
+                           *ngIf="customerAccount.statutId === 1">{{'customer_account.status_1'| translate }}</div>
+                      <div class="badge bg-success"
+                           *ngIf="customerAccount.statutId === 2">{{'customer_account.status_2'| translate }}</div>
+                      <div class="badge bg-success"
+                           *ngIf="customerAccount.statutId === 4">{{'customer_account.status_4'| translate }}</div>
+                      <div class="badge bg-primary"
+                           *ngIf="customerAccount.statutId === 8">{{'customer_account.status_8'| translate }}</div>
+                      <div class="badge bg-danger"
+                           *ngIf="customerAccount.statutId === 16">{{'customer_account.status_16'| translate }}</div>
+                      <div class="badge bg-primary"
+                           *ngIf="customerAccount.statutId === 32">{{'customer_account.status_32'| translate }}</div>
+                      <div class="badge bg-danger"
+                           *ngIf="customerAccount.statutId === 64">{{'customer_account.status_64'| translate }}</div>
+                    </td>
+                    <td>
+                      <button class="btn btn-warning" (click)="openLarge(content6)">
+                        <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <ng-template #content6 let-c="close" let-d="dismiss">
+                    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+                      <div class="card">
+                        <div class="card-header py-2">
+                          <i class="lnr-calendar-full text-secondary pr-2"></i>
+                         <div class="ms-2">{{'schedule.schedule'| translate }}</div>
+                        </div>
+                        <div class="card-body">
+                          <perfect-scrollbar style="height: 500px;">
+                            <div class="table-responsive">
+                                <p-table [value]="customerAccount?.scheduleDTOs">
+                                  <ng-template pTemplate="header">
+                                    <tr>
+                                      <th class="text-center">{{'schedule.period'| translate }}</th>
+                                      <th class="text-center">{{'schedule.repayment_date'| translate }}</th>
+                                      <th class="text-center">{{'schedule.total_repayment'| translate }}</th>
+                                      <th class="text-center">{{'schedule.interest'| translate }}</th>
+                                      <th class="text-center">{{'schedule.loan'| translate }}</th>
+                                      <th class="text-center">{{'schedule.balance'| translate }}</th>
+                                      <th class="text-center">{{'schedule.interestAmtPaid'| translate }}</th>
+                                      <th class="text-center">{{'schedule.loanRepaymentPaid'| translate }}</th>
+                                      <th class="text-center">{{'schedule.status'| translate }}</th>
+                                      <th class="text-center">{{'schedule.repaidOn'| translate }}</th>
+                                      <th class="text-center">{{'schedule.nbArrearsDays'| translate }}</th>
+                                    </tr>
+                                  </ng-template>
+                                  <ng-template pTemplate="body" let-schedule let-rowIndex="index">
+                                  <tr>
+                                  <td class="text-center"
+                                  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.period}}</td>
+                                  <td class="text-center" [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.repaymentDate}}</td>
+                                  <td
+                                    class="text-center"  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.totalRepayment | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                  <td
+                                    class="text-center"  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.interestRepayment  | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                  <td
+                                    class="text-center"  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.loanRepayment  | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                  <td
+                                    class="text-center"  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.balance  | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                  <td
+                                    class="text-center"  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.interestAmtPaid  | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                  <td
+                                    class="text-center"  [ngStyle]="index ===  customerAccount?.scheduleDTOs.length -1 ? {'font-weight': 'bold'} : {'font-weight': 'normal'}">
+                                    {{ schedule.loanRepaymentPaid  | number : this.decimalPlaces:'fr'}} {{ loan?.currencySymbol }}</td>
+                                  <td class="text-center">
+                                    <div class="badge bg-success"
+                                         *ngIf="schedule.status===1">{{'customer_account.schedule.status_1'| translate }}</div>
+                                    <div class="badge bg-warning"
+                                         *ngIf="schedule.status===2">{{'customer_account.schedule.status_2'| translate }}</div>
+                                    <div class="badge bg-danger"
+                                         *ngIf="schedule.status===3">{{'customer_account.schedule.status_3'| translate }}</div>
+                                  </td>
+                                  <td class="text-center" [ngClass]="{'font-weight-bold' : index ===  customerAccount?.scheduleDTOs.length -1 }">{{ schedule.repaidOn | date: 'dd/MM/yyyy'}}</td>
+                                  <td class="text-center" [ngClass]="{'font-weight-bold' : index ===  customerAccount?.scheduleDTOs.length -1 }">{{ schedule.nbArrearsDays }}</td>
+                                </tr>
+                              </ng-template>
+                              </p-table>
+                            </div>
+                          </perfect-scrollbar>
+                        </div>
+                        <div class="card-footer py-2 d-flex justify-content-end">
+                          <button class="mb-2 mx-2 btn btn-outline-danger"
+                                  (click)="c('close')">{{'button.cancel' | translate}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-template>
+            </p-table>
+          </div>
+        </div>
+
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="customerAccounts.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                              [maxSize]="3" [boundaryLinks]="true">
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="customerAccounts.length === 0">
+        <div class="card-body">
+          <h6 style="color: red;" class="pt-3">{{ 'customer.missing_customer_account' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

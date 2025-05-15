@@ -1,0 +1,98 @@
+<div class="card">
+    <div class="card-header">
+        <i class="lnr-cog px-2"> </i>
+        {{'setting.renewal_condition.renewal_condition_setting'| translate }}
+    </div>
+
+    <div class=" ">
+        <div class="table-responsive">
+            <table class="mb-0 t table  table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>{{'setting.renewal_condition.year'| translate }}</th>
+                        <th>{{'setting.renewal_condition.amount_from'| translate }}</th>
+                        <th>{{'setting.renewal_condition.amount_to'| translate }}</th>
+                        <th>{{'setting.renewal_condition.percentage'| translate }}</th>
+                        <th>
+                            <button class="btn-shadow d-inline-flex align-items-center btn btn-sm btn-primary" type="button" (click)="addRenewalConditionModal(renewalModalContent)">
+                              <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+                            </button>
+                    </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let renewalCondition of renewalConditionSettings, let i = index">
+                        <td>{{renewalCondition.year}}</td>
+                        <td>{{renewalCondition.minAmount}}</td>
+                        <td>{{renewalCondition.maxAmount}}</td>
+                        <td>{{renewalCondition.pourcentage}}</td>
+                        <td>
+                                <button class="btn btn-sm btn-warning text-white mx-1" (click)="editRenewalConditionModal(renewalModalContent,renewalCondition)">
+                                  <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                                </button>
+                                <button class="btn btn-sm btn-danger text-white" (click)="deleteRenewalCondition(renewalCondition, i)">
+                                  <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                                </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+        </div>
+    </div>
+</div>
+
+<!-- Renewal Condition Modal : ADD/EDIT -->
+
+<ng-template #renewalModalContent let-c="close" let-d="dismiss">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <form class="form col-xl-12 col-md-12 px-0" [formGroup]="renewalConditionSettingForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header py-2">
+                <h4 class="modal-title" *ngIf="action ==='CREATE'">{{'setting.renewal_condition.add'| translate }}</h4>
+                <h4 class="modal-title" *ngIf="action ==='UPDATE'">{{'setting.renewal_condition.edit'| translate }}</h4>
+                <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+                    (click)="d('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body no-gutters">
+                <div class="position-relative">
+                    <label>{{'setting.renewal_condition.year'| translate }}</label>
+                    <div class="input-group form-group">
+                        <input [readonly]="modeEdit" type="number" class="form-control" [(ngModel)]="yearValue" (change)="changeYear()"
+                            placeholder="{{'setting.renewal_condition.year'| translate }}" formControlName="year">
+                    </div>
+                </div>
+                <div class="position-relative ">
+                    <label>{{'setting.renewal_condition.amount_from'| translate }}</label>
+                    <div class="input-group form-group">
+                        <input (change)="onChangeMinAmount()" [readonly]="yearSelected" type="number" class="form-control"
+                            placeholder="{{'setting.renewal_condition.amount_from'| translate }}" formControlName="minAmount">
+                    </div>
+                </div>
+                <div class="position-relative ">
+                    <label>{{'setting.renewal_condition.amount_to'| translate }}</label>
+                    <div class="input-group form-group">
+                        <input [readonly]="yearSelected" type="number" class="form-control"
+                            placeholder="{{'setting.renewal_condition.amount_to'| translate }}" formControlName="maxAmount">
+                    </div>
+                </div>
+                <div class="position-relative ">
+                    <label>{{'setting.renewal_condition.percentage'| translate }}</label>
+                    <div class="input-group form-group">
+                        <input [readonly]="yearSelected" type="number" class="form-control"
+                            placeholder="{{'setting.renewal_condition.percentage'| translate }}" formControlName="percentage">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer py-1">
+                <button type="reset" class="btn btn-outline-danger"
+                    (click)="c('Close click')">{{'button.close' | translate}}</button>
+                <button type="submit" class="btn btn-success">{{'button.save' | translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

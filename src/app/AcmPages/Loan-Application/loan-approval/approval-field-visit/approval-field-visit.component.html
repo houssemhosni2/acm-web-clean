@@ -1,0 +1,135 @@
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header py-2">
+      <h4 class="modal-title">{{'visit.visit_report'| translate }}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="col-xl-12">
+        <div class="row">
+          <div class="widget-content p-0 col-md-3">
+            <div class="widget-content-outer">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left">
+                  <div class="widget-heading">{{'visit.planned_visit_date'| translate }}</div>
+                  <div class="widget-subheading">{{ datePlannedVisit }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-content p-0 col-md-3">
+            <div class="widget-content-outer">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left">
+                  <div class="widget-heading">{{'visit.visit_by'| translate }}</div>
+                  <div class="widget-subheading">{{ selectedReportVisitEntity.visitBy }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="widget-content px-0 pb-2 col-md-3">
+        <div class="widget-content-outer">
+          <div class="widget-content-wrapper">
+            <div class="widget-content-left">
+              <div class="widget-heading">{{'visit.visit_report'| translate }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <angular-editor [(ngModel)]="htmlContent" [config]="configEditor" class="form-control wysiwyg-edito">
+      </angular-editor>
+      <div class="widget-content p-0 col-md-3 my-3">
+        <div class="widget-content-outer">
+          <div class="widget-content-wrapper">
+            <div class="widget-content-left">
+              <div class="widget-heading">{{'visit.comment'| translate }}</div>
+              <div class="widget-subheading">{{ selectedReportVisitEntity.comment }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">Close</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <ngx-loading [show]="loading" [config]="{animationType: ngxLoadingAnimationTypes.circle,
+    primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+    </ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne"
+         data-target="#collapseSchedule" aria-expanded="true" aria-controls="collapseSchedule"
+         (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-pie-chart text-secondary px-2"></i>
+        {{'visit.visit_report'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseSchedule" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+      <div>
+        <div class="table-responsive">
+          <table class="mb-0 t table table-hover">
+            <thead>
+            <tr>
+              <th> {{'visit.version'| translate }}</th>
+              <th> {{'visit.insert_by'| translate }}</th>
+              <th>{{'visit.comment'| translate }}</th>
+              <th>{{'visit.planned_visit'| translate }}</th>
+              <th>{{'visit.creation_date'| translate }}</th>
+              <th>{{'visit.action'| translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr
+              *ngFor="let reportVisitEntity of reportVisitEntitys.slice().reverse() | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+              <td> Version {{ reportVisitEntitys.length - i }}</td>
+              <td>Insert By {{ reportVisitEntity.insertBy }}</td>
+              <td>{{ reportVisitEntity.comment }}</td>
+              <td>{{reportVisitEntity.plannedVisit |  date: 'dd/MM/yyyy'}}</td>
+              <td>{{ reportVisitEntity.dateInsertion | date: 'dd/MM/yyyy'}}</td>
+              <td>
+                <button class="btn btn-warning" (click)="openLarge(content, reportVisitEntity)">
+                  <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <ngb-pagination [collectionSize]="reportVisitEntitys.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                            [maxSize]="3" [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <div class="d-flex justify-content-lg-end">
+              <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

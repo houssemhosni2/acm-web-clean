@@ -1,0 +1,196 @@
+<app-page-title [heading]="'blacklist.blacklist'| translate " [icon]="'pe-7s-id'" [status]="-1"></app-page-title>
+
+<div class="card m-1 ">
+    <div class="card-header d-flex justify-content-between">
+        {{ 'blacklist.blacklist-import' | translate }}
+    </div>
+    <div class="row  m-2">
+        <div class="col-xl-12">
+            <p-fileUpload #uploadFile name="file" customUpload="true" (onSelect)="exportDataFromExcel($event)"
+                accept=".xlsx,.csv,.xls" [showUploadButton]="false" [showCancelButton]="false">
+            </p-fileUpload>
+        </div>
+    </div>
+</div>
+
+<div class="card m-1 ">
+    <div class="card-header" *ngIf="!bulkAdd">
+        {{ 'blacklist.blacklist-history' | translate }}
+    </div>
+    <div class="card-header" *ngIf="bulkAdd">
+        {{ 'blacklist.blacklist-items' | translate }}
+    </div>
+    <div class="card-body" *ngIf="loader">
+        <p-table #dt [responsive]="true" [autoLayout]="true" [value]="blacklistItemPagination.resultsBlacklistItems"
+            (onLazyLoad)="!bulkAdd ? reloadBlacklistItems($event): null"
+            [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+            [totalRecords]="blacklistItemPagination.totalElements" [rowsPerPageOptions]="!bulkAdd ? [5,10,20,50,100] : null"
+            [paginator]="!bulkAdd" [pageLinks]="!bulkAdd ? 5 : null" [rows]="!bulkAdd ? 10 : null" 
+            [columns]="cols" [(selection)]="selectedBlacklistItems"
+            selectionMode="multiple">
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th style="width: 4rem">
+                        <p-tableHeaderCheckbox (click)="onSelectAllChange()"></p-tableHeaderCheckbox>
+                    </th>
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field"
+                        [pSortableColumnDisabled]="bulkAdd" class="text-center">
+                        <div class="center-elem text-center">
+                            {{col.header | translate}}
+                            <p-sortIcon *ngIf="!bulkAdd" [field]="col.field" class="pl-1"></p-sortIcon>
+                        </div>
+                    </th>
+                </tr>
+                <tr *ngIf="!bulkAdd">
+                    <th></th>
+                    <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <input *ngSwitchCase="'nationalId'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'name'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <select *ngSwitchCase="'partyType'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let partyType of partyTypeList" [ngValue]="partyType.code">
+                                {{partyType.label}}
+                            </option>
+                        </select>
+                        <select *ngSwitchCase="'reasonCode'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option *ngFor="let reason of upgradeReasonList" [ngValue]="reason.libelle">
+                                {{reason.libelle}}
+                            </option>
+                            <option *ngFor="let reason of downgradeReasonList" [ngValue]="reason.libelle">
+                                {{reason.libelle}}
+                            </option>
+                        </select>
+                        <input *ngSwitchCase="'dateInsertion'" class="form-control" type="date"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <input *ngSwitchCase="'insertBy'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                        <select *ngSwitchCase="'status'" class="form-control ACM-Dashbord-productDescription-col"
+                            (change)="dt.filter($event.target.value, col.field, 'equals')" [showClear]="true">
+                            <option value="null"> {{ "category_loan.all" | translate }}</option>
+                            <option [value]="isDowngradeProcess">{{ 'blacklist.button-downgrade' | translate }}</option>
+                            <option [value]="isUpgradeProcess">{{ 'blacklist.button-upgrade' | translate }}</option>
+                        </select>
+                        <input *ngSwitchCase="'note'" class="form-control" type="text"
+                            (input)="dt.filter($event.target.value, col.field, 'contains')">
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td>
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                    </td>
+                    <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                        <div *ngSwitchCase="'nationalId'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'name'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'partyType'">{{rowData[col.field]?.label}}</div>
+                        <div *ngSwitchCase="'reasonCode'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'dateInsertion'">{{rowData[col.field] | date:'dd/MM/yyyy' }}</div>
+                        <div *ngSwitchCase="'insertBy'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'status'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'note'">{{rowData[col.field]}}</div>
+                        <div *ngSwitchCase="'document'">
+                            <button class="btn btn-warning" (click)="getDocument(rowData)" *ngIf="!bulkAdd">
+                                <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="card-footer" style="display: block;">
+        <div class="text-end">
+            <label *ngIf="!bulkAdd">
+                <input type="checkbox" [(ngModel)]="addManually" />
+                {{ "blacklist.add-new-blacklist-entry" | translate }}
+            </label>
+            <button type="button" class="btn btn-info m-2" (click)="downgradeProcess(modalContent)">{{
+                'blacklist.button-downgrade' | translate }}</button>
+            <button type="button" class="btn btn-info m-2" (click)="upgradeProcess(modalContent)">{{
+                'blacklist.button-upgrade' | translate }}</button>
+            <button class="mx-2 btn btn-outline-danger" type="button" (click)="exit()" *ngIf="bulkAdd">{{'button.exit' | translate}}</button>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title" *ngIf="addManually">
+                {{ "blacklist.add-new-blacklist-entry" | translate }}
+            </h5>
+            <h5 class="modal-title" *ngIf="processMode === isUpgradeProcess && !addManually && !bulkAdd">
+                {{ "blacklist.upgrade_selected_items" | translate }}
+            </h5>
+            <h5 class="modal-title" *ngIf="processMode === isDowngradeProcess && !addManually && !bulkAdd">
+                {{ "blacklist.downgrade_selected_items" | translate }}
+            </h5>
+            <h5 class="modal-title" *ngIf="bulkAdd">
+                {{ "blacklist.blacklist-import" | translate }}
+            </h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModal()">&times;</span>
+            </button>
+        </div>
+    </div>
+    <form class="form" [formGroup]='blacklistItemForm'>
+        <div class="card-body">
+            <div class="position-relative form-group" *ngIf="addManually">
+                <label>{{ "blacklist.nationalId" | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="nationalId">
+            </div>
+            <div class="position-relative form-group" *ngIf="addManually">
+                <label>{{ "blacklist.name" | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="name">
+            </div>
+            <div class="position-relative form-group" *ngIf="addManually || bulkAdd">
+                <label>{{ "blacklist.partyType" | translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="partyType">
+                    <option *ngFor="let partyType of partyTypeList" [ngValue]="partyType">
+                        {{partyType.label}}
+                    </option>
+                </select>
+            </div>
+            <div class="position-relative form-group">
+                <label>{{ "blacklist.reasonCode" | translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="reason" *ngIf="processMode === isUpgradeProcess">
+                    <option *ngFor="let reason of upgradeReasonList" [ngValue]="reason.code">
+                        {{reason.libelle}}
+                    </option>
+                </select>
+                <select class="form-control" formControlName="reason" *ngIf="processMode === isDowngradeProcess">
+                    <option *ngFor="let reason of downgradeReasonList" [ngValue]="reason.code">
+                        {{reason.libelle}}
+                    </option>
+                </select>
+            </div>
+            <div class="position-relative form-group">
+                <label>{{ "blacklist.document" | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="file" class="form-control" (change)="onUpload($event)" />
+            </div>
+            <div class="position-relative form-group">
+                <label>{{ "blacklist.notes" | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="note">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModal()">{{'button.cancel'
+                | translate}}</button>
+            <button class="mb-1 btn btn-primary" type="submit" (click)="submit()">{{'button.save' | translate}}</button>
+        </div>
+    </form>
+</ng-template>

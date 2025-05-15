@@ -1,0 +1,471 @@
+<app-page-title [heading]="'sidebar.notification' | translate " [icon]="'pe-7s-bell'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="mb-0 table table-hover">
+        <thead>
+        </thead>
+        <tbody>
+          <tr *ngFor="let notification of notifications?.resultsNotifications let index = index"
+            [ngClass]="{'font-weight-bold' : notification.statusNotif === 'NEW'}">
+            <td class="text-center ACM-table-notification-td-1">
+              <i class="pe-7s-mail ACM-font-size-icon" [ngClass]="{
+            'pe-7s-mail opacity-5' : notification.statusNotif === 'NEW',
+            'pe-7s-mail-open opacity-5' : notification.statusNotif === 'READ'}"
+                (click)="updateStatusNotif(notification)">
+              </i>
+            </td>
+            <!-- description Notification -->
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'NEW'&& notification.category === 'REMINDER_COLLECTION' "
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.reminder' | translate }}
+              {{notification.title}}
+              {{'notifications.msg.regarding_customer'|translate}}
+              <!--customerName-->
+              {{notification.customerName}}
+              {{'notifications.msg.which_should_be_completed'|translate}}
+              <!-- start date-->
+              {{notification.targetDate| date : 'dd/MM/yyyy'}}
+
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+            *ngIf="notification.action === 'NEW'&& notification.category === 'REMINDER_SUP_COLLECTION' "
+            (click)="loanDetails(notification)">
+            {{'notifications.msg.we_inform_you_that_your_collaborator'|translate}}
+             <!--owner step name-->
+             {{notification.description}}
+            {{'notifications.msg.has_a_task'|translate}}
+            {{notification.title}}
+            {{'notifications.msg.regarding_customer'|translate}}
+             <!--customerName-->
+             {{notification.customerName}}
+            {{'notifications.msg.which_should_be_completed'|translate}}
+             <!-- start date-->
+             {{notification.targetDate| date : 'dd/MM/yyyy'}}
+          </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'NEW'&& notification.category === 'LOAN' ">
+              {{'notifications.msg.new_notif_approval_participants'|translate}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'NEW APPLICATION' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.new_loan' | translate }}
+              {{' ' + notification.loanDTO.customerNameNoPipe|uppercase}}
+              {{'notifications.msg.at' | translate}}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'SUBMITTED FOR APPROVAL' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.submit_loan' | translate }}
+              {{' ' + notification.insertBy|uppercase}}
+              {{'notifications.msg.at' | translate}}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'UPDATE' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.submit_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'PENDING APPROVAL' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.submit_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'REVIEW' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.review_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'APPROVED' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.approved_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td *ngIf="notification.action === 'CANCEL' && notification.category === 'LOAN'"
+              class="text-left ACM-table-notification-td-2" (click)="loanDetails(notification)">
+              {{'notifications.msg.cancel_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td *ngIf="notification.action === 'DECLINE' && notification.category === 'LOAN'"
+              class="text-left ACM-table-notification-td-2" (click)="loanDetails(notification)">
+              {{'notifications.msg.decline_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'REJECT' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.reject_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'CLIENT ASKED FOR REVIEW' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.client_ask_for_review' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'ALERT' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.warning_loan' | translate }}
+              {{ notification.loanDTO.accountNumber}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'WARNING' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.alert_loan' | translate }}
+              {{ notification.loanDTO.accountNumber}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'REASSIGN' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.reassign_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'READY FOR DISBURSMENT' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.ready_for_disbursement' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'CENTRAL REVISION 2' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.central_revision' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'UPLOAD SIGNED AGREEMENT' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.upload_sign_agreement' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'CUSTOMER DECISION' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.customer_decision' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <!-- description Notification LOAN IB -->
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'ASSIGN_IB' && notification.category === 'LOAN_IB'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.assign_loan' | translate }}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy| uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'MESSAGE_IB' && notification.category === 'MESSAGE_IB'"
+              (click)="loanDetails(notification)">
+              {{'notifications.message_customer' | translate }}
+              {{ notification.insertBy }}
+              {{'notifications.at' | translate }}
+              {{ notification.creactionDate | date:'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'CLIENT ADD DATA' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.add_data_customer' | translate }}
+              {{ notification.loanDTO?.customerNameNoPipe | uppercase }}
+              {{'notifications.at' | translate }}
+              {{ notification.creactionDate | date:'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.on_loan' | translate }}
+              {{ notification.loanDTO?.accountNumber }}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'AUDIT' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.audit_loan' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'RISK' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.risk_loan' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'COMPLIANCE' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.compliance_loan' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <!-- Expenses notification-->
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'ASSIGN EXPENSES' && notification.category === 'EXPENSES'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.assign_expenses' | translate }}
+              {{' ' + notification.username|uppercase}}
+              {{'notifications.msg.at' | translate}}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'REJECT EXPENSES' && notification.category === 'EXPENSES'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.assign_expenses' | translate }}
+              {{' ' + notification.username|uppercase}}
+              {{'notifications.msg.at' | translate}}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'ACCEPT EXPENSES' && notification.category === 'EXPENSES'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.assign_expenses' | translate }}
+              {{' ' + notification.username|uppercase}}
+              {{'notifications.msg.at' | translate}}
+              {{ notification.creactionDate| date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'MEZA CARD SENT' && notification.category === 'MEZA'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.sent_meza_card' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'NEW' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.exception_request_new' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'CANCELLED' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.exception_request_cancelled' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'ACCEPTED' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.exception_request_accepted' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <td class="text-left ACM-table-notification-td-2"
+              *ngIf="notification.action === 'REJECTED' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)">
+              {{'notifications.msg.exception_request_rejected' | translate }}
+              {{' ' + notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}
+              {{'notifications.msg.by' | translate}}
+              {{ notification.insertBy |uppercase}}
+            </td>
+            <!-- action Notification-->
+            <td *ngIf="notification.action === 'NEW APPLICATION' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary">{{'notifications.new' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'MESSAGE_IB' && notification.category === 'MESSAGE_IB'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'notifications.new_message' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'CLIENT ADD DATA' && notification.category === 'LOAN'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'notifications.new_data' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'UPDATE' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary">{{'notifications.update' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'APPROVED' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-success">{{'notifications.approve' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'REJECT' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-danger">{{'notifications.reject' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'DECLINE' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-danger">{{'notifications.decline' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'CANCEL' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-danger">{{'notifications.cancel' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'REVIEW' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-warning">{{'notifications.review' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'CLIENT ASKED FOR REVIEW' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-warning ACM-badge-notification">
+                {{'notifications.client_review' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'ALERT' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-danger">{{'notifications.alert' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'WARNING' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-warning">{{'notifications.warn' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'SUBMITTED FOR APPROVAL' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary ACM-badge-notification">{{'notifications.update' | translate}}
+              </div>
+            </td>
+            <td *ngIf="notification.action === 'REASSIGN' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary ACM-badge-notification">{{'button.reassign' | translate}}
+              </div>
+            </td>
+            <td *ngIf="notification.action === 'READY FOR DISBURSMENT' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary ACM-badge-notification">
+                {{'button.ready_for_disbursment' | translate}}
+              </div>
+            </td>
+            <td *ngIf="notification.action === 'NEW' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.new' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'CANCELLED' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'process.Cancelled' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'ACCEPTED' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.accepted' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'REJECTED' && notification.category === 'REQUEST_EXCEPTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary"> {{'process.Rejected' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'NEW' &&notification.category === 'COLLECTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.new' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'NEW' &&notification.category === 'LOAN'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.new' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'NEW' &&notification.category === 'REMINDER_COLLECTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.new' |translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'NEW' &&notification.category === 'REMINDER_SUP_COLLECTION'"
+              (click)="loanDetails(notification)" class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.new' |translate}}</div>
+            </td>
+            <!-- description Notification LOAN IB -->
+            <td *ngIf="notification.action === 'ASSIGN_IB' && notification.category === 'LOAN_IB'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary ACM-badge-notification">
+                {{'button.assign' | translate}}
+              </div>
+            </td>
+            <td *ngIf="notification.action === 'RISK' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary">{{'notifications.risk' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'AUDIT' && notification.category === 'LOAN'"
+              class="text-center ACM-table-notification-td-3" (click)="loanDetails(notification)">
+              <div class="mb-2 mr-2 badge bg-primary">{{'notifications.audit' | translate}}</div>
+            </td>
+            
+            <td *ngIf="notification.action === 'NEW' && notification.category === 'BLACKLIST'"
+              class="text-center ACM-table-notification-td-3">
+              {{notification.description}}
+            </td>
+            <td *ngIf="notification.action === 'NEW' && notification.category === 'BLACKLIST'"
+              class="text-center ACM-table-notification-td-3">
+              <div class="mb-2 mr-2 badge bg-primary">{{'online_application.new' | translate}}</div>
+            </td>
+            <td *ngIf="notification.action === 'NEW' && notification.category === 'BLACKLIST'"
+              class="text-center ACM-table-notification-td-3">
+              {{ notification.insertBy |uppercase}}
+            </td>
+            
+
+            <!-- Customer Name Notification -->
+            <td class="text-center ACM-table-notification-td-4"> {{notification.loanDTO?.customerNameNoPipe |
+              uppercase}}</td>
+            <!-- Account Number Notification -->
+            <td class="text-center ACM-table-notification-td-5" (click)="loanDetails(notification)">
+              {{notification.loanDTO?.accountNumber}}
+            </td>
+            <!-- Creation Date Notification-->
+            <td class="ACM-table-notification-td-6" (click)="loanDetails(notification)">
+              {{notification.creactionDate | date: 'dd/MM/yyyy hh:mm a'}}</td>
+            <!-- Icon Notification -->
+            <td class="text-center ACM-table-notification-td-7" (click)="loanDetails(notification)">
+              <i [ngClass]="{
+            'pe-7s-info text-primary' : notification.typeMotif === 'INFO',
+            'lnr-warning text-warning' : notification.typeMotif === 'WARN',
+            'lnr-hand text-danger' : notification.typeMotif === 'ALERT'}">
+              </i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer pb-0">
+    <div class="row no-gutters w-100">
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <ngb-pagination [collectionSize]="totalElements" [pageSize]="pageSize" [(page)]="page" [maxSize]="5"
+          aria-label="Custom pagination" (pageChange)="changePagination(page)">
+          <ng-template ngbPaginationPrevious>{{'button.previous' | translate}}</ng-template>
+          <ng-template ngbPaginationNext>{{'button.next' | translate}}</ng-template>
+        </ngb-pagination>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12">
+        <div class="d-flex justify-content-lg-end">
+          <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize"
+            (ngModelChange)="changePagination(page)">
+            <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+            <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+            <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+            <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

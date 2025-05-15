@@ -1,0 +1,134 @@
+<div class="card">
+    <div class="card-header">
+        <i class="lnr-cog px-2"> </i>
+        {{'setting.reset_setting.reset_setting'| translate }}
+    </div>
+
+    <div>
+        <div class="table-responsive">
+            <table class="mb-0 t table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{'setting.label'| translate }}</th>
+                        <th>{{'setting.description'| translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{'setting.reset_setting.reset_setting_udf'| translate }}</td>
+                        <td>{{'setting.reset_setting.reset_setting_udf_description'| translate }}</td>
+                        <td>
+                            <button class="btn btn-warning text-white" (click)="openModal(modalContent, 1)">
+                              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{'setting.reset_setting.reset_setting_list_values'| translate }}</td>
+                        <td>{{'setting.reset_setting.reset_setting_list_values_description'| translate }}</td>
+                        <td>
+                            <button class="btn btn-warning text-white" (click)="openModal(modalContent, 2)">
+                              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{'setting.reset_setting.reset_setting_address'| translate }}</td>
+                        <td>{{'setting.reset_setting.reset_setting_address_description'| translate }}</td>
+                        <td>
+                            <button class="btn btn-warning text-white" (click)="openModal(modalContent, 3)">
+                              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{'setting.reset_setting.load_refresh_setting_product'| translate }}</td>
+                        <td>{{'setting.reset_setting.load_refresh_setting_product_description'| translate }}</td>
+                        <td>
+                            <button class="btn btn-warning text-white" (click)="openModal(modalContent, 4)">
+                              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{'setting.reset_setting.synchronize_ib'| translate }}</td>
+                        <td>{{'setting.reset_setting.synchronize_ib_description'| translate }}</td>
+                        <td>
+                            <button class="btn btn-warning text-white" (click)="openModal(modalContent, 5)">
+                              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+        </div>
+    </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="card">
+            <ngx-loading [show]="loadingReset"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+            </ngx-loading>
+            <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header py-2">
+                <h5 class="modal-title">{{'setting.reset_setting.reset_setting'| translate }}</h5>
+                <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                    <span aria-hidden="true" (click)="closeModale()">&times;</span>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="position-relative col-xl-12 col-md-12">
+                    <h4>{{'setting.reset_setting.msg_warnning'| translate }}</h4>
+                </div>
+
+                <div class="position-relative col-xl-12 col-md-12">
+                    <span *ngIf="category===1">
+                        {{'setting.reset_setting.msg_warnning_1'| translate }} {{'setting.reset_setting.setting_udf'|
+                        translate }}
+                    </span>
+                    <span *ngIf="category===2">
+                        {{'setting.reset_setting.msg_warnning_1'| translate }}
+                        {{'setting.reset_setting.setting_list_values'| translate }}
+                    </span>
+                    <span *ngIf="category===3">
+                        {{'setting.reset_setting.msg_warnning_1'| translate }}
+                        {{'setting.reset_setting.setting_address'| translate }}
+                    </span>
+                </div>
+
+                <div class="position-relative col-xl-12 col-md-12">
+                    {{'setting.reset_setting.msg_warnning_2'| translate }}
+                </div>
+            </div>
+            <div class="position-relative form-group">
+                <div class="custom-checkbox custom-control">
+                    <input class="custom-control-input" id="confirm1" type="checkbox" formControlName="confirm1"
+                        (change)="changeCheckboxConfirm1()">
+                    <label class="custom-control-label ms-2" for="confirm1">{{'button.confirm_checkbox' |
+                        translate}}</label>
+                </div>
+            </div>
+            <div class="position-relative form-group">
+                <div class="custom-checkbox custom-control">
+                    <input class="custom-control-input" id="confirm2" type="checkbox" formControlName="confirm2"
+                        (change)="changeCheckboxConfirm2()">
+                    <label class="custom-control-label" for="confirm2">{{'setting.reset_setting.confirm_message' |
+                        translate}}</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.exit' |
+                    translate}}</button>
+                <button type="submit" class="mb-1 btn btn-primary">{{'button.refresh' | translate}}</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</ng-template>

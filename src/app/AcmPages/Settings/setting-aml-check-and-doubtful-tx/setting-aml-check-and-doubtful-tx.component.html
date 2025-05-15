@@ -1,0 +1,376 @@
+<!-- AML List Setting -->
+<div class="card">
+    <div class="card-header">
+        {{"setting.setting_check_aml.setting_list_aml" | translate}}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="btn-icon btn btn-success" (click)="addParametrageAML()">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+                {{"setting.add_setting_aml" | translate}}
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div *ngFor="let amlListForm of amlListSettingForm, let i = index">
+
+            <form class="form" [formGroup]="amlListForm">
+                <div class="box-style">
+                    <div class="card col-12">
+                        <div class="card-header" data-target="#collapseOne" aria-expanded="true"
+                            style="display: flex; justify-content: space-between; align-items: center;"
+                            aria-controls="collapseOne" >
+                            <div class="col-2 px-3">
+                                <p class="text-primary m-0">
+                                    <span *ngIf="amlListSettings[i]?.listName !== '' && amlListSettings[i]?.id !== null; else showInput">
+                                        {{ amlListSettings[i].listName | translate }}
+                                    </span>
+                                    <ng-template #showInput>
+                                      <input  type="text" class="form-control" formControlName="listName" (change)="saveListNameAML(i)" />
+                                    </ng-template>
+                                  </p> 
+                            </div>
+
+                            
+                            <div class="col-8 form-group"
+                                style="display: flex; align-items: center;text-transform: none;">
+                                <div class="col-xl-3 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <label style="font-weight: 400;line-height: 1.5;color: #495057;"> 
+                                            {{"setting.setting_check_aml.description_keywords" | translate}} </label>
+                                        <span class="text-danger">*</span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <input type="text" class="form-control" formControlName="descriptionKeywords">
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <label style="font-weight: 400;line-height: 1.5;color: #495057;">
+                                            {{"setting.setting_check_aml.list_keywords" | translate}} </label>
+                                        <span class="text-danger">*</span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <input type="text" class="form-control" formControlName="listKeywords">
+                                    </div>
+                                </div>                           
+                            </div>
+
+                            <div style="display: flex; align-items: center;">
+                                <div class="custom-checkbox custom-control">
+                                    <input class="custom-control-input" type="checkbox"
+                                        formControlName="isBlockingList">
+                                    &nbsp;<label
+                                        class="custom-control-label">{{"setting.setting_check_aml.is_blocking_list" |
+                                        translate}}</label>
+                                </div>
+                                <div (click)="toggleCollapseAmlListSetting(i)">
+                                    &nbsp;&nbsp;&nbsp;<i
+                                        [ngClass]="amlListSettingExpands[i] === true ? 'lnr-chevron-up text-secondary': 'lnr-chevron-down text-secondary'"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn-icon btn-icon-only btn-outline-2x btn btn-outline-danger ml-2"
+                                    style="margin-left: 10px;" type="button" (click)="disableParametrageAML(i)">
+                                    <i class="lnr-trash btn-icon-wrapper"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div [ngClass]="amlListSettingExpands[i] === true ? 'collapse show' : 'collapse'"
+                            aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body row">
+                                <div class="col-xl-6 col-md-6 px-1">
+                                    <div class="position-relative form-group">
+                                        <label> {{"setting.setting_check_aml.min_rejection_range" | translate}} </label>
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" formControlName="minRejectionRange" (change)="amlListRejectionMinMaxValidator(i)">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-md-6 px-1">
+                                    <div class="position-relative form-group">
+                                        <label> {{"setting.setting_check_aml.max_rejection_range" | translate}} </label>
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" formControlName="maxRejectionRange" (change)="amlListRejectionMinMaxValidator(i)">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-md-6 px-1">
+                                    <div class="position-relative form-group">
+                                        <label> {{"setting.setting_check_aml.min_acceptance_range" | translate}}
+                                        </label>
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" formControlName="minAcceptanceRange" (change)="amlListAcceptanceMinMaxValidator(i)">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-md-6 px-1">
+                                    <div class="position-relative form-group">
+                                        <label> {{"setting.setting_check_aml.max_acceptance_range" | translate}}
+                                        </label>
+                                        <span class="text-danger">*</span>
+                                        <input type="text" class="form-control" formControlName="maxAcceptanceRange" (change)="amlListAcceptanceMinMaxValidator(i)">
+                                    </div>
+                                </div>
+                                <div class="card-header d-flex justify-content-between">
+                                    <h6 class="text-primary text-uppercase px-4 pt-3">
+                                        <span
+                                            class="vertical-align-middle">{{"setting.setting_check_aml.validation_workflow_to_be_launched"
+                                            | translate}}</span>
+                                    </h6>
+                                    <div class="px-3">
+                                        <hr class="hr" />
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-md-6 px-1">
+                                    <div class="position-relative form-group">
+                                        <select class="form-control " formControlName="genericWorkFlowObject">
+                                            <option *ngFor="let wf of genericWorkflowObjects" [ngValue]="wf.id">
+                                                {{wf.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                                    <button class="btn btn-primary text-white" (click)="saveAmlList(i)">
+                                        {{ "button.save" | translate }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Doubtful Tx Setting -->
+<div class="card mt-2">
+    <div class="card-header">
+        {{"setting.setting_doubtful_tx.doubtful_tx_scenario" | translate}}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="btn-icon btn btn-success" (click)="addNewDoubtfulTxScenario()">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+                {{"setting.setting_doubtful_tx.add_new_scenario" | translate}}
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div *ngFor="let doubtfulTxForm of doubtfulTransactionSettingsForm, let i = index">
+
+            <form class="form" [formGroup]="doubtfulTxForm">
+                <div class="box-style">
+                    <div class="card col-12">
+                        <div class="card-header" data-target="#collapseOne" aria-expanded="true"
+                            style="display: flex; justify-content: space-between; align-items: center;"
+                            aria-controls="collapseOne" >
+                            <div class="px-3">
+                                <p class="text-primary m-0">
+                                    {{ "setting.setting_doubtful_tx.scenario" | translate }} {{i+1}}
+                                </p>
+                            </div>
+
+
+                            <div class="col-8 form-group"
+                                style="display: flex; align-items: center;text-transform: none;">
+                                <div class="col-xl-2 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <label style="font-weight: 400;line-height: 1.5;color: #495057;">
+                                            {{ "setting.setting_doubtful_tx.risk_score_between" | translate }} </label>
+                                        <span class="text-danger">*</span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <input type="number" class="form-control" formControlName="minRiskScore" (change)="riskScoreMinMaxValidator(i)">
+                                    </div>
+                                </div>
+                                <div class="col-xl-1 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <label style="font-weight: 400;line-height: 1.5;color: #495057;"> {{
+                                            "setting.setting_doubtful_tx.and" | translate }} </label>
+                                        <span class="text-danger">*</span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-4 px-1">
+                                    <div class="position-relative form-group">
+                                        <input type="number" class="form-control" formControlName="maxRiskScore" (change)="riskScoreMinMaxValidator(i)">
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div>
+                                <button class="btn-icon btn-icon-only btn-outline-2x btn btn-outline-danger ml-2"
+                                    style="margin-left: 10px;" type="button" (click)="disableDoubtfulTxScenario(i)">
+                                    <i class="lnr-trash btn-icon-wrapper"></i>
+                                </button>
+                            </div>
+
+                            <div (click)="toggleCollapseDoubtfulTxSetting(i)">
+                                <i
+                                    [ngClass]="doubtfulTransactionSettingsExpands[i] === true ? 'lnr-chevron-up text-secondary': 'lnr-chevron-down text-secondary'"></i>
+                            </div>
+                        </div>
+                        <div [ngClass]="doubtfulTransactionSettingsExpands[i] === true ? 'collapse show' : 'collapse'"
+                            aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body row">
+
+                                <div class="col-xl-6 col-md-6 px-1" style="display: flex; align-items: center;">
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <label>{{ "setting.setting_doubtful_tx.cumulative_amount_higher_than" |
+                                                translate }} </label>
+                                            <span class="text-danger">*</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-md-2 px-1">
+                                        <div class="position-relative form-group">
+                                            <input type="number" class="form-control"
+                                                formControlName="cumultativeAmount">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 px-1" style="display: flex; align-items: center;">
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <label>{{ "setting.setting_doubtful_tx.for_a_period_less_than" | translate
+                                                }} </label>
+                                            <span class="text-danger">*</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <input type="number" class="form-control"
+                                                formControlName="cumultativeAmountPeriod">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 px-1" style="display: flex; align-items: center;">
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <label>{{ "setting.setting_doubtful_tx.payment_more_than" | translate }}
+                                            </label>
+                                            <span class="text-danger">*</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <input type="number" class="form-control"
+                                                formControlName="maxInstalmentsNumberPaid">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-2 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <span>{{ "setting.setting_doubtful_tx.instalments" | translate }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 px-1" style="display: flex; align-items: center;">
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <label>{{ "setting.setting_doubtful_tx.or" | translate }} </label>
+                                            <span class="text-danger">*</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <input type="number" class="form-control"
+                                                formControlName="maxInstalmentsAmountPaid">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <span>{{ "setting.setting_doubtful_tx.of_credit_amount" | translate
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 px-1" style="display: flex; align-items: center;">
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <label>{{ "setting.setting_doubtful_tx.early_repayment_after" | translate }}
+                                            </label>
+                                            <span class="text-danger">*</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <input type="number" class="form-control"
+                                                formControlName="maxEarlyRepaymentNumber">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-2 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <span> {{ "setting.setting_doubtful_tx.instalments" | translate }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 px-1" style="display: flex; align-items: center;">
+                                    <div class="col-xl-6 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <label>{{ "setting.setting_doubtful_tx.or_greater_than" | translate }}
+                                            </label>
+                                            <span class="text-danger">*</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <input type="number" class="form-control"
+                                                formControlName="maxEarlyRepaymentAmount">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-4 px-1">
+                                        <div class="position-relative form-group">
+                                            <span>{{ "setting.setting_doubtful_tx.of_credit_amount" | translate
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-header d-flex justify-content-between">
+                                    <h6 class="text-primary text-uppercase px-4 pt-3">
+                                        <span
+                                            class="vertical-align-middle">{{"setting.setting_check_aml.validation_workflow_to_be_launched"
+                                            | translate}}</span>
+                                    </h6>
+                                    <div class="px-3">
+                                        <hr class="hr" />
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-md-6 px-1">
+                                    <div class="position-relative form-group">
+                                        <select class="form-control " formControlName="genericWorkFlowObject">
+                                            <option *ngFor="let wf of genericWorkflowObjects" [ngValue]="wf.id">
+                                                {{wf.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+                                    <button class="btn btn-primary text-white" (click)="saveDoubtfulTxScenario(i)">
+                                        {{ "button.save" | translate }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

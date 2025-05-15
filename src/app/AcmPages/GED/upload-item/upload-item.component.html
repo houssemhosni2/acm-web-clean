@@ -1,0 +1,194 @@
+<div *ngIf="loanSharedService.ibDocumentsReceived | async">
+<div *ngIf="loan.statut != '5' && loan.statut != '6' && documents.length !== 0 ">
+<div>
+  <h6 *ngIf="documents.length === 0 " style="color: red;" class="pt-3">
+    {{ 'upload_document.missing_document' | translate }} </h6>
+</div>
+  <div class="main-card mb-1 card" *ngIf="documents.length !== 0 ">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerNote"
+      aria-expanded="true" aria-controls="collapseCustomerNote" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-book text-secondary px-2"></i>
+        {{'collections.collection-dashboard.documents'|translate}}: {{statutDocumentLoan}}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomerNote" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne">
+      <div class="table-responsive">
+        <div class="pb-3 px-1 mt-4 ms-4" *ngIf="adminFee">
+          <div class="custom-checkbox custom-control">
+            <input [checked]="repaymentFee!==0" class="custom-control-input" type="checkbox" disabled>
+            <label class="custom-control-label">{{'loan.admin_fees_paid'| translate }}</label>
+          </div>
+        </div>
+        <table class="align-middle mb-0 table table-hover">
+          <thead>
+            <tr>
+              <th class="ACM-document-table-column">{{'upload_document.download_template'| translate }}</th>
+              <th class="ACM-document-table-column">{{'upload_document.Title'| translate }}</th>
+              <th class="text-center ACM-document-table-column">{{'upload_document.Name'| translate }}</th>
+              <th class="text-center ACM-document-table-column">{{'upload_document.Date'| translate }}</th>
+              <th class="text-center ACM-document-table-column-button">{{ 'upload_document.modify-by' | translate }}
+              </th>
+
+              <th class="text-center ACM-document-table-column-button">{{ 'upload_document.version-history' | translate
+                }}
+              </th>
+              <th class="text-center ACM-document-table-column-button">{{'upload_document.Upload_new_version'| translate
+                }}
+              </th>
+
+              <th class="text-center ACM-document-table-column-button"></th>
+              <th class="text-center ACM-document-table-column-button"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of documents; let i = index">
+              <td>
+                <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                  type="button" (click)="downloadTemplate(d)"
+                  *ngIf="d.reportName!==undefined&&d.reportName !== null && d.reportName !== ''">
+
+                  <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                </button>
+              </td>
+              <td>
+                <div class="widget-content p-0">
+                  <div class="widget-content-wrapper">
+                    <div class="widget-content-left flex2">
+                      <div class="widget-heading">{{d.title}}<span *ngIf="d.mandatory === status" class="text-danger">
+                          *</span></div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{d.name}}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{d.date}}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{d.updatedBy}}
+                </div>
+              </td>
+              <td class="text-center">
+                <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                  type="button" (click)="openLarge(content,d)">
+                  <i class="pe-7s-folder btn-icon-wrapper"></i>
+                </button>
+              </td>
+              <td class="text-center">
+                <form class="form" [formGroup]="documentForm">
+                  <button class="mb-2 mx-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-focus"
+                    type="button" (click)="fileInput.click()">
+                    <i class="pe-7s-cloud-upload btn-icon-wrapper"></i>
+                    <input #fileInput type="file" [name]="'file'+d.title" (change)="onFileSelected($event,d,category)"
+                      style="display:none;">
+                  </button>
+                </form>
+              </td>
+              <td class="text-center px-0">
+                <button class="btn btn-warning" (click)="view(d.file,d.idfile)"  >
+                  <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                </button>
+              </td>
+              <td class="text-center px-0">
+                <form class="form" [formGroup]="addDocumentForm">
+                  <button [disabled]="!d.file" *ngIf="(d.settingDocumentType.uniqueness) && (d.documentIndex === 1)"
+                    class="btn-shadow d-inline-flex align-items-center btn btn-primary"
+                    (click)="fileuploadMultiple.click()">
+                    <fa name="plus" _nghost-gyt-c2="" ng-reflect-name="plus">
+                      <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                    </fa>
+                    <input #fileuploadMultiple type="file" name='file' formControlName='fileInput'
+                      (change)="onUpload($event,d,category)" style="display:none;">
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <!--form add new note-->
+      <form>
+        <div class="modal-header py-2">
+          <h4 class="modal-title">{{'upload_document.document-history'| translate }}</h4>
+          <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+            (click)="c(reset())">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+          <div class="container p-3">
+            <!--Date-->
+
+
+
+
+            <div class="table-responsive">
+              <table class="align-middle mb-0 table table-hover">
+                <thead>
+                  <tr>
+                    <th class="text-center ACM-document-table-column">{{'upload_document.Name'| translate }}</th>
+                    <th class="text-center ACM-document-table-column">{{'upload_document.Date'| translate }}</th>
+                    <th class="text-center ACM-document-table-column">{{'customer_decision.addedBy'| translate }}
+                    </th>
+                    <th class="text-center ACM-document-table-column-button"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let hd of historyDocuments; let i = index">
+                    <td>
+                      <div class="text-center">
+                        {{hd.name}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="text-center">
+                        {{hd.dateCreation | date : 'dd/MM/yyyy hh:mm a'}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="text-center">
+                        {{hd.insertBy}}
+                      </div>
+                    </td>
+
+
+                    <td class="text-center px-0">
+                      <button class="btn btn-warning" (click)="view(hd.file,hd.idDocumentGED)">
+                        <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                      </button>
+                    </td>
+
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <!--buttons-->
+          <div class="modal-footer py-1">
+            <button class="mb-2 mx-2 btn btn-outline-danger" (click)="reset()">{{'button.cancel' | translate}}</button>
+
+          </div>
+       
+      </form>
+    </div>
+  </ng-template>
+</div>
+</div>

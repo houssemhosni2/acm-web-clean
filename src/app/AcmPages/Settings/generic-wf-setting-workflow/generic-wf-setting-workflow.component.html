@@ -1,0 +1,66 @@
+<div class="card-header d-flex justify-content-between">
+  <h6 class="text-primary text-uppercase px-4 pt-3">
+    <span class="vertical-align-middle">{{ "generic-wf.generic-wf" | translate }}</span>
+  </h6>
+  <div class="px-3">
+    <hr class="hr" />
+  </div>
+</div>
+
+<div aria-labelledby="headingOne" data-parent="#accordionExample">
+  <div *ngIf="!isOfflineModeEnabled()" class="card-body">
+    <div class="col-xl-12 d-flex justify-content-end pt-3">
+      <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button" (click)="addForm()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{'button.add' | translate}}
+      </button>
+    </div>
+  </div>
+  <hr class="solid">
+
+
+  <div *ngIf="genericObjectWfForms.length > 0">
+
+    <div class="table-responsive mt-2">
+      <table class="mb-0 table green">
+        <thead>
+          <tr>
+
+            <th>{{ 'generic-wf.generic-wf' | translate }}</th>
+            <th></th>
+            <th></th>
+            <th>{{ 'generic-wf.priority' | translate }}</th>
+            <th></th>
+
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+          <div *ngFor="let formGF of genericObjectWfForms ; let i = index">
+              <div class="form-group" [formGroup]="formGF">
+                <td class="col-sm-8 p-3 " >
+                  <select class="form-control " formControlName="genericWorkFlow">
+                    <option *ngFor="let wf of genericWorkflowObjects" [ngValue]="wf">
+                      {{wf.name}}
+                    </option>
+                  </select>
+                </td>
+                <td class="col-md-6">
+                  <input formControlName="priority" type="number" class="form-control col-md-2" />
+                </td>
+                <td>
+                  <div class="col-xl-1 px-3">
+                    <button class="btn btn-danger" (click)="deleteGroupe(i)">
+                      <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+              </div>
+          </div>
+
+
+    </div>
+  </div>
+
+</div>

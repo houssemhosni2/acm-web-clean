@@ -1,0 +1,126 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseTransitionAccount"
+      aria-expanded="true" aria-controls="collapseTransitionAccount" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-chart-bars text-secondary px-2"></i>
+        {{'Comptes_transition'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseTransitionAccount" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+
+      <div *ngIf="transitionAccounts.length > 0">
+        <div>
+          <ngx-loading [show]="loading"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+          <div class="table-responsive">
+            <table class="mb-0 table green">
+              <thead>
+                <tr>
+                  <th>{{'Compte'| translate }}</th>
+                  <th>{{'Solde'| translate }}</th>
+                  <th>{{'Date_solde'| translate }}</th>
+                  <th>{{'Statut'| translate }}</th>
+                  <th>{{'Branche'| translate }}</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let item of transitionAccounts | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                  <td> {{ item.accountNumber}}</td>
+                  <td>{{ item.balanceForward | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }}</td>
+                  <td>{{ item.balanceDate | date: 'dd/MM/yyyy'}}</td>
+                  <td>{{ item.status }}</td>
+                  <td>{{ item.branchName }}</td>
+                  <td>{{ item.active ? ('Actif' | translate) : ('Inactif' | translate) }}</td>
+                  <td> <button *ngIf="!loanSharedService.habilitationButton('SAVING_DEPOSIT','customer-360-details')"  class="btn btn-outline-success mx-2" style="background-color: white;"
+                      (click)="openLargePayment(content8, item)">
+                      {{'transaction.deposit' | translate }}
+                    </button></td>
+
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="0" [(page)]="page" [pageSize]="pageSize" size="sm" [maxSize]="3"
+                [boundaryLinks]="true">
+                <!-- [collectionSize]="customerAccounts.length" -->
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div *ngIf="transitionAccounts.length === 0"> <!-- *ngIf="transitionAccounts.length === 0": -->
+        <div class="card-body">
+          <h6 style="color: red;" class="pt-3">{{ 'customer.missing_customer_account' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content8 let-c="close" let-d="dismiss" >
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        <i class="lnr-calendar-full text-secondary px-2 pr-2"></i>
+        {{'transaction.deposit' | translate }}
+      </div>
+      <div *ngIf="!loading" class="d-flex justify-content-end">
+      </div>
+      <div>
+        <perfect-scrollbar style="height: 300px;">
+          <div class="px-2">
+
+            <div class="row mb-2" style="padding: 20px;">
+              <form [formGroup]="depositForm" >
+              <label class="text cu-px-th">{{'dashboard.amount'|translate}} </label>
+              <input type="number" class="form-control"
+              formControlName ="amountPayment" />
+
+              <label class="text cu-px-th"> {{'reject.note'| translate }} </label>
+              <textarea type="text" class="form-control"  formControlName="notePayment" >
+              </textarea>
+            </form>
+              <ng-template #elseBlock>-</ng-template>
+
+            </div>
+          </div>
+        </perfect-scrollbar>
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)=" closeModal()">{{'button.cancel' |
+          translate}}</button>
+        <button type="button" class="mb-2 mx-2 btn btn btn-success" (click)="payment(notePayment,amountPayment,selectedPayment)">
+          {{'button.submit' | translate}} </button>
+
+      </div>
+    </div>
+  </div>
+</ng-template>

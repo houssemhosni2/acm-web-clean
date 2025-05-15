@@ -1,0 +1,136 @@
+<div class="he-100">
+  <div class="row no-gutters">
+    <div class="d-none d-lg-block col-lg-4">
+      <div class="slider-light">
+        <div class="slick-slider slick-dotted">
+          <ngx-slick-carousel #slickModal='slick-carousel' (init)="slickInit($event)" [config]="slideConfig">
+            <div ngxSlickItem [ngClass]="{'h-100' : true}">
+              <div
+                [ngClass]="{'position-relative h-100 d-flex justify-content-center align-items-center bg-plum-plate': true}">
+                <div [ngClass]="{'slide-img-bg': true }"></div>
+                <div [ngClass]="{'slider-content text-light': true }">
+                  <h3>TALYS - THE HOUSE OF DIGITAL EXPERTS</h3>
+                </div>
+              </div>
+            </div>
+          </ngx-slick-carousel>
+        </div>
+      </div>
+    </div>
+    <div class="h-100 col-md-12 col-lg-8">
+      <div class="text-end pt-3 pr-5">
+        <button class="mb-2 mx-2 border-0 btn-transition btn btn-outline-primary" (click)="langFR()"
+          [disabled]="translate.currentLang === 'fr'">Français
+        </button>
+        <button class="mb-2 mx-2 border-0 btn-transition btn btn-outline-primary" (click)="langEN()"
+          [disabled]="translate.currentLang === 'en'">English
+        </button>
+        <button class="mb-2 mx-2 border-0 btn-transition btn btn-outline-primary" (click)="langAR()"
+          [disabled]="translate.currentLang === 'ar'">عربية
+        </button>
+      </div>
+      <div class="h-100 d-flex bg-white justify-content-center align-items-center">
+        <div class="mx-auto app-login-box col-sm-12 col-md-10 col-lg-9">
+          <div class="app-logo"></div>
+          <h4 class="mb-0">
+            <div>{{'login.welcome'| translate }}</div>
+            <span>{{'login.please_sign_in'| translate }}</span>
+          </h4>
+          <div class="divider"></div>
+          <div>
+            <form class="form" [formGroup]="loginForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <div tabindex="-1" role="group">
+                      <label> {{'login.username'| translate }}</label>
+                      <input type="text" placeholder="{{'login.username'| translate }}" class="form-control"
+                        formControlName="username">
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <div tabindex="-1" role="group">
+                      <label>{{'login.password'| translate }}</label>
+                      <input type="password" placeholder="{{'login.password'| translate }}" class="form-control"
+                        formControlName="password">
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="text-danger">{{ error | translate }}</div>
+              <div class="divider"></div>
+              <div class="align-items-center">
+                <div class="ml-auto" style="display: flex;justify-content: space-between;">
+                  <div>
+                    <button type="submit" (click)="login()" class="btn btn-primary btn-lg">{{'login.login'| translate
+                      }}</button>
+                    <button class="btn btn-link" (click)="open(content)">{{"login.forget_pwd" | translate}}</button>
+                  </div>
+                  <button *ngIf="outlookButton" (click)="logWithOutlook()" class="btn btn-light p-1 button-darken"
+                    style="border-radius: 10px !important;filter: drop-shadow(1px black);">
+ 
+                    <img src="assets/resources/images/microsoft-logo.svg" alt="Outlook Logo" class="logo"
+                      style="width:20px !important;" />
+                    {{'login.outlook'| translate}}
+                  </button>
+
+                </div>
+                <button (click)="logWithOutlook()" class="btn btn-light p-1 button-darken"
+                  style="border-radius: 10px !important;filter: drop-shadow(1px black);">
+
+                  <img src="assets/resources/images/microsoft-logo.svg" alt="Outlook Logo" class="logo"
+                    style="width:20px !important;" />
+                  {{'login.outlook'| translate}}
+                </button>
+
+              </div>
+          
+          </form>
+          <!-- <div style="display: flex; unicode-bidi: isolate;">
+              <button class="social-btn p-1"><span class="social-logo-wrapper"><img class="social-logo" src="assets/resources/images/microsoft-logo.svg" alt="logo Microsoft"></span><span class="social-text">Continuer avec le compte Microsoft</span></button>
+            </div> -->
+        </div>
+      </div>
+    </div>
+  
+</div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="resetPwdForm">
+    <div class="modal-header py-2">
+      <h4 class="modal-title">{{'login.forget_pwd'| translate }}</h4>
+      <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+        (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body row no-gutters">
+      <div class="position-relative col-xl-12 col-md-12">
+        <label> {{'login.username'| translate }}</label>
+        <input type="text" class="form-control" formControlName="resetUsername"
+          placeholder="{{'login.username'| translate }}">
+      </div>
+
+    </div>
+    <div class="modal-footer py-1">
+      <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+        translate}}</button>
+      <button type="submit" (click)="submitReset()" class="btn btn-primary">{{'button.submit' | translate}}</button>
+    </div>
+  </form>
+</ng-template>
+<style>
+  .button-darken {
+    border-radius: 10px !important;
+    font-size: medium;
+    display: ruby;
+    filter: drop-shadow(1px black);
+    transition: filter 0.3s ease-in-out;
+  }
+
+  .button-darken:hover {
+    filter: brightness(85%);
+  }
+</style>

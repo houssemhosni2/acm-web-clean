@@ -1,0 +1,506 @@
+<ng-container  *transloco="let t" >
+  <!-- <form [formGroup]="formSupplier"> -->
+<!--title-->
+<app-page-title *ngIf="idSupplier != undefined || idSupplier != null" [heading]="'Modifier supplier'"
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [supplierStatus]="supplierStatus"></app-page-title>
+
+<app-page-title *ngIf="idSupplier == undefined || idSupplier == null" [heading]="'supplier.add_supplier'| translate "
+  [icon]="'lnr-user icon-gradient bg-ripe-malin'" [account]="''" [supplierStatus]="supplierStatus"></app-page-title>
+
+<!-- begin form add supplier information -->
+<div>
+  <div class="card-hover-shadow-2x mb-1 card">
+    <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+      aria-controls="collapseCustomerAccount" (click)="toggleCollapseCustomer()">
+      <div>
+        <i class="lnr-user text-secondary pr-2"></i>
+
+        {{ 'supplier.supplier-information' | translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expandedCustomer===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomer" [ngClass]="(expandedCustomer===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div *ngIf="filtersLoaded | async">
+        <form [formGroup]="formSupplier">
+          <div class="card-body">
+            <div class="col-xl-12 col-sm-12 row no-gutters">
+
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.name' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <input type="text" class="form-control" formControlName="name">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.acronym' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <input type="text" class="form-control" formControlName="acronyme">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.LegalCategory' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <select class="form-control" formControlName="legalCatalog">
+                    <option *ngFor="let legalCatalog of legalCategorys" [ngValue]="legalCatalog.id">
+                      {{legalCatalog.label}}
+                    </option>
+
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.patentNumber' | translate }}</label>
+                  <input type="text" class="form-control" formControlName="registerNumber">
+                  <span *ngIf="formSupplier.hasError('atLeastOneRequired')" class="error-msg">
+                    {{ 'supplier.error-msg' | translate }}
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.national-id' | translate }}</label>
+                  <input type="text" class="form-control" formControlName="national_id">
+                  <span *ngIf="formSupplier.hasError('atLeastOneRequired')" class="error-msg">
+                    {{ 'supplier.error-msg' | translate }}
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.ActivityArea' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <select class="form-control" formControlName="activity">
+                    <option *ngFor="let s of sectors" [ngValue]="s.industryID">
+                      {{s.name}}
+                    </option>
+
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.start-date-of-activity' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <input class="form-control" placeholder="Date de début convention" type="date"
+                    formControlName="activityStartDate">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.turnover-objective' | translate }} </label>
+                  <input type="number" class="form-control" formControlName="objectif"
+                    onkeypress="return event.charCode >= 48" min="0">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.periodicity-ca' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <select class="form-control" [compareWith]="compareGroup3" formControlName="periodicity">
+                    <option *ngFor="let p of periodicity" [ngValue]="p">
+                      {{p.label}}
+                    </option>
+
+                  </select>
+                </div>
+              </div>
+              <!-- <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>Nom commercial</label>
+                  <span class="text-danger">*</span>
+                  <input type="text" class="form-control" name="commercialName" [(ngModel)]="supplier.commercialName">
+                </div>
+              </div> -->
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.telephone' | translate }}</label>
+                  <span class="text-danger">*</span>
+
+                  <input type="number" class="form-control" formControlName="telephone" maxlength="8">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.telephone' | translate }} 2</label>
+                  <input type="text" class="form-control" formControlName="telephone2" maxlength="8">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.web-site' | translate }} </label>
+                  <input type="text" class="form-control" formControlName="webSite">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.email' | translate }}</label>
+                  <input type="text" class="form-control" formControlName="email">
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.withholding_tax' | translate }}</label>
+                  <span class="text-danger">*</span>
+                  <select class="form-control" formControlName="withholdingTax">
+                    <option selected value=""> {{'supplier.select_group'| translate }} </option>
+                    <option *ngFor="let tax of withholdingTaxes" [ngValue]="tax">
+                      {{tax}}%
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="position-relative form-group">
+                  <label>{{ 'supplier.approved' | translate }}</label> 
+                  <select class="form-control" formControlName="isApproved">
+                    <option selected value="">
+                       {{ 'supplier.select_group' | translate }} 
+                    </option>
+                    <option value="true">{{ 'customer_management.oui' | translate }}</option>
+                    <option value="false">{{ 'customer_management.non' | translate }}</option>
+                  </select>
+                </div>
+              </div>
+
+
+         
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<app-generic-workFlow-document #supplierDocumentComponenet (requiredDocument)="requiredDocument($event)" [category]="'SUPPLIER'"  [expanded]="true"></app-generic-workFlow-document>
+<!-- end form add supplier information -->
+
+<!-- begin form add supplier convention -->
+
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+    aria-controls="collapseCustomerAccount" (click)="toggleCollapseConvention()">
+    <div>
+      <i class="lnr-pushpin text-secondary pr-2"></i>
+
+      {{ 'supplier.supplier-agreement' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedConvention===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseCustomer" [ngClass]="(expandedConvention===true)?'collapse show':'collapse'"
+    aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div *ngIf="filtersLoaded | async">
+      <div class="card-body">
+
+        <form [formGroup]="formConvention">
+
+
+
+          <div class="col-xl-12 col-sm-12 row no-gutters">
+            <div class="col-xl-12 d-flex justify-content-end p-3">
+              <button class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                (click)="addConvention()" *ngIf="!editConv">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+                {{'button.add' | translate}}
+              </button>
+              <button class="btn-shadow d-inline-flex align-items-center btn btn-success" type="button"
+                (click)="addConvention()" *ngIf="editConv">
+                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-ruler')"></fa-icon>
+                {{ 'supplier.edit' | translate }}
+              </button>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.discount-rate' | translate }}</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">%</span>
+                  <input formControlName="discountRate"  type="number"
+                    class="form-control" onkeypress="return event.charCode >= 48" min="0">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.agreement-start-date' | translate }}</label>
+                <input class="form-control" placeholder="Date de début convention" type="date"
+                  name="startDateConvention" formControlName="startDateConvention">
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.agreement-end-date' | translate }}</label>
+                <input class="form-control" placeholder="Date de début convention" type="date" name="endDateConvention"
+                  formControlName="endDateConvention">
+              </div>
+            </div>
+
+
+
+            <div class="col-sm-12">
+
+              <div>
+                <div class="custom-checkbox custom-control">
+
+                  &nbsp;&nbsp;<input class="custom-control-input" type="checkbox" formControlName="applyRate">
+                  &nbsp;&nbsp;<label class="custom-control-label">{{
+                    'supplier.apply-the-rate-to-all-items-in-the-provider' | translate }}</label>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.rebate' | translate }}</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">%</span>
+                  <input type="number" class="form-control" name="rebate" onkeypress="return event.charCode >= 48"
+                    min="0" formControlName="rebate">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.from-turnover-discount' | translate }}</label>
+                <input type="number" class="form-control" name="ca" onkeypress="return event.charCode >= 48" min="0"
+                  formControlName="ca">
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.objective-turnover-volume' | translate }}</label>
+                <input type="number" class="form-control" name="objectiveTurnoverVolume" formControlName="objectiveTurnoverVolume">
+              </div>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="position-relative form-group">
+                <label>{{ 'supplier.objective-file-number' | translate }}</label>
+                <input type="number" class="form-control" name="objectiveFileNumber" formControlName="objectiveFileNumber">
+              </div>
+            </div>
+
+
+
+
+
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+
+  </div>
+  <app-generic-workFlow-document #conventionDocumentComponent   (documentTypechild) = "reciveDocFomchild($event)" style= "margin-bottom: 58px"  [category]="'CONVENTION'"  [expanded]="true"></app-generic-workFlow-document>
+
+<div class="main-card mb-3 card" >
+    <div>
+      <div class="table-responsive">
+        <table class="mb-0 table green" style = "margin-top : 5px">
+          <thead>
+            <tr>
+              <!-- actions button -->
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'supplier.discount-rate' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{'supplier.agreement-start-date' | translate}}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{'supplier.agreement-end-date' | translate}}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{'supplier.rebate' | translate}}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{'supplier.from-turnover-discount'|translate}}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'supplier.apply-rate' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{'supplier.file' | translate}}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'supplier.objective-turnover-volume' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'supplier.objective-file-number' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+
+                </div>
+              </th>
+
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let conv of conventionLst ;let i = index">
+
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.discountRate}}
+                </div>
+              </td>
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.startDateConvention | date : 'dd/MM/yyyy'}}
+                </div>
+              </td>
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.endDateConvention | date : 'dd/MM/yyyy'}}
+                </div>
+              </td>
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.rebate}}
+                </div>
+              </td>
+
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.ca}}
+                </div>
+              </td>
+
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center" *ngIf="conv.applyRate==true">
+                  Oui
+                </div>
+                <div class="center-elem text-center" *ngIf="conv.applyRate==false">
+                  Non
+                </div>
+              </td>
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.fileName}}
+                </div>
+              </td>
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                  {{conv.objectiveTurnoverVolume}}
+                </div>
+              </td>
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <div class="center-elem text-center">
+                 {{conv.objectiveFileNumber}}
+                </div>
+              </td>
+
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <button class="btn btn-shadow btn-primary " (click)="editConvention(conv)">
+                  <i class="p-button-icon fa fa-edit"></i>
+                </button>
+              </td>
+
+              <td class="text-center" *ngIf="conv.forRemove==false">
+                <button class="btn btn-danger" (click)="deleteConvention(i)">
+                  <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                </button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- end form add supplier information -->
+
+
+<!-- begin form address supplier information -->
+<div *ngIf="updateMode">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseCustomer" aria-expanded="true"
+    aria-controls="collapseCustomerAccount" (click)="toggleCollapseArticle()">
+    <div>
+      <i class="lnr-pushpin text-secondary pr-2"></i>
+
+      {{ 'supplier.items' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedArticles===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseCustomer" [ngClass]="(expandedArticles===true)?'collapse show':'collapse'"
+    aria-labelledby="headingOne" data-parent="#accordionExample">
+
+    <app-list-asset #childComponent [fromSupplier360]="true"></app-list-asset>
+
+  </div>
+</div>
+<app-customer-address [expanded]="true" [mode]="updateMode" [supplier]="true" [mandatory]="true"></app-customer-address>
+<app-udf-step-workflow  [source]="(idSupplier!==null && idSupplier!==undefined)?'edit':'add'"
+  [category]="'SUPPLIER'"></app-udf-step-workflow>
+
+
+<!-- end  form address supplier information -->
+
+<div class="d-block text-end card-footer p-2">
+  <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button *ngIf="idSupplier==null && idSupplier==undefined" class="mx-2 btn btn-success " type="submit"
+    (click)="onSubmit('POTENTIEL')">{{'button.save'| translate }}
+  </button>
+  <button *ngIf="idSupplier !==null && idSupplier !==undefined" class="mx-2 btn btn-success " type="submit"
+    (click)="onSubmit()" >{{'button.save'| translate }}
+  </button>
+  <button *ngIf="(idSupplier!=null && idSupplier!=undefined)&& supplier?.status!=='REJECTED'"
+    class="mx-2 btn btn-danger " type="submit" (click)="onSubmit('REJECTED')"
+   >{{ 'supplier.reject' | translate }}
+  </button>
+  <button *ngIf="(idSupplier!=null && idSupplier!=undefined) && supplier?.status!=='APPROVED' "
+    class="mx-2 btn btn-success " type="submit" (click)="onSubmit('APPROVED')"
+    >{{ 'supplier.approve' | translate }}
+  </button>
+
+</div>
+<!-- </form> -->
+</ng-container>

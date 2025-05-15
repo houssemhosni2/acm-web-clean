@@ -1,0 +1,140 @@
+<app-page-title [heading]=" 'sidebar.registration_incentives'| translate " [icon]="'pe-7s-gift'" [account]="''"
+    [status]="-1">
+</app-page-title>
+
+<div class="card row">
+    <div class="card-header ">
+        <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+            <div class="card-title m-0">{{'incentive.registration_incentives_settings'| translate }}</div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="row pt-3">
+            <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+                <div class="row">
+                    <div class="col-md-2 col-lg-2 col-sm-2">
+                        <label>{{'incentive.select_category' | translate}} : </label>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-4 justify-content-start">
+                        <div class="input-group">
+                            <select class="form-control"
+                                [(ngModel)]="productEntity" (ngModelChange)="selectProduct($event)">
+                                <option *ngFor="let product of productEntitys" [ngValue]="product">
+                                    {{product.description}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-2 d-flex justify-content-start">
+                        <div>
+                                <div class="input-group">
+                                    <bSwitch  [(ngModel)]="enabled" [switch-size]="'small'" [switch-animate]="true"
+                                        [switch-off-color]="'danger'" class="px-2 mb-0 " (click)="EnableDisableRegistration()">
+                                    </bSwitch>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+                <div class="row">
+                    <div class="col-md-2 col-lg-2 col-sm-2">
+                        <label>{{'incentive.select_frequency' | translate}} : </label>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-4 justify-content-start">
+                        <div class="input-group">
+                            <select class="form-control"
+                                [(ngModel)]="frequency" (ngModelChange)="selectFrequency($event)">
+                                <option *ngFor="let freq of frequencies" [ngValue]="freq">
+                                    {{freq.description}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="pt-5" *ngIf="productSelected && frequencySelected">
+            <form [formGroup]="registrationIncentiveForm">
+                <div class="row">
+            <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+                <table class="table">
+                <tr>
+                  <th>{{'incentive.role' | translate}}</th>
+                  <th>{{'incentive.customer_type' | translate}}</th>
+                  <th>{{'incentive.incentive_type' | translate}}</th>
+                  <th>{{'incentive.incentive_value' | translate}}</th>
+                  <th>{{'incentive.based_on' | translate}}</th>
+                </tr>
+                <tr *ngFor="let registration of registrations, let i = index">
+                  <td *ngIf="!registration.delete"><select class="form-control" formControlName="role{{i}}">
+                    <option *ngFor="let groupeEntity of groupeEntitys" [ngValue]="groupeEntity.code">
+                        {{groupeEntity.libelle}}
+                    </option>
+                </select>
+                <td *ngIf="!registration.delete">
+                    <select class="form-control" formControlName="customerType{{i}}" [compareWith]="compareCustomerType">
+                        <option *ngFor="let customerType of registrationCustomerType" [ngValue]="customerType">
+                            {{customerType.description}}
+                        </option>
+                    </select>
+                </td>
+                <td *ngIf="!registration.delete">
+                    <select class="form-control" formControlName="incentiveType{{i}}" [compareWith]="compareIncentiveType">
+                        <option *ngFor="let incentiveType of incentiveTypes" [ngValue]="incentiveType">
+                            {{incentiveType.description}}
+                        </option>
+                    </select>
+                </td>
+                  <td *ngIf="!registration.delete"><input type="text" class="form-control" formControlName="incentiveValue{{i}}"></td>
+                  <td *ngIf="!registration.delete">
+                    <select class="form-control" formControlName="basedOn{{i}}" [compareWith]="compareBasedOn">
+                        <option *ngFor="let registrationBasedOn of registrationsBasedOn" [ngValue]="registrationBasedOn">
+                            {{registrationBasedOn.description}}
+                        </option>
+                    </select>
+                  </td>
+                  <td *ngIf="!registration.delete">
+                    <div class="row d-flex justify-content-end px-3">
+                        <div class="px-2">
+                            <button class="btn btn-success" (click)="saveRegistrationSettings(i)">
+                                <i class="pe-7s-check btn-icon-wrapper text-white"></i>
+                            </button>
+                        </div>
+                        <div class="px-2">
+                            <button class="btn btn-danger" (click)="deleteIncentiveRegistration(i)">
+                                <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              <div class ="scroll-incentive" #scrollToNewRegistration>
+              </div>
+              <div class="col-xl-12 col-md-12 px-0 mx-0 row">
+                <div class="col-xl-9 col-md-9">
+                  <ngb-pagination [collectionSize]="totalElements" [(page)]="pageNumber" [pageSize]="pageSize" size="sm"
+                                  [maxSize]="3" [boundaryLinks]="true" (pageChange)="reloadIncentiveRegistrations(pageNumber,'NUMBER')">
+                  </ngb-pagination>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                <button [disabled]="saveRegistration" class="btn-shadow d-inline-flex align-items-center btn btn-primary" type="button"
+                 (click)="addRegistration(scrollToNewRegistration)">
+                    <fa class="mx-2" name="plus">
+                      <i aria-hidden="true" class="fa fa-plus" ng-reflect-klass="fa fa-plus"></i>
+                    </fa>
+                  </button>
+            </div>
+        </div>
+            </form>
+        </div>
+    </div>
+</div>

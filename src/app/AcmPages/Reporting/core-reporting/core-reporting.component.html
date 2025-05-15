@@ -1,0 +1,195 @@
+<app-page-title [heading]="'reporting.title' | translate " [icon]="'pe-7s-news-paper'" [status]="-1"></app-page-title>
+
+<div class="main-card mb-2 card">
+    <div class="card-header">
+        {{'reporting.report_list'| translate }}
+    </div>
+    <div>
+        <div class="table-responsive">
+            <table class="mb-0 t table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 90%;">{{ 'reporting.report_name' | translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        *ngFor="let item of reportingSettingList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                        <td> {{item.reportName}} </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning text-white mx-1" (click)="openReportCriteria(item)">
+                                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'eye')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <ngb-pagination [collectionSize]="reportingSettingList?.length" [(page)]="page" [pageSize]="pageSize"
+                    size="sm" [maxSize]="3" [boundaryLinks]="true">
+                </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <div class="d-flex justify-content-lg-end">
+                    <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                        <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                        <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                        <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                        <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--form search-->
+<div class="card-hover-shadow-2x mb-1 card" *ngIf="showReportCriteria">
+    <div class="card-header">
+        <i class="lnr-magnifier px-2"> </i>
+        {{ reportingSetting?.reportName }} &nbsp; {{'reporting.report_criteria'| translate }}
+    </div>
+    <form class="form" [formGroup]='reportingCriteriaForm'>
+        <div class="card-body">
+            <div class="col-xl-12 col-sm-12 row no-gutters">
+                <div class="col-sm-4" *ngFor="let filter of selectedFilter">
+                    <div class="position-relative form-group" *ngIf="filter === 'products'">
+                        <label>{{'reporting.products'| translate }}</label>
+                        <p-multiSelect [filter]="false" [options]="products" [styleClass]="'full-width'"
+                            formControlName="products" optionLabel="code"
+                            [required]="displayMultiSelect"></p-multiSelect>
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'branches'">
+                        <label>{{'reporting.branches'| translate }}</label>
+                        <p-multiSelect [filter]="false" [options]="branches" [styleClass]="'full-width'"
+                            formControlName="branches" optionLabel="description"
+                            [required]="displayMultiSelect"></p-multiSelect>
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'loanOfficiers'">
+                        <label>{{'reporting.loan_officer'| translate }}</label>
+                        <p-multiSelect [filter]="false" [options]="loanOfficers" [styleClass]="'full-width'"
+                            formControlName="loanOfficiers" optionLabel="fullName"
+                            [required]="displayMultiSelect"></p-multiSelect>
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'loanStatus'">
+                        <label>{{'reporting.loan_status'| translate }}</label>
+                        <p-multiSelect [filter]="false" [options]="loanStatus" [styleClass]="'full-width'"
+                            formControlName="loanStatus" optionLabel="key" optionValue="value" [required]="displayMultiSelect">
+                        </p-multiSelect>
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'glAccounts'">
+                        <label>{{'gl-accounts.gl-accounts'| translate }}</label>
+                        <p-multiSelect [filter]="false" [options]="glAccountList" [styleClass]="'full-width'"
+                            formControlName="glAccounts" optionValue="id" optionLabel="accountNumber" [required]="displayMultiSelect">
+                            <ng-template let-item pTemplate="item">
+                                {{ item.accountNumber }} - {{ item.name }}
+                            </ng-template>
+                        </p-multiSelect>
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'glAccountCategory'">
+                        <label>{{'reporting.gl_accounts_category'| translate }}</label>
+                        <p-multiSelect [filter]="false" [options]="glAccountCategory" [styleClass]="'full-width'"
+                            formControlName="glAccountCategory" [required]="displayMultiSelect">
+                        </p-multiSelect>
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'valueDateFrom'">
+                        <label>{{ 'receipt-view.value-date-from' | translate }}</label>
+                        <input type="date" class="form-control" formControlName="valueDateFrom">
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'valueDateTo'">
+                        <label>{{ 'receipt-view.value-date-to' | translate }}</label>
+                        <input type="date" class="form-control" formControlName="valueDateTo">
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'issueDateFrom'">
+                        <label>{{'reporting.issue_date_from'| translate }}</label>
+                        <input type="date" class="form-control" formControlName="issueDateFrom">
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'issueDateTo'">
+                        <label>{{'reporting.issue_date_to'| translate }}</label>
+                        <input type="date" class="form-control" formControlName="issueDateTo">
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'customerName'">
+                        <label>{{'upload_document.Customer_Name'| translate }}</label>
+                        <input type="text" class="form-control" formControlName="customerName">
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'customerNumber'">
+                        <label>{{'upload_document.customer_number'| translate }}</label>
+                        <input type="text" class="form-control" formControlName="customerNumber">
+                    </div>
+                    <div class="position-relative form-group" *ngIf="filter === 'accountNumber'">
+                        <label>{{'upload_document.Account_Number'| translate }}</label>
+                        <input type="text" class="form-control" formControlName="accountNumber">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-block text-end card-footer">
+        <div class="d-flex justify-content-end px-2">
+            <span class="mx-2">
+                <button class="btn btn-danger mt-2" (click)="reset()">{{'button.refresh'| translate }}</button>
+            </span>
+            <span class="mx-2">
+                <button class="btn btn-primary mt-2" (click)="findReportData()">{{'button.generate'| translate }}</button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="main-card mb-2 card" *ngIf="showReportData">
+    <div class="card-header">
+        {{'reporting.report_data'| translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button type="button" class="btn btn-success" (click)="generateReport('excel')">
+                <span class="fa fa-file-excel-o" style="font-size: 1.1rem;"></span>
+            </button>
+            <button type="button" class="btn btn-danger m-2" (click)="generateReport('pdf')">
+                <span class="fa fa-file-pdf-o" style="font-size: 1.1rem;"></span>
+            </button>
+        </div>
+    </div>
+    <div>
+        <div class="table-responsive">
+            <table class="mb-0 t table table-hover">
+                <thead>
+                    <tr>
+                        <th *ngFor="let item of reportData[0]">{{ item }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of reportData.slice(1) | slice: (reportDatapage - 1) * reportDataPageSize : (reportDatapage - 1) * reportDataPageSize + reportDataPageSize">
+                        <td *ngFor="let item of row">{{ item }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+    <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <ngb-pagination [collectionSize]="reportData?.length" [(page)]="reportDatapage" [pageSize]="reportDataPageSize"
+                    size="sm" [maxSize]="3" [boundaryLinks]="true">
+                </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <div class="d-flex justify-content-lg-end">
+                    <select class="custom-select" style="width: auto" name="reportDataPageSize" [(ngModel)]="reportDataPageSize">
+                        <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                        <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                        <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                        <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

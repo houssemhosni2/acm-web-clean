@@ -1,0 +1,420 @@
+<!--title-->
+<app-page-title [heading]="'sidebar.add_asset' | translate" [icon]="'pe-7s-note2'" [account]="''"
+  [status]="-1"></app-page-title>
+<!--form add-->
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseSupplier" aria-expanded="true"
+    aria-controls="collapseSupplier" (click)="toggleCollapseSupplier()">
+    <div>
+      <i class="lnr-user text-secondary pr-2"></i>
+      {{ 'supplier.supplier-information' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedSupplier===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseSupplier" [ngClass]="(expandedSupplier===true)?'collapse show':'collapse'"
+    aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div class="page-title-actions p-4 d-flex justify-content-end">
+      <div class="px-3">
+        <button class="btn-shadow d-inline-flex align-items-center btn btn-primary px-3" (click)="addSupplier()">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{ 'asset.add-a-new-supplier' | translate }}
+        </button>
+      </div>
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="openSupplierList(content)">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{ 'asset.select-supplier' | translate }}
+      </button>
+    </div>
+    <div *ngIf="supplierSelected | async" class="card-body pt-0 px-5">
+      <div class="row">
+        <div class=" col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">Type</div>
+                <div class="widget-subheading" *ngIf="supplier.type === 1"> Personne physique </div>
+                <div class="widget-subheading" *ngIf="supplier.type === 2"> Personne morale </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class=" col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.name' | translate}}</div>
+                <div class="widget-subheading"> {{supplier.name}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class=" col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.ActivityArea' | translate}}</div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 1"> Commercial - تجارى </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 2"> Industrial - صناعي </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 3"> Services - خدمي </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 4"> Tourism - سياحي </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 5"> Health - صحي </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 6"> Education - تعليمي </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 9"> Entertainment - ترفيه </div>
+                <div class="widget-subheading" *ngIf="supplier.activity === 10"> Agriculture - زراعي </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class=" col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.acronym' | translate}}</div>
+                <div class="widget-subheading"> {{supplier.acronyme}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.email'| translate}}</div>
+                <div class="widget-subheading"> {{supplier.email}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.start-date-of-activity' | translate}}</div>
+                <div class="widget-subheading"> {{supplier.activityStartDate | date : 'dd/MM/yyyy'}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.LegalCategory'| translate}}</div>
+                <div class="widget-subheading" *ngIf="supplier.legalCatalog === 1"> Entreprise individuelle </div>
+                <div class="widget-subheading" *ngIf="supplier.legalCatalog === 2"> Société unipersonnelle à
+                  responsabilité limitée (SUARL) </div>
+                <div class="widget-subheading" *ngIf="supplier.legalCatalog === 3"> Société à responsabilité limitée
+                  (SARL) </div>
+                <div class="widget-subheading" *ngIf="supplier.legalCatalog === 4"> Société anonyme (SA) </div>
+                <div class="widget-subheading" *ngIf="supplier.legalCatalog === 5"> Société en commandite par actions
+                  (SCA) </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.patentNumber'| translate}}</div>
+                <div class="widget-subheading"> {{supplier.registerNumber}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.telephone' | translate}}</div>
+                <div class="widget-subheading"> {{supplier.telephone}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.web-site' | translate}}</div>
+                <div class="widget-subheading"> {{supplier.webSite}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.fax' | translate}}</div>
+                <div class="widget-subheading"> {{supplier.fax}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.turnover-objective'|translate}}</div>
+                <div class="widget-subheading"> {{supplier.objectif}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-3 widget-content p-0">
+          <div class="widget-content-outer">
+            <div class="widget-content-wrapper">
+              <div class="widget-content-left ">
+                <div class="widget-heading">{{'supplier.periodicity-ca' | translate}}</div>
+                <div class="widget-subheading" *ngIf="supplier.periodicity === 1 "> Mensuelle </div>
+                <div class="widget-subheading" *ngIf="supplier.periodicity === 2 "> Trimestrielle </div>
+                <div class="widget-subheading" *ngIf="supplier.periodicity === 3 "> Semestrielle </div>
+                <div class="widget-subheading" *ngIf="supplier.periodicity === 4 "> Annuelle </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr class="solid">
+  </div>
+</div>
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between" data-target="#collapseAsset" aria-expanded="true"
+    aria-controls="collapseAsset" (click)="toggleCollapseAsset()">
+    <div>
+      <i class="lnr-user text-secondary pr-2"></i>
+      {{ 'asset.article' | translate }}
+    </div>
+    <div>
+      <i [ngClass]="(expandedAsset===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+    </div>
+  </div>
+  <div id="collapseAsset" [ngClass]="(expandedAsset===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+    data-parent="#accordionExample">
+    <div class="col-xl-12 d-flex justify-content-end p-3">
+      <button [disabled]="supplier === undefined" class="d-inline-flex align-items-center btn btn-primary"
+        (click)="addAsset()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{ 'asset.add-asset' | translate }}
+      </button>
+    </div>
+
+    <div *ngFor="let asset of assetForms, let i = index">
+      <form class="form" [formGroup]="asset">
+        <div class="card-body pt-0">
+          <div class="row">
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'asset.code-asset' | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="codeArticle">
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'asset.label' | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="libelle">
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'asset.description' | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="description">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label> {{ 'asset.type' | translate }} </label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="typeAsset" (change)="typeAssetChanged(i)">
+                  <option *ngFor="let type of typeList" [ngValue]="type">
+                    {{type.libelle}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label> {{ 'asset.categorie' | translate }} </label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="categoryAsset" (change)="categoryAssetChanged(i)">
+                  <option value=""></option>
+                  <option *ngFor="let category of categoryListChange[i]" [ngValue]="category">
+                    {{category.libelle}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label> {{ 'asset.sous-categorie' | translate }} </label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="subCategoryAsset">
+                  <option value=""></option>
+                  <option *ngFor="let subCategory of subCategoryListChange[i]" [ngValue]="subCategory">
+                    {{subCategory.libelle}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'asset.start-date' | translate }}</label>
+                <input type="date" class="form-control" formControlName="dateDebut" (change)="dateChanged(i)">
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'asset.end-date' | translate }}</label>
+                <input type="date" class="form-control" formControlName="dateFin" (change)="dateChanged(i)">
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative form-group">
+                <label>{{ 'asset.unit-price' | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="prixUnitaire"
+                (input)="validateInput($event,i)">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'asset.reserved-stock' | translate }}</label>
+                <span class="text-danger">*</span>
+                <input type="text" class="form-control" formControlName="reservedStock">
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'asset.tva' | translate }}</label>
+                <select class="form-control" formControlName="tva">
+                  <option value="0">0%</option>
+                  <option value="7">7%</option>
+                  <option value="13">13%</option>
+                  <option value="19">19%</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'asset.discount-asset' | translate }}</label>
+                <span class="text-danger">*</span>
+                <div class="input-group">
+                  <div>
+                    <input type="number" class="form-control" formControlName="remiseArticle"
+                      onkeypress="return event.charCode >= 48" min="0">
+                  </div>
+                  <span class="input-group-append">
+                    <button class="btn btn-light border hl" ngxclipboard="" type="button"
+                      ng-reflect-target-elm="">%</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'asset.promotion' | translate }}</label>
+                <div class="input-group">
+                  <div>
+                    <input type="number" class="form-control" min="0" formControlName="promotion">
+                  </div>
+                  <span class="input-group-append">
+                    <button class="btn btn-light border hl" ngxclipboard="" type="button"
+                      ng-reflect-target-elm="">%</button></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'asset.promotion-start-date' | translate }}</label>
+                <input type="date" class="form-control" formControlName="promotionStartDate" (change)="dateChanged(i)">
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'asset.promotion-end-date' | translate }}</label>
+                <input type="date" class="form-control" formControlName="promotionEndDate" (change)="dateChanged(i)">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'Grandeur_de_mesure' | translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="mesure" (change)="onMesureChange($event,i)">
+                  <option value="Poids">{{ 'Poids' | translate }}</option>
+                  <option value="Volume">{{ 'Volume' | translate }}</option>
+                  <option value="Unité">{{ 'Unité' | translate }}</option>
+                  <option value="Superficie">{{ 'Superficie' | translate }}</option>
+                  <option value="Longueur">{{ 'Longueur' | translate }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 px-1">
+              <div class="position-relative">
+                <label>{{ 'unite' | translate }}</label>
+                <span class="text-danger">*</span>
+                <select class="form-control" formControlName="unite">
+                  <option value="">
+                  </option>
+                  <option *ngFor="let option of mesureOptions" [ngValue]="option">
+                    {{option | translate}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="solid">
+      </form>
+    </div>
+
+    <div class="d-block text-end card-footer p-2">
+      <button class="mx-2 btn btn-outline-danger" (click)="exit()">{{'button.exit'|
+        translate }}</button>
+      <button class="mx-2 btn btn-success " (click)="externalSubmit()"
+        [disabled]=" assetList.length === 0">{{'button.save'| translate }}</button>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="main-card card">
+    <div class="card-header py-2">
+      <h4 class="modal-title">{{'asset.select-supplier'| translate }}</h4>
+    </div>
+    <app-supplier-list [search]="true" (supplierSelected)="selectSupplier($event)"></app-supplier-list>
+  </div>
+</ng-template>

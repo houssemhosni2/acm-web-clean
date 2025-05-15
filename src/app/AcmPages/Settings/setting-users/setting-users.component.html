@@ -1,0 +1,472 @@
+<div class="py-1">
+<div class="card">
+  <ngx-loading [show]="loading"
+    [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+  </ngx-loading>
+  <div class="card-header">
+    {{"setting.setting_users.setting_user" | translate}}
+    <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addUser(modalContent)">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        {{"setting.setting_users.add_user" | translate}}
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [value]="userPagination.resultsUsers"
+      (onLazyLoad)="reloadUserList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="userPagination.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true"
+      [pageLinks]="5" [rows]="10" [columns]="selectedColumns" [(selection)]="user" selectionMode="single">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <!-- actions button -->
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'employeeId'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'login'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'nom'" class="form-control ACM-Dashbord-customername-col" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'prenom'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'email'" class="form-control ACM-Dashbord-Date-col" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <select *ngSwitchCase="'groupes'" class="form-control ACM-Dashbord-productDescription-col"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="null" >{{'category_loan.all' | translate}}</option>
+              <option *ngFor="let grp of groups" value="{{grp.label}}">{{grp.value}}</option>
+            </select>
+            <input *ngSwitchCase="'branchDescription'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'responsableId'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'portfolioName'" class="form-control" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+              <select *ngSwitchCase="'enabled'" class="form-control ACM-Dashbord-productDescription-col"
+              (change)="dt.filter($event.target.value, col.field, 'equals')">
+              <option value="null">{{'category_loan.all' | translate}}</option>
+              <option value="true">{{"setting.on" | translate}}</option>
+              <option value="false">{{"setting.off" | translate}}</option>
+            </select>
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+            <div *ngSwitchCase="'employeeId'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'login'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'nom'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'prenom'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'email'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'groupes'">{{rowData[col.field][0]?.libelle}}</div>
+            <div *ngSwitchCase="'branchDescription'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'responsableId'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'portfolioName'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'enabled'">
+              <bSwitch [(ngModel)]="rowData[col.field]" [switch-size]="'mini'" [switch-handle-width]="40" [switch-animate]="true"
+                [switch-off-color]="'danger'" class="px-2 mb-0" (click)="endableDisable(rowData)">
+              </bSwitch>
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-warning text-white" (click)="updateUser(modalContent, rowData)">
+              <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+            </button>
+          </td>
+          <td>
+            <button class="btn-icon btn-icon-only btn d-flex justify-items-center p-0"
+              (click)="openNotificationModal(notifmodalContent, rowData)">
+              <i class="fa fa-bell btn-icon-wrapper text-black  pt-2 font-size-xlg mb-1"></i>
+            </button>
+          </td>
+          <td>
+            <button class="btn-icon btn-icon-only btn d-flex justify-items-center p-0"
+             (click)="openMyTeam(myTeams,rowData)">
+              <i class="fa fa-users btn-icon-wrapper text-black  pt-2 font-size-xlg mb-1"></i>
+              </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+</div>
+  <ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2">
+        <h5 *ngIf="action === 'update'" class="modal-title">{{"setting.setting_users.update_user" | translate}}</h5>
+        <h5 *ngIf="action === 'create'" class="modal-title">{{"setting.setting_users.add_user" | translate}}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+          <span aria-hidden="true" (click)="closeModal()">&times;</span>
+        </button>
+      </div>
+      <form class="form" [formGroup]="groupForm" (ngSubmit)="onSubmit();dateChanged()">
+        <div class="card-body">
+          <perfect-scrollbar style="height: 400px;">
+            <h4 class="pb-3">{{UserforUpdate.login}}</h4>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.category" | translate}}</label>
+              <span class="text-danger">*</span>
+              <mat-radio-group labelPosition="after" formControlName="category"
+                class="d-flex flex-row bd-highlight mb-3">
+                <mat-radio-button class="pt-2 px-3 bd-highlight" value="OPERATION">
+                  {{"setting.setting_users.operation" | translate}}
+                </mat-radio-button>
+                <mat-radio-button class="pt-2 px-3 bd-highlight" value="MANAGMENT">
+                  {{"setting.setting_users.managment" | translate}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+            <div class="position-relative pb-4">
+              <label> {{"setting.setting_users.login" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="login" [attr.disabled]="action === 'update' ? '' : null">
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label> {{"setting.setting_users.employee_id" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="employeeId"  >
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.first-name" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="firstName">
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.last-name" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="lastName">
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.email" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="email">
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.group" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <select class="form-control" formControlName="group" (change)="changeGroup($event)">
+                  <option *ngFor="let groupEntity of groupEntitys" [ngValue]="groupEntity.code">{{groupEntity.code}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"customer.branch" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <select class="form-control" formControlName="branche"  (change)="branchChanged()">
+                  <option selected value></option>
+                  <option *ngFor="let brancheEntity of brancheEntitys" [ngValue]="brancheEntity.id">
+                    {{brancheEntity.description}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.acces_branches" | translate}}</label>
+              <ngx-select-dropdown tabindex="0" formControlName="branches" [multiple]="true" [(ngModel)]="branchesArray"
+                [options]="brancheEntitys" [config]="configBranches" (change)="branchMethode()"></ngx-select-dropdown>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.responsible" | translate}}</label>
+              <ngx-select-dropdown  [ngClass]="(emptyResponsible===true)?'ACM-responsible-error':''" tabindex="0" formControlName="responsible" [multiple]="false" [(ngModel)]="responsibleSelected"
+                [options]="responsibleList" [config]="configResponsibles"></ngx-select-dropdown>
+              <div class="custom-checkbox custom-control" *ngIf="action === 'update'">
+                <input class="custom-control-input" id="exampleCustomCheckboxReview" type="checkbox"
+                  formControlName="updateUsersResponsible">
+                <label class="custom-control-label" for="exampleCustomCheckboxReview">
+                  {{"setting.setting_users.change_responsible" | translate}}</label>
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label>{{"setting.setting_users.portfolio" | translate}}</label>
+              <div>
+                <select  [attr.disabled]="displayPortfolio ?'':null"  class="form-control" formControlName="portfolio" [compareWith]="comparePortfolio">
+                  <option selected value>
+                 </option>
+                  <option *ngFor="let portfolio of listPortfolio" [ngValue]="portfolio">
+                    {{portfolio.portfolioName}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="position-relative form-group">
+              <label>{{"setting.setting_users.hiring_date" | translate}}</label>
+              <span class="text-danger">*</span>
+              <input type="date" class="form-control" [max]="groupForm.controls.resigningDate.value"  (blur)="dateChanged()"formControlName="hiringDate"  placeHolder="dd/mm/yyyy" >
+            </div>
+            <div class="position-relative form-group">
+              <label> {{"setting.setting_users.resigning_date" | translate}}</label>
+              <input type="date" class="form-control" [min]="groupForm.controls.hiringDate.value" (blur)="dateChanged()" formControlName="resigningDate"  placeHolder="dd/mm/yyyy" >
+            </div>
+
+          </perfect-scrollbar>
+        </div>
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModal()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+  <ng-template #notifmodalContent let-close="close">
+
+    <div class="card">
+      <div class="modal-header py-2">
+        <h5 class="modal-title">
+          {{'setting.setting_notifications.setting_notification'| translate }}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+          <span aria-hidden="true" (click)="closeModal()">&times;</span>
+        </button>
+      </div>
+      <div>
+        <div class="table-responsive">
+          <table class="mb-0 t table table-hover">
+            <thead>
+              <tr>
+                <th>{{'setting.category'| translate }}</th>
+                <th>{{'setting.setting_notifications.type_notification'| translate }}</th>
+                <th>{{'setting.status'| translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of userSettingNotificationsEntitys, let i = index ">
+                <td>{{s.settingNotificationDTO.category}}</td>
+                <td>{{s.settingNotificationDTO.typeNotif }}</td>
+                <td>
+                  <bSwitch [(ngModel)]="s.statut" [switch-size]="'mini'" [switch-animate]="true"
+                    [switch-off-color]="'danger'" class="px-2 mb-0" (click)="enableDisableNotif(s)" [disabled]="!s.settingNotificationDTO.enabled">
+                  </bSwitch>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.close' |
+          translate}}</button>
+      </div>
+    </div>
+  </ng-template>
+  <!-- My Teams -->
+  <ng-template #myTeams let-close="close">
+    <div class="card">
+      <div class="modal-header py-2">
+        <h5 class="modal-title">
+            {{'setting.setting_users.my_teams' | translate}} : {{supervisorName}}
+        </h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+          <span aria-hidden="true" (click)="closeModal()">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <p-table #dt [responsive]="true" [autoLayout]=true [value]="teamsPagination.resultsUsers"
+          (onLazyLoad)="reloadUserListTeams($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+          [totalRecords]="teamsPagination.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true"
+          [pageLinks]="5" [rows]="10" [columns]="teamsSelectedColumns" [(selection)]="team" selectionMode="multiple">
+          <ng-template pTemplate="header" let-columns >
+            <tr>
+              <!-- actions button -->
+              <th class="ACM_Customer_Search_void_Col"></th>
+              <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+                <div class="center-elem text-center">
+                  {{col.header | translate}}
+                  <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+                </div>
+              </th>
+              <th style='width: 40px;'></th>
+            </tr>
+            <tr>
+              <th class="ACM_Customer_Search_void_Col">
+                  <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              </th>
+              <th *ngFor="let col of columns" [ngSwitch]="col.field">
+                <input *ngSwitchCase="'login'" class="form-control placeholder" type="text"
+                  (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'nom'" class="form-control ACM-Dashbord-customername-col" type="text"
+                  (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'prenom'" class="form-control" type="text"
+                  (input)="dt.filter($event.target.value, col.field, 'contains')">
+                <input *ngSwitchCase="'oldResponsableName'" class="form-control" type="text"
+                  (input)="dt.filter($event.target.value, col.field, 'contains')">
+                  <select *ngSwitchCase="'temporaryResponsable'" class="form-control ACM-Dashbord-productDescription-col"
+                  (change)="dt.filter($event.target.value, col.field, 'equals')">
+                  <option value="null">{{'category_loan.all' | translate}}</option>
+                  <option value="true">{{"setting.on" | translate}}</option>
+                  <option value="false">{{"setting.off" | translate}}</option>
+                </select>
+              </th>
+
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-i="rowIndex" let-loans let-rowData let-columns="columns">
+
+            <tr >
+              <td>
+                  <p-tableCheckbox  [value]="rowData" ></p-tableCheckbox>
+                </td>
+              <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+                <div *ngSwitchCase="'login'">{{rowData[col.field]}}</div>
+                <div *ngSwitchCase="'nom'">{{rowData[col.field]}}</div>
+                <div *ngSwitchCase="'prenom'">{{rowData[col.field]}}</div>
+                <div *ngSwitchCase="'oldResponsableName'">{{rowData[col.field]}}</div>
+                <div *ngSwitchCase="'temporaryResponsable'">
+                  <div class="custom-checkbox custom-control">
+                    <input class="custom-control-input" disabled [(ngModel)]="rowData[col.field]" [id]="i"
+                     type="checkbox" [name]="i">
+                    <label class="custom-control-label" [for]="i"></label>
+                </div>
+                </div>
+
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+      </div>
+      <form class="form m-4" [formGroup]="teamForm" (ngSubmit)="changeSupervisor(team)">
+      <div class="position-relative pb-4">
+        <label>{{"setting.setting_users.responsible" | translate}}</label>
+        <span class="text-danger">*</span>
+        <ngx-select-dropdown [ngClass]="(emptyResponsible===true)?'ACM-responsible-error ACM-team-supervisor':'ACM-team-supervisor'" tabindex="0" [multiple]="false"
+        formControlName="responsible"
+          [options]="responsibleList" [config]="configResponsibles"></ngx-select-dropdown>
+      </div>
+
+      <div class="position-relative form-group">
+        <div class="custom-checkbox custom-control">
+            <input class="custom-control-input" id="confirm1" type="checkbox" formControlName="allTemporary">
+            <label class="custom-control-label" for="confirm1">{{'setting.setting_users.change_is_temp' | translate}}</label>
+        </div>
+    </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.close' |
+          translate}}</button>
+      </div>
+      </form>
+    </div>
+  </ng-template>
+  <div class="py-1">
+    <div class="card">
+        <div class="card-header">
+          {{"setting.setting_users.setting_portfolio" | translate}}
+          <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="d-inline-flex align-items-center btn btn-primary" (click)="addPortfolio(modalContentPortfolio)">
+              <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+              {{"setting.setting_users.add_portfolio" | translate}}
+            </button>
+          </div>
+        </div>
+      <div class="card-body">
+        <p-table #dtPortfolio  [responsive]="true" [autoLayout]=true [value]="portfolioPagination.resultsPortfolio"
+      (onLazyLoad)="reloadPortfolioList($event)" [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [totalRecords]="portfolioPagination.totalElements" [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true"
+      [pageLinks]="5" [rows]="10" [columns]="selectedPortfolio" [(selection)]="portfolio" selectionMode="single">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <!-- actions button -->
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'portfolioId'" class="form-control placeholder" type="text"
+            (input)="dtPortfolio.filter($event.target.value, col.field, 'contains')" style="width: 100%">
+          <input *ngSwitchCase="'code'" class="form-control placeholder" type="text"
+            (input)="dtPortfolio.filter($event.target.value, col.field, 'contains')" style="width: 100%">
+          <input *ngSwitchCase="'portfolioName'" class="form-control" type="text"
+            (input)="dtPortfolio.filter($event.target.value, col.field, 'contains')" style="width: 100%">
+          </th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-loans let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+            <div *ngSwitchCase="'portfolioId'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'code'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'portfolioName'">{{rowData[col.field]}}</div>
+          </td>
+            <td>
+              <button class="btn btn-warning text-white" (click)="updatePortfolio(modalContentPortfolio, rowData)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+              </button>
+            </td>
+        </tr>
+      </ng-template>
+    </p-table>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #modalContentPortfolio let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2">
+        <h5 *ngIf="action === 'update'" class="modal-title">{{"setting.setting_users.update_portfolio" | translate}}</h5>
+        <h5 *ngIf="action === 'create'" class="modal-title">{{"setting.setting_users.add_portfolio" | translate}}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+          <span aria-hidden="true" (click)="closeModal()">&times;</span>
+        </button>
+      </div>
+      <form class="form" [formGroup]="groupFormPortfolio" (ngSubmit)="onSubmitPortfolio();">
+        <div class="card-body">
+          <perfect-scrollbar style="height: 200px;">
+            <div class="position-relative pb-4">
+              <label> {{"setting.setting_users.portfolioName" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="portfolioName" >
+              </div>
+            </div>
+            <div class="position-relative pb-4">
+              <label> {{"setting.setting_users.portfolioCode" | translate}}</label>
+              <span class="text-danger">*</span>
+              <div>
+                <input class="form-control" formControlName="code"  >
+              </div>
+            </div>
+          </perfect-scrollbar>
+        </div>
+        <div class="modal-footer">
+          <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModal()">{{'button.cancel' |
+            translate}}</button>
+          <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

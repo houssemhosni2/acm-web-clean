@@ -1,0 +1,202 @@
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseCustomerReceipts"
+      aria-expanded="true" aria-controls="collapseCustomerReceipts" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-chart-bars text-secondary px-2"></i>
+        {{'customer.receipt_view'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseCustomerReceipts" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+      aria-labelledby="headingOne" data-parent="#accordionExample">
+
+      <div *ngIf="customerReceipts.length > 0">
+        <div>
+          <ngx-loading [show]="loading"
+            [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+          <div class="table-responsive">
+            <table class="mb-0 table green">
+              <thead>
+                <tr>
+                  <th>{{'transaction.receipt_number'| translate }}</th>
+                  <th *ngIf="useExternalCBS === '1'">{{'credit-line-account.account-number'| translate }}</th>
+                  <th *ngIf="useExternalCBS !== '1'">{{'loan.loan_id'| translate }}</th>
+                  <th>{{'dashboard.amount'| translate }}</th>
+                  <th>{{'customer_decision.Date'| translate }}</th>
+
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of customerReceipts | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+                  <td> {{ item.receiptNo}}</td>
+                  <td>{{ item.accountNumber }}</td>
+                  <td>{{ item.montant | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }}</td>
+                  <td>{{ item.valueDate | date: 'dd/MM/yyyy' }}</td>
+
+                  <td *ngIf="useExternalCBS === '1'">
+                    <!-- <button *ngIf="!loanSharedService.habilitationButton('SAVING_DEPOSIT','customer-360-details')"  class="btn btn-outline-success mx-2" style="background-color: white;" -->
+
+                    <button (click)="openLarge(content, item)" class="btn btn-outline-success mx-2"
+                      style="background-color: white;">
+                      {{'transaction.print_receipt' | translate }}
+                    </button>
+                  </td>
+                  <td *ngIf="useExternalCBS !== '1'">
+                    <button (click)="openTransactionDetails(content1, item)" class="btn btn-warning mx-2">
+                      <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+        <div class="card-footer pb-0">
+          <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <ngb-pagination [collectionSize]="customerReceipts.length" [(page)]="page" [pageSize]="pageSize" size="sm" [maxSize]="3"
+                [boundaryLinks]="true">
+                <!-- [collectionSize]="customerAccounts.length" -->
+              </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+              <div class="d-flex justify-content-lg-end">
+                <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                  <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                  <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                  <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                  <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div *ngIf="customerReceipts.length === 0">
+        <div class="card-body">
+          <h6 style="color: red;" class="pt-3">{{ 'customer.no_receipt_found' | translate }}</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <ng-template #content let-c="close" let-d="dismiss" >
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="card">
+        <div class="card-header py-2">
+          <i class="lnr-calendar-full text-secondary px-2 pr-2"></i>
+          {{'customer.customer_receipt' | translate }}
+        </div>
+        <div *ngIf="!loading" class="d-flex justify-content-end">
+        </div>
+        <div>
+          <perfect-scrollbar style="height: 300px;">
+            <div class="px-2">
+  
+              <div class="row mb-2" style="padding: 20px;">
+  
+  
+                <label class="text cu-px-th">{{'dashboard.amount'|translate}} </label>
+                <input type="number" min="0" [ngClass]="{'form-control': true,'errForm': errorCheck}"
+                  [(ngModel)]="amountPayment" />
+  
+                <label class="text cu-px-th"> {{'reject.note'| translate }} </label>
+                <textarea type="text" [ngClass]="{'form-control': true,'errForm': errorCheck}" [(ngModel)]="notePayment" >
+                </textarea>
+                <ng-template #elseBlock>-</ng-template>
+  
+              </div>
+            </div>
+          </perfect-scrollbar>
+        </div>
+        <div class="card-footer py-2 d-flex justify-content-end">
+  
+          <button class="mb-2 mx-2 btn btn-outline-danger" (click)=" closeModal()">{{'button.cancel' |
+            translate}}</button>
+          <button type="button" class="mb-2 mx-2 btn btn btn-success" (click)="print()">
+            {{'button.submit' | translate}} </button>
+  
+        </div>
+      </div>
+    </div>
+  </ng-template> -->
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="modalForm" (ngSubmit)="printReceipt()">
+      <div class="modal-header py-2">
+        <h4 class="modal-title">{{'customer.customer_receipt'| translate }}</h4>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+
+        <div class="position-relative form-group">
+          <label>{{'confirmation_dialog.print_receipt'| translate }}</label>
+        </div>
+        <div class="position-relative form-group">
+          <div>
+            <div class="form-group form-check">
+              <label class="form-check-label" for="exampleCustomCheckboxReview"> {{'button.confirm_checkbox' |
+                translate}}</label>
+              <input id="confirm" type="checkbox" class="form-check-input" formControlName="confirm">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Close click')">{{'button.close' |
+          translate}}</button>
+        <button type="submit" class="btn btn-primary">{{'transaction.print_receipt'| translate }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #content1 let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="card">
+      <div class="card-header py-2">
+        {{ 'transactions.transactions' | translate}}
+      </div>
+      <div class="table-responsive">
+        <table class="mb-0 t table table-hover">
+          <thead>
+            <tr>
+              <th>{{'transactions.receipt-number'| translate }}</th>
+              <th>{{'transactions.transaction-type'| translate }}</th>
+              <th>{{'transactions.amount'| translate }}</th>
+              <th>{{'transactions.value-date'| translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let transaction of transactions">
+              <td>{{ transaction.receiptNumber }}</td>
+              <td>{{ transaction.transactionType }} <span *ngIf="transaction?.label != null">:</span> {{ transaction?.label }}</td>
+              <td>{{ transaction.amount | currency:'TND':number : this.devToolsServices.getDecimalPlaces(3):'fr' }}</td>
+              <td>{{ transaction.dateInsertion | date: 'dd/MM/yyyy'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer py-2 d-flex justify-content-end">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c('close')">{{'button.cancel' |
+          translate}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

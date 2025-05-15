@@ -1,0 +1,43 @@
+<div class="card">
+  <div class="card-header">
+    {{'setting.apr_calculation_method'| translate }}
+
+  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{'setting.calculation_option'| translate }}</td>
+            <td>
+              <form [formGroup]="groupForm" >
+              <select class="form-control" formControlName="apr" name = "apr-select">
+                <option  [ngValue]="null" selected disabled>{{'setting.select_apr_method'| translate }}</option>
+                <option  [ngValue]="'abacus_apr'" >APR from Abacus</option>
+                <option [ngValue]="'tn_apr'">APR formula TN</option>
+
+
+            </select>
+          </form>
+          </td>
+
+
+
+
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="card-footer">
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+          <button (click)="updateApr()" class=" btn btn-primary text-white" >{{'button.save' | translate}}</button>
+      </div>
+    </div>
+  </div>
+
+</div>

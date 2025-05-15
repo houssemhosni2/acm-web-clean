@@ -1,0 +1,122 @@
+<div class="card">
+  <ngx-loading [show]="loading"
+    [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}">
+  </ngx-loading>
+  <div class="card-header">
+    {{'setting.setting_steps_workflow.steps_workflow' | translate}}
+  </div>
+  <div class="card-body">
+   <!--  <div class="col-xl-12 pb-2" >
+      <div class="input-group ">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.guarantor' | translate}}</label>
+        <bSwitch [(ngModel)]="stateGuarantor" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateGuarantor()"></bSwitch>
+      </div>
+    </div> -->
+  <!--   <div class="col-xl-12 pb-2" >
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.collateral' | translate}}</label>
+        <bSwitch [(ngModel)]="stateCollateral" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateCollateral()"></bSwitch>
+      </div>
+    </div> -->
+<!--     <div class="col-xl-12 pb-2"  >
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.field_visit' | translate}}</label>
+        <bSwitch [(ngModel)]="stateFieldVisit" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateFieldVisit()"></bSwitch>
+      </div>
+    </div> -->
+  <!--   <div class="col-xl-12 pb-2"  >
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.audit_review' | translate}}</label>
+        <bSwitch [(ngModel)]="stateAuditReview" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateAuditReview()"></bSwitch>
+      </div>
+    </div> -->
+   <!--  <div class="col-xl-12 pb-2"  >
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.risk_review' | translate}}</label>
+        <bSwitch [(ngModel)]="stateRiskReview" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateRiskReview()"></bSwitch>
+      </div>
+    </div> -->
+    <div hidden class="col-xl-12 pb-2">
+      <div class="input-group ">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.application_fees' | translate}}</label>
+        <bSwitch [(ngModel)]="stateApplicationFees" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateApplicationFees()"></bSwitch>
+      </div>
+    </div>
+    <div hidden class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.admin_fees' | translate}}</label>
+        <bSwitch [(ngModel)]="stateAdminFees" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateAdminFees()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.indiv' | translate}}</label>
+        <bSwitch [(ngModel)]="stateIndiv" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateIndiv()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.grp' | translate}}</label>
+        <bSwitch [(ngModel)]="stateGrp" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateGrp()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.org' | translate}}</label>
+        <bSwitch [(ngModel)]="stateOrg" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateOrg()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'loan_management.topup_refinance.topup' | translate}}</label>
+        <bSwitch [(ngModel)]="stateTopup" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateTopup()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'loan_management.topup_refinance.refinance' | translate}}</label>
+        <bSwitch [(ngModel)]="stateRefinance" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateRefinance()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.setting_supplier' | translate}}</label>
+        <bSwitch [(ngModel)]="stateSupplier" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateSupplier()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.setting_steps_workflow.disburse' | translate}}</label>
+        <bSwitch [(ngModel)]="stateDisburse" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateAutomaticDisburse()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'loan.frequency' | translate}}</label>
+        <bSwitch [(ngModel)]="stateFrequency" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateFrequency()"></bSwitch>
+      </div>
+    </div>
+    <div class="col-xl-12 pb-2">
+      <div class="input-group">
+        <label class="mb-0 col-xl-6 px-0">{{'setting.deferred_periode_frequency' | translate}}</label>
+        <bSwitch [(ngModel)]="stateDeferredPeriodeFrequency" [switch-size]="'small'" [switch-animate]="true"
+          [switch-off-color]="'danger'" class="px-2 mb-0" (click)="updateDeferredPeriodeFrequency()"></bSwitch>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,643 @@
+<div *ngIf="category!=='PROSPECT'" >
+<div class="accordion mb-1" *ngIf="customer.customerType === 'INDIV'">
+  <div class="card">
+    <ngx-loading [show]="loading"
+      [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+    <div class="card-header d-flex justify-content-between" data-target="#collapseOne" aria-expanded="true"
+      aria-controls="collapseOne" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-user text-secondary px-2"></i>
+        {{'customer.customer_details'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="row mt-2 pb-0">
+          <div class="col-xl-2 col-sm-3 text-center">
+            <div class="frame">
+              <img [src]='newPhoto' alt="image" class="img-thumbnail">
+              <button type="button" class="mb-2 mx-2 btn-icon btn-icon-only btn-pill btn btn-light ACM_top-left"
+                (click)="fileInput.click()">
+                <i class="lnr-camera btn-icon-wrapper"> </i>
+              </button>
+              <input #fileInput id="photo" type="file" [name]="'file'" (change)="addImage($event)"
+                style="display:none;">
+            </div>
+          </div>
+
+          <div class="col-xl-10 col-sm-9">
+            <div class="widget-content p-0">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="row">
+                      <h4 class="text-uppercase col-12">{{ customer.firstName}}  {{customer.secondName}} {{customer.middleName}} 
+                        {{customer.lastName}} &nbsp; <i *ngIf="customer.ibCustomerId" class="pi pi-globe "></i> &nbsp; 
+                        <div *ngIf="customer.isCustomer" class="badge bg-success">
+                          <div class="px-1">{{'customer.active'| translate }}</div>
+                        </div>  
+                        <div *ngIf="!customer.isCustomer" class="badge bg-warning">
+                          <div class="px-1">{{'customer.prospect'| translate }}</div>
+                        </div>
+                       </h4>
+                      <div class="col-2 px-3">
+                        <div *ngIf="customer.mezaCardStatus === 'TRUSTED'">
+                          <i ngbTooltip="{{'button.trusted'| translate }}"
+                            class="pe-7s-check ACM-icon-assign-customer text-success"></i>
+                        </div>
+                        <div *ngIf="customer.mezaCardStatus === 'UNTRUSTED'">
+                          <i ngbTooltip="{{'button.untrusted'| translate }}"
+                            class="pe-7s-close-circle ACM-icon-assign-customer text-danger"></i>
+                        </div>
+
+                        <div *ngIf="customer.mezaCardStatus === 'NEW' || customer.mezaCardStatus === 'SENT'">
+                          <i ngbTooltip="{{'meza_card_check.waiting_for_check_meza'| translate }}"
+                            class="    pe-7s-hourglass ACM-icon-assign-customer text-warning"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <h5>{{ customer.customerNumber}}</h5>
+                      </div>
+                      <div *ngIf="showInternetBanking === '1'" class="px-1">
+                        <button class="btn btn-primary btn-sm ACM-btn-send-login" *ngIf="customer360"
+                          (click)="sendLogin()">
+                          <i class="lnr-lock btn-icon-wrapper"></i>
+                          {{'customer.send_login'| translate }}
+                        </button>
+
+                        <button class="btn btn-primary ACM-btn-send-login m-2" *ngIf="customer.isSupplier"
+                          (click)="supplierDetails(customer)">
+                          {{ 'customer.is-supplier' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row no-gutters">
+              <div class="col-xl-4 col-sm-4">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left ">
+                        <div class="widget-heading">{{'customer.age'| translate }}</div>
+                        <div class="widget-subheading">{{ customer.dateOfBirth | date: 'dd/MM/yyyy'}}
+                          ( {{ customer.age}} {{'customer.years'| translate}} )
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer.telephone'| translate }}</div>
+                        <div class="widget-subheading row no-gutters">
+                          <div *ngIf="customer.telephone">{{ customer.telephone }}</div>
+                          <div *ngIf="!customer.telephone">{{'customer.msg_telephone'| translate }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="wdiget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer_management.beneficialEffective'| translate }}</div>
+                        <div class="widget-subheading">{{ customer.beneficialEffective }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-4 col-sm-4">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer.portfolio'| translate }}</div>
+                        <div class="widget-subheading">{{ customer.accountPortfolioDescription }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer.branch'| translate }}</div>
+                        <div class="widget-subheading">{{ customer.branchesDescription }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer_management.prospectionSource'| translate }}</div>
+                        <div class="widget-subheading">{{ customer.prospectionSource }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-xl-4 col-sm-4">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer.email'| translate }}</div>
+                        <div *ngIf="customer.email && customer.email !== '' " class="widget-subheading">{{
+                          customer.email }} </div>
+                        <div *ngIf="customer.email === null  || customer.email === undefined || customer.email === ''"
+                          class="widget-subheading"> ..... </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="customer.gender !== null" class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="wdiget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer_management.gender'| translate }}</div>
+                        <div class="widget-subheading" *ngIf="customer.gender === 'M'">{{'customer_management.male'|
+                          translate }}</div>
+                        <div class="widget-subheading" *ngIf="customer.gender === 'F'">{{'customer_management.female'|
+                          translate }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="widget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer_management.prospectionComment'| translate }}</div>
+                        <div class="widget-subheading">{{ customer.prospectionComment }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+              </div>
+
+              <div class="col-xl-12 col-sm-12">
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="wdiget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer.address'| translate }}</div>
+                        <div class="widget-subheading">{{ customerAddress }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!customer360" class="col-xl-12 d-flex justify-content-center pt-2 pb-0">
+            <button class="btn btn-primary" (click)="clientDetails()">
+              {{ 'customer.view_more' | translate }}
+              <span class="text-white pl-2 opacity-3">
+                <i class="fa fa-arrow-right"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="accordion mb-1" *ngIf="customer.customerType === 'ORG'">
+    <div class="card">
+      <ngx-loading [show]="loading"
+        [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+      <div class="card-header d-flex justify-content-between" data-target="#collapseOne" aria-expanded="true"
+        aria-controls="collapseOne" (click)="toggleCollapse()">
+        <div>
+          <i class="lnr-user text-secondary pr-2"></i>
+          {{'customer.customer_organisation.company_information'| translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div class="card-body">
+          <div class="row mt-2 pb-0">
+            <div class="col-xl-2 col-sm-3">
+              <div class="frame">
+                <img [src]='newPhoto' alt="image" class="img-thumbnail">
+                <button type="button" class="mb-2 mx-2 btn-icon btn-icon-only btn-pill btn btn-light ACM_top-left"
+                  (click)="fileInput.click()">
+                  <i class="lnr-camera btn-icon-wrapper"> </i>
+                </button>
+                <input #fileInput type="file" [name]="'file'" (change)="addImage($event)" style="display:none;">
+              </div>
+            </div>
+            <div class="col-xl-6 col-sm-9 mr-0 ml-0 px-5">
+              <div class="row no-gutters">
+                <div class="col-xl-6">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <h4 class="text-uppercase">{{ customer.organizationName }}</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="customer.isCustomer" class="badge bg-success">
+                  <div class="px-1">{{'customer.active'| translate }}</div>
+                </div>
+                <div *ngIf="!customer.isCustomer" class="badge bg-warning">
+                  <div class="px-1">{{'customer.prospect'| translate }}</div>
+                </div>
+                <div class="col-xl-6 col-sm-6">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left ">
+                          <div class="widget-heading">{{'customer.customer_organisation.sector'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.sector }}
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.telephone'| translate }}</div>
+                          <div class="widget-subheading row no-gutters">
+                            <div *ngIf="customer.telephone">{{ customer.telephone }}</div>
+                            <div *ngIf="!customer.telephone">{{'customer.msg_telephone'| translate }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.email'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.email }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.customer_organisation.register_nember'| translate }}
+                          </div>
+                          <div class="widget-subheading row no-gutters">
+                            {{ customer.registerNumber }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-6 col-sm-6">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.customer_organisation.fax'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.fax }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.branch'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.branchesDescription }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.customer_organisation.web_site'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.webSite }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.account_year_end'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.accountYearEnd | date: 'dd/MM/yyyy'}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-12 col-sm-12">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="wdiget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.address'| translate }}</div>
+                          <div class="widget-subheading">{{ customerAddress }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 px-1">
+              <div class="card mb-1 bg-primary widget-chart text-white card-border">
+                <div class="icon-wrapper">
+                  <div class="icon-wrapper-bg"></div>
+                  <i class="lnr-chart-bars text-white"></i>
+                </div>
+                <div class="widget-numbers">{{ customer.arrearDay }}</div>
+                <div class="widget-subheading">{{ 'customer.avg_arrears_days' | translate }}</div>
+              </div>
+            </div>
+            <div class="col-xl-2 px-1">
+              <div class="card mb-1 bg-warning widget-chart text-white card-border">
+                <div class="icon-wrapper">
+                  <div class="icon-wrapper-bg"></div>
+                  <i class="lnr-pushpin text-white"></i>
+                </div>
+                <div class="widget-numbers">{{ customer.arrearSchedule }}</div>
+                <div class="widget-subheading">{{ 'customer.arrears_schedules' | translate }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="accordion mb-1" id="accordionExample" *ngIf="customer.customerType === 'GRP'">
+    <div class="card">
+      <ngx-loading [show]="loading"
+        [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+      <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseOne"
+        aria-expanded="true" aria-controls="collapseOne" (click)="toggleCollapse()">
+        <div>
+          <i class="lnr-users text-secondary px-2"></i>
+          {{'customer.customer_groupe.groupe_details'| translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div id="collapseOne" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+        data-parent="#accordionExample">
+        <div class="card-body">
+          <div class="row mt-2 pb-0">
+            <div class="col-xl-2 col-sm-3">
+              <div class="frame">
+                <img [src]='newPhoto' alt="image" class="img-thumbnail">
+                <button type="button" class="mb-2 mx-2 btn-icon btn-icon-only btn-pill btn btn-light ACM_top-left"
+                  (click)="fileInput.click()">
+                  <i class="lnr-camera btn-icon-wrapper"> </i>
+                </button>
+                <input #fileInput type="file" [name]="'file'" (change)="addImage($event)" style="display:none;">
+              </div>
+            </div>
+            <div class="col-xl-6 col-sm-9 mr-0 ml-0 px-5">
+              <div class="row no-gutters">
+                <div class="col-xl-6">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <h4 class="text-uppercase">{{ customer.solidarityName }}</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="customer.isCustomer" class="badge bg-success">
+                  <div class="px-1">{{'customer.active'| translate }}</div>
+                </div>
+                <div *ngIf="!customer.isCustomer" class="badge bg-warning">
+                  <div class="px-1">{{'customer.prospect'| translate }}</div>
+                </div>
+                <div class="col-xl-6 col-sm-6">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.telephone'| translate }}</div>
+                          <div class="widget-subheading row no-gutters">
+                            <div *ngIf="customer.telephone">{{ customer.telephone }}</div>
+                            <div *ngIf="!customer.telephone">{{'customer.msg_telephone'| translate }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.branch'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.branchesDescription }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.account_year_end'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.accountYearEnd | date: 'dd/MM/yyyy'}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-6 col-sm-6">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.portfolio'| translate }}</div>
+                          <div class="widget-subheading">{{ customer.accountPortfolioDescription }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.customer_organisation.register_nember'| translate }}
+                          </div>
+                          <div class="widget-subheading row no-gutters">
+                            {{customer.registerNumber }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="widget-content p-0">
+                  <div class="widget-content-outer">
+                    <div class="wdiget-content-wrapper">
+                      <div class="widget-content-left">
+                        <div class="widget-heading">{{'customer.address'| translate }}</div>
+                        <div class="widget-subheading">{{ customerAddress }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 px-1">
+              <div class="card mb-1 bg-primary widget-chart text-white card-border">
+                <div class="icon-wrapper">
+                  <div class="icon-wrapper-bg"></div>
+                  <i class="lnr-chart-bars text-white"></i>
+                </div>
+                <div class="widget-numbers">{{ customer.arrearDay }}</div>
+                <div class="widget-subheading">{{ 'customer.avg_arrears_days' | translate }}</div>
+              </div>
+            </div>
+            <div class="col-xl-2 px-1">
+              <div class="card mb-1 bg-warning widget-chart text-white card-border">
+                <div class="icon-wrapper">
+                  <div class="icon-wrapper-bg"></div>
+                  <i class="lnr-pushpin text-white"></i>
+                </div>
+                <div class="widget-numbers">{{ customer.arrearSchedule }}</div>
+                <div class="widget-subheading">{{ 'customer.arrears_schedules' | translate }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="accordion mb-1" *ngIf="(prospect && category==='PROSPECT') || customer.customerType === 'PROSPECT' ">
+    <div class="card">
+      <ngx-loading [show]="loading"
+        [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+      <div class="card-header d-flex justify-content-between" data-target="#collapseOne" aria-expanded="true"
+        aria-controls="collapseOne" (click)="toggleCollapse()">
+        <div>
+          <i class="lnr-user text-secondary px-2"></i>
+          {{'customer.prospect_details'| translate }}
+        </div>
+        <div>
+          <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+      <div [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne" style="min-height: 180px;"
+        data-parent="#accordionExample">
+        <div class="card-body">
+          <div class="row mt-2 pb-0">
+            <div class="col-xl-2 col-sm-3 text-center">
+              <div class="frame">
+                <img [src]='newPhoto' alt="image" class="img-thumbnail">
+                <button type="button" class="mb-2 mx-2 btn-icon btn-icon-only btn-pill btn btn-light ACM_top-left"
+                  (click)="fileInput.click()">
+                  <i class="lnr-camera btn-icon-wrapper"> </i>
+                </button>
+                <input #fileInput id="photo" type="file" [name]="'file'" (change)="addImage($event)"
+                  style="display:none;">
+              </div>
+            </div>
+            <div class="col-xl-10 col-sm-9">
+              <div class="widget-content p-0">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                      <div class="row">
+                        <h4 *ngIf="prospect && category==='PROSPECT'" class="text-uppercase col-12">{{ prospect.name}} &nbsp;
+                          <!-- <i *ngIf="customer.ibCustomerId" class="pi pi-globe "></i> &nbsp; <div *ngIf="customer.isCustomer" class="badge bg-success">
+                        </div>   -->
+                        <div class="badge bg-warning">
+                           <div class="px-1">{{'customer.prospect'| translate }}</div>
+                           </div>
+                         </h4>
+                         <h4 *ngIf="customer.customerType === 'PROSPECT'" class="text-uppercase col-12">{{ customer.firstName}}  {{ customer.lastName}} &nbsp;  
+                          <div class="badge bg-warning">
+                            <div class="px-1">{{'customer.prospect'| translate }}</div>
+                            </div>
+                          </h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-gutters">
+                <div class="col-xl-4 col-sm-4">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.telephone'| translate }}</div>
+                          <div class="widget-subheading row no-gutters">
+                            <div *ngIf=" prospect && category==='PROSPECT'">{{prospect.phone}}</div>
+                            <div *ngIf="customer.customerType === 'PROSPECT'">{{customer.telephone1}}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-sm-4">
+                  <div class="widget-content p-0">
+                    <div class="widget-content-outer">
+                      <div class="widget-content-wrapper">
+                        <div class="widget-content-left">
+                          <div class="widget-heading">{{'customer.email'| translate }}</div>
+                          <div *ngIf="prospect && category==='PROSPECT'" class="widget-subheading">{{
+                            prospect.email }} </div>
+                            <div *ngIf="customer.customerType === 'PROSPECT'" class="widget-subheading">{{
+                              customer.email }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+      
+                </div>
+
+              </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

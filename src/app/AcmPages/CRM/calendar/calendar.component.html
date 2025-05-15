@@ -1,0 +1,415 @@
+<app-page-title [heading]="'sidebar.calender' | translate " [icon]="'lnr-calendar-full'" [account]="''" [status]="-1">
+</app-page-title>
+<div class="card mb-3">
+  <div class="card-header-tab card-header">
+    <div class="d-flex flex-row  position-relative form-group col-4  mt-2">
+      <mat-radio-group labelPosition="after" class="d-flex flex-row bd-highlight mb-3" (change)="optionChange($event)">
+        <mat-radio-button class="pt-2 px-3 bd-highlight" value="1" [checked]="true">
+          {{'dashboard.task'|translate}}
+        </mat-radio-button>
+        <mat-radio-button class="pt-2 px-3 bd-highlight" value="2">
+          {{'dashboard.teams_tasks'|translate}}
+        </mat-radio-button>
+      </mat-radio-group>
+      <div *ngIf="asyncP |async" class="col-6 mt-1">
+        <div *ngIf="teamOptionSelected">
+          <ngx-select-dropdown (change)="teamMemberChanged($event)" tabindex="0" [multiple]="true" [options]="teamUsers"
+            [config]="configTeams"></ngx-select-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="btn-actions-pane-right">
+      <button class="d-inline-flex align-items-center btn btn-primary" (click)="addEvent()">
+        <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+        <span *ngIf="!teamOptionSelected">
+          {{'button.create' | translate}}
+        </span>
+        <span *ngIf="teamOptionSelected">
+          {{'button.assign_event' | translate}}
+        </span>
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="btn-group">
+          <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay()">
+            {{ 'button.previous' | translate }}
+          </div>
+          <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
+            {{ 'button.today' | translate }}
+          </div>
+          <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay()">
+            {{ 'button.next' | translate }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):getLang():weekStartsOn }}</h3>
+      </div>
+      <div class="col-md-4">
+        <div class="btn-group">
+          <div class="btn btn-primary" (click)="setView(CalendarView.Month)"
+            [class.active]="view === CalendarView.Month">
+            {{ 'button.month' | translate }}
+          </div>
+          <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+            {{ 'button.week' | translate }}
+          </div>
+          <div class="btn btn-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
+            {{ 'button.day' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div [ngSwitch]="view">
+      <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
+        [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)"
+        [cellTemplate]="customCellTemplate" (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)" [weekStartsOn]="weekStartsOn" [weekendDays]="weekendDays"
+        [locale]="getLang()">
+      </mwl-calendar-month-view>
+      <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events"
+        [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)" [locale]="getLang()">
+      </mwl-calendar-week-view>
+      <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events"
+        [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)" [locale]="getLang()">
+      </mwl-calendar-day-view>
+      <div class="d-block py-4 px-0  text-right card-footer">
+        <span class="badge-collection mx-2"></span>{{ 'collections.collection' | translate }}
+        <span class="badge-loan mx-2"></span>{{ 'upload_document.Loan' | translate }}
+        <span class="badge-legal mx-2"></span>{{ 'legal.legal' | translate }}
+        <span class="badge-prospect mx-2"></span>{{ 'task.prospecting' | translate }}
+        <span class="badge-generic-wf mx-2"></span> {{ 'generic-wf.generic-wf' | translate }}
+        <span class="badge-claim mx-2"></span> {{ 'claims.claim' | translate }}
+      </div>
+    </div>
+  </div>
+  <ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" *ngIf="eventSelected.id === undefined">{{ 'task.new_event' | translate }}
+        </h5>
+        <h5 class="modal-title" *ngIf="eventSelected.id !== undefined && !teamOptionSelected">
+          {{ 'task.modif_event' | translate }}</h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <form class="form" [formGroup]="eventForm" (change)="changeForm()">
+          <div class="position-relative">
+            <label> {{'task.title'| translate }}</label>
+            <span class="text-danger">*</span>
+            <div>
+              <input type="text" class="form-control" formControlName="title">
+            </div>
+          </div>
+          <div *ngIf="eventSelected.category || eventSelected.customerName" class="position-relative">
+            <label> {{'task.category'| translate }}</label>
+            <div>
+              <input disabled type="text" class="form-control"
+                [value]="eventSelected.category !== '' ? eventSelected.category : 'PROSPECTING'">
+            </div>
+          </div>
+          <div *ngIf="teamOptionSelected" class="position-relative">
+            <label> {{'task.user'| translate }}</label>
+            <span class="text-danger">*</span>
+            <ngx-select-dropdown [ngClass]="(emptyUser===true)?'ACM-responsible-error':''"
+              [disabled]="eventSelected.id !== undefined" tabindex="0" [multiple]="false" [options]="teamUsers"
+              formControlName="user" [config]="configTeams"></ngx-select-dropdown>
+          </div>
+          <div class="position-relative">
+            <label> {{'task.customer'| translate }}</label>
+            <p-autoComplete [suggestions]="customerPaginationEntity.resultsCustomers"
+              (completeMethod)="filterCustomerName($event)" formControlName="customer"
+              placeholder="{{'upload_document.Customer_Name'| translate }}" field="customerNameNoPipe"
+              id="user-autocomplete" [size]="30" [minLength]="1" [forceSelection]="true" [style]="{'width':'100%'}"
+              [inputStyle]="{'width': '100%'}">
+              <ng-template let-filteredCustomer pTemplate="item">
+                {{filteredCustomer.customerNameNoPipe}} ({{filteredCustomer.customerNumber}})
+              </ng-template>
+            </p-autoComplete>
+
+          </div>
+          <br>
+
+          <br>
+          <div class="position-relative">
+            <label> {{'task.start_date'| translate }}</label>
+            <span class="text-danger">*</span>
+            <div class="input-group">
+              <div class="col-6">
+                <input type="date" class="form-control" [min]="minDate" formControlName="startDate"
+                  (change)="dateChanged()">
+              </div>
+              <div class="col-6">
+                <input type="time" class="form-control" formControlName="hourDate">
+                <div *ngIf="eventForm.errors?.invalidStartTime">
+                  <span class="text-danger">{{ 'invalid_time' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="position-relative">
+            <label> {{'task.end_date'| translate }}</label>
+            <span class="text-danger">*</span>
+            <div class="input-group">
+              <div class="col-6">
+                <input type="date" class="form-control" [min]="eventForm.controls.startDate.value"
+                  formControlName="endDate" (change)="dateChanged()">
+              </div>
+              <div class="col-6">
+                <input type="time" class="form-control" formControlName="hourEndDate">
+                <div *ngIf="eventForm.errors?.invalidTimeRange">
+                  <span class="text-danger">{{ 'invalid_time' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="position-relative ">
+            <label>{{'task.participant'| translate }}</label>
+            <ngx-select-dropdown tabindex="0" formControlName="participant" [multiple]="true" [options]="participants"
+              [config]="configParticipants" (change)="participantMethod()"></ngx-select-dropdown>
+          </div>
+          <br>
+          <div class="position-relative">
+            <label> {{'task.location'| translate }}</label>
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="location">
+            </div>
+          </div>
+          <br>
+          <div class="position-relative">
+            <label> {{'task.description'| translate }}</label>
+            <div class="input-group">
+              <textarea rows="3" cols="20" pInputTextarea class="form-control" formControlName="description">
+          </textarea>
+            </div>
+          </div>
+          <div class="modal-footer py-1">
+            <button class="mb-2 mx-2 btn btn-outline-danger" type="reset" (click)="reset()">{{'button.cancel' |
+              translate}}</button>
+            <button class="mb-2 btn btn-primary" [disabled]="eventForm.invalid"
+              *ngIf="!teamOptionSelected ||(teamOptionSelected &&  eventSelected.id === undefined)"
+              (click)="onSubmit()">{{'button.save' |
+              translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.category === collectionCategory"
+              (click)="collectionDetails()">
+              {{'collections.open_collection' |translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.category === loanCategory"
+              (click)="loanDetails()">{{'task.open_loan' | translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.idCustomerExtern !== null
+            && eventSelected?.idCustomerExtern !== undefined && (eventSelected.category === 'PROSPECT' || eventSelected.category === 'CUSTOMER') " (click)="clientDetails()">{{'button.Go_to_costumer' |
+              translate}}</button>
+              <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected.category === 'CLAIM' " (click)="claimDetails()">{{'button.Go_to_claim' |
+              translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary"
+              *ngIf="eventSelected?.category === prospectionCategory || eventSelected?.category === genericCategory"
+              (click)="itemDetails()">{{'button.Go_to_Wf' |
+              translate}}</button>
+            <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.category === legalCategory"
+              (click)="collectionDetails()">
+              {{'collections.open_legal_collection' |translate}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #customCellTemplate let-day="day" let-locale="locale" let-tooltipPlacement="tooltipPlacement"
+    let-highlightDay="highlightDay" let-unhighlightDay="unhighlightDay" let-eventClicked="eventClicked"
+    let-tooltipTemplate="tooltipTemplate" let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDelay="tooltipDelay">
+    <div class="cal-cell-top">
+      <span class="cal-day-badge" *ngIf="day.badgeTotal > 0">
+        {{ day.badgeTotal }}</span>
+      <span class="cal-day-number">
+        {{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+    </div>
+    <div *ngIf="day.events.length > 0">
+      <div *ngFor="let event of day.events; trackBy: trackByEventId; index as i">
+        <ng-template *ngIf="i < eventLimit; then showEventsBlock; else showMoreBlock">
+        </ng-template>
+        <ng-template #showEventsBlock>
+          <div class="cal-events body-events mt-1" *ngIf="i < eventLimit"
+            [ngStyle]="{ backgroundColor: event.color?.primary } " [ngClass]="event.cssClass"
+            (mwlClick)="eventClicked.emit({event: event})"
+            [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
+            [tooltipPlacement]="tooltipPlacement" [tooltipEvent]="event" [tooltipTemplate]="tooltipTemplate"
+            [tooltipAppendToBody]="tooltipAppendToBody" [tooltipDelay]="tooltipDelay">
+            {{event.title}}
+          </div>
+        </ng-template>
+        <ng-template #showMoreBlock>
+          <ng-container *ngIf="i === eventLimit">
+            <div class="cal-events">
+              <a class="show-more"> {{day.events.length - eventLimit}} More ⇣ </a>
+            </div>
+          </ng-container>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #modalContentConsult let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+      <div class="modal-header py-2">
+        <h5 class="modal-title"> {{ 'task.consulter_event' | translate }} </h5>
+        <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="col-xl-12 col-sm-12">
+          <div class="col-xl-12 col-sm-12">
+            <div class="widget-content p-1">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'task.user'| translate }}</div>
+                    <div class="widget-subheading"> <label>{{eventSelected.user.fullName}}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="col-xl-12 col-sm-12">
+            <div class="widget-content p-1">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'task.title'| translate }}</div>
+                    <div class="widget-subheading"> <label> {{eventSelected.libelleEvent}} </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="col-xl-12 col-sm-12">
+            <div class="widget-content p-1">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading"> {{'task.customer'| translate }}</div>
+                    <div class="widget-subheading"> <label> {{eventSelected.customerName}}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row p-2">
+            <div class="col-xl-6 col-sm-6 widget-content p-1">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading"> {{'task.start_date'| translate }}</div>
+                    <div class="widget-subheading">
+                      <input type="date" class="form-control" disabled [value]="eventSelected.dateDebut">
+                      <input type="time" class="form-control" [value]="eventSelected.startHour">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-6 col-sm-6 widget-content p-1">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading"> {{'task.end_date'| translate }}</div>
+                    <div class="widget-subheading">
+                      <input type="date" class="form-control" disabled [value]="eventSelected.dateFin">
+                      <input type="time" class="form-control" [value]="eventSelected.endHour">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="col-xl-12 col-sm-12 widget-content p-1">
+            <div class="widget-content-outer">
+              <div class="widget-content-wrapper">
+                <div class="widget-content-left">
+                  <div class="widget-heading">{{'task.participant'| translate }}</div>
+                </div>
+              </div>
+            </div>
+            <table *ngIf="eventSelected.participantList.length !== 0" class="mb-0 table green">
+              <thead>
+                <tr>
+                  <th>{{'setting.setting_users.login'| translate }} </th>
+                  <th>{{'guarantors.name'| translate }} </th>
+                </tr>
+              </thead>
+              <tbody class="widget-subheading">
+                <tr *ngFor="let p of eventSelected.participantList ">
+                  <td> {{p.login}}</td>
+                  <td>{{p.fullName}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div *ngIf="eventSelected.participantList.length === 0">
+              <div class="card-body">
+                <h6 class="text-danger pt-3">{{ 'customer.no_data_to_display' | translate }}</h6>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="col-xl-12 col-sm-12">
+            <div class="widget-content">
+              <div class="widget-content p-1">
+                <div class="widget-content-outer">
+                  <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                      <div class="widget-heading">{{'task.location'| translate }} </div>
+                      <div class="widget-subheading"> <label> {{eventSelected.place}}</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="col-xl-12 col-sm-12">
+            <div class="widget-content p-1">
+              <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <div class="widget-heading">{{'task.description'| translate }} </div>
+                    <div class="widget-subheading"> <label> {{eventSelected.description}}</label> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+        </div>
+        <div class="modal-footer py-1">
+          <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.category === collectionCategory"
+            (click)="collectionDetails()">
+            {{'collections.open_collection' |translate}}</button>
+          <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.category === loanCategory"
+            (click)="loanDetails()">{{'task.open_loan' | translate}}</button>
+          <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.idCustomerExtern !== null
+            && eventSelected?.idCustomerExtern !== undefined " (click)="clientDetails()">{{'button.Go_to_costumer' |
+            translate}}</button>
+          <button class="mb-2 mx-2 btn btn-outline-primary" *ngIf="eventSelected?.category === legalCategory"
+            (click)="collectionDetails()">
+            {{'collections.open_legal_collection' |translate}}</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>

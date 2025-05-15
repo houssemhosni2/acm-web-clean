@@ -1,0 +1,478 @@
+<app-page-title [heading]="'Expenses'" [icon]="'pe-7s-piggy'" [account]="''" [status]="-1"></app-page-title>
+
+<div class="accordion mb-1">
+  <div class="card">
+    <div class="card-header" [style]="{marginRight:'3rem'}" (click)="toggleCollapseExpensesDoc()">
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+        <div class="card-title m-0">{{'expenses-settings.expenses_types_document'| translate }}</div>
+      </div>
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="btn btn-primary" (click)="openLarge(addDocument)">
+          <fa-icon class="mx-1" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'expenses-settings.add-document'|translate }}
+        </button>
+      </div>
+      <div class="px-3 justify-content-end">
+        <div>
+          <i
+            [ngClass]="(expandedExpensesDoc===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="(expandedExpensesDoc===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div class="table-responsive">
+              <table class="align-middle mb-0 table table-hover">
+                <thead>
+                  <tr>
+                    <th>{{'setting.label'| translate }}</th>
+                    <th>{{'setting.description'| translate }}</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let documentType  of settingDocumentTypes, let i =index">
+                    <td>{{documentType.libelle}}</td>
+                    <td>{{documentType.description}}</td>
+                    <td>
+                      <button class="btn btn-warning" (click)="updateDocumentModal(addDocument, i)">
+                        <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <div class="d-flex justify-content-center">
+                        <button class="btn btn-danger" (click)="disableExpenses(documentType,i)">
+                          <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <hr class="solid">
+      </div>
+    </div>
+</div>
+
+<div class="accordion mb-1">
+  <div class="card">
+    <div class="card-header" (click)="toggleRefreshFrequency()">
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+        <div class="card-title m-0"> {{'expenses-settings.refresh-frequency'| translate }}</div>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1  d-flex justify-content-end">
+        <div>
+          <i
+            [ngClass]="(refreshFrequency===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="(refreshFrequency===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="expenses_freq_refresh_accordion">
+          <div class="col">
+            <div>
+              {{'expenses-settings.date_last_refresh'| translate }} : {{dateLastUpdateExpenseLimit | date: 'dd/MM/yyyy'}}
+            </div>
+            <div>
+              <button class="btn-icon btn-icon-only btn btn-success" (click)="refreshLimitExpenses()" [style]="{justifyContent : 'flex_end'}">
+                {{'expenses-settings.refresh_limit_expenses'| translate }}
+                  <i class="pe-7s-refresh-2 btn-icon-wrapper px-2"></i>
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accordion mb-1">
+  <div class="card">
+    <div class="card-header" [style]="{marginRight:'1rem'}" (click)="toggleCollapseExpensesTypes()">
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+        <div class="card-title m-0"> {{'expenses-settings.expenses_type'| translate }}</div>
+      </div>
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="btn btn-primary" (click)="openModalExpenses(expensesType)">
+          <fa-icon class="mx-1" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'expenses-settings.add_expenses'| translate }}
+      </button>
+      </div>
+      <div class="px-3 justify-content-end">
+        <div>
+          <i
+            [ngClass]="(expandedExpensesTypes===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="(expandedExpensesTypes===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <table class="align-middle mb-0 table table-hover" *ngIf="expensesTypes.length > 0">
+              <thead>
+              <tr>
+                <th>{{'expenses-settings.code'| translate }}</th>
+                <th>{{'expenses-settings.libel'| translate }}</th>
+                <th class="ACM-expenses-type-column-description">{{'expenses-settings.description'| translate }}</th>
+                <th class="ACM-expenses-type-column-description">{{'expenses-settings.document'| translate }}</th>
+                <th>{{'expenses-settings.enable'| translate }}</th>
+                <th class="ACM-expenses-type-column-button"></th>
+                <th class="ACM-expenses-type-column-button"></th>
+                <th class="th_expenses_align">  </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let expType of expensesTypes,let i = index">
+                <td>{{expType.code}}</td>
+                <td>{{expType.libel}}</td>
+                <td>{{expType.description}}</td>
+                <td>{{expType.documentLibel}}</td>
+                <td>
+                  <bSwitch [switch-size]="'mini'" [switch-animate]="true" [disabled]="true"
+                    [switch-off-color]="'danger'" class="mb-0" [(ngModel)]="expType.enabled">
+                  </bSwitch>
+                </td>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    <button class="btn btn-danger" (click)="deleteExpenses(i)">
+                      <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    <button class="btn btn-success" (click)="editExpenses(expensesType, i)">
+                      <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+            </table>
+            <div *ngIf="expensesTypes.length === 0">
+              <h6 class="text-danger">
+                {{'expenses-settings.empty-msg'| translate }}
+              </h6>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accordion mb-1">
+  <div class="card">
+    <div class="card-header" (click)="toggleCollapseBranchLimits()">
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+        <div class="card-title m-0">{{'expenses-settings.branch-limits'| translate }}</div>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1  d-flex justify-content-end">
+        <div>
+          <i
+            [ngClass]="(expandedBranchLimits===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="(expandedBranchLimits===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div class="card-body">
+        <div class="col-xl-4 col-md-4">
+          <div class="position-relative form-group">
+            <label>{{'customer_management.branch'| translate }}</label>
+            <span class="text-danger">*</span>
+            <select class="form-control" [(ngModel)]="selectedBranch" (change)="loadSettingLimits()">
+              <option [ngValue]="null">{{'customer_management.branch_default_select'| translate }}</option>
+              <option *ngFor="let branchEntity of branchEntitys" [ngValue]="branchEntity">
+                {{branchEntity.description}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+        <form [formGroup]="limitsFrom">
+          <table class="align-middle mb-0 table table-hover" *ngIf="selectedBranch !== null && loadLimit">
+            <tr>
+              <th>{{'expenses-settings.expenses_type'| translate }}</th>
+              <th>{{'expenses-settings.limits'| translate }}</th>
+              <th>{{'expenses-settings.dr'| translate }}</th>
+              <th>{{'expenses-settings.cr'| translate }}</th>
+            </tr>
+            <tr *ngFor="let expType of expensesTypes,let i = index">
+              <td>{{expType.libel}}</td>
+              <td>
+                <div class="position-relative form-group">
+                  <div class="form-group input-group mb-2">
+                    <input class="form-control" placeholder="limit" type="number" [formControlName]="'limit' + i">
+                    <span class="input-group-append">
+                      <button class="btn btn-light border" ngxclipboard="" type="button"
+                        ng-reflect-target-elm="">{{this.currency}}</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td class="pt-0">
+                <select class="form-control" [formControlName]="'dr' + i ">
+                  <option [ngValue]="null">--------------</option>
+                  <option [ngValue]="account" *ngFor="let account of accounts">{{account}}</option>
+                </select>
+              </td>
+              <td class="pt-0">
+                <select class="form-control" [formControlName]="'cr' + i ">
+                  <option [ngValue]="null">--------------</option>
+                  <option [ngValue]="account" *ngFor="let account of accounts">{{account}}</option>
+                </select>
+              </td>
+            </tr>
+          </table>
+        </form>
+      <div class="card-footer d-flex justify-content-end">
+        <button class="btn btn-primary" (click)="saveLimits()">{{'button.save' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accordion mb-1">
+  <div class="card">
+    <div class="card-header" (click)="toggleCollapseRejectReason()">
+      <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+        <div class="card-title m-0">{{'expenses-settings.reject_reason'| translate }}</div>
+      </div>
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="btn btn-primary" (click)="openModalRejectReason(rejectReason)">
+          <fa-icon class="mx-1" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{'expenses-settings.add_reason'| translate }}</button>
+      </div>
+      <div class="px-3 justify-content-end">
+        <div>
+          <i
+            [ngClass]="(expandedRejectReason===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+        </div>
+      </div>
+    </div>
+    <div [ngClass]="(expandedRejectReason===true)?'collapse show':'collapse'" aria-labelledby="headingOne"
+      data-parent="#accordionExample">
+      <div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <table class="align-middle mb-0 table table-hover" *ngIf="expensesTypes.length > 0">
+              <thead>
+              <tr>
+                <th>{{'expenses-settings.code'| translate }}</th>
+                <th>{{'expenses-settings.libel'| translate }}</th>
+                <th class="ACM-expenses-type-column-description">{{'expenses-settings.description'| translate }}</th>
+                <th class="ACM-expenses-type-column-button"></th>
+                <th class="ACM-expenses-type-column-button"></th>
+                <th class="th_expenses_align">
+
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let reason of settingMotifReviewEntitys,let i = index">
+                <td>{{reason.code}}</td>
+                <td>{{reason.libelle}}</td>
+                <td>{{reason.description}}</td>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    <button class="btn btn-danger" (click)="deleteReason(i)">
+                      <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    <button class="btn btn-success" (click)="editReason(rejectReason, i)">
+                      <i class="pe-7s-pen btn-icon-wrapper text-white"></i>
+                    </button>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+            </table>
+            <div *ngIf="expensesTypes.length === 0">
+              <h6 class="text-danger">
+                {{'expenses-settings.empty-msg'| translate }}
+              </h6>
+            </div>
+          </div>
+          <!-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 d-flex justify-content-end">
+            <div>
+              <button class="btn btn-primary"
+                (click)="openModalRejectReason(rejectReason)">{{'expenses-settings.add_reason'| translate }}</button>
+            </div>
+          </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #expensesType let-close="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header">
+      <div *ngIf="mode === 'I'" class="modal-title">
+        {{'expenses-settings.add_new_expenses_type'| translate }}
+      </div>
+      <div *ngIf="mode === 'U'" class="modal-title">
+        {{'expenses-settings.update_new_expenses_type'| translate }}
+      </div>
+      <button type="button" aria-label="Close" class="close ACM-modal-header-{{translate.currentLang}}"
+        (click)="close()">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="addExpensesForm">
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.code'| translate }}</label>
+            <span class="text-danger">*</span>
+            <input class="form-control" placeholder="code" type="text" formControlName="code">
+          </div>
+        </div>
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.libel'| translate }}</label>
+            <span class="text-danger">*</span>
+            <input class="form-control" placeholder="Label" type="text" formControlName="libel">
+          </div>
+        </div>
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.description'| translate }}</label>
+            <span class="text-danger">*</span>
+            <input class="form-control" placeholder="Description" type="text" formControlName="description">
+          </div>
+        </div>
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.enable'| translate }}</label>
+            <div class="col-xl-12 col-md-12 px-1">
+              <bSwitch [switch-size]="'mini'" [switch-animate]="true" [switch-off-color]="'danger'" class="mb-0"
+                formControlName="enable">
+              </bSwitch>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.document'| translate }}</label>
+            <div class="col-xl-12 col-md-12 px-1">
+              <select class="form-control" formControlName="document" [compareWith]="compareDocument">
+                <option *ngFor="let document of settingDocumentTypes" [ngValue]="document">
+                  {{document.libelle}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger" (click)="d()">cancel</button>
+      <button class="btn btn-primary" *ngIf="mode === 'I'" (click)="addExpenses()">{{'button.save' |
+        translate}}</button>
+      <button class="btn btn-primary" *ngIf="mode === 'U'" (click)="updateExpenses()">{{'button.save' |
+        translate}}</button>
+    </div>
+  </div>
+</ng-template>
+<!--popup-->
+<ng-template #addDocument let-c="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <!--form-->
+    <form [formGroup]="popupForm">
+      <div class="modal-header py-2">
+        <h4 *ngIf="updateId === 0" class="modal-title">{{'setting.setting_document_type.add_new_document_type'|
+          translate }} </h4>
+        <h4 *ngIf="updateId !== 0" class="modal-title">{{'setting.setting_document_type.update_document_type'| translate
+          }} </h4> <button type="button" class="close ACM-modal-header-{{translate.currentLang}}" aria-label="Close"
+          (click)="d()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="container p-3">
+        <div class="position-relative pb-4">
+          <label> {{'setting.label'| translate }} <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="libelle" (change)="changeCode()">
+          </div>
+        </div>
+        <div class="position-relative pb-4">
+          <label> {{'setting.description'| translate }}</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="description">
+          </div>
+        </div>
+      </div>
+      <!--buttons-->
+      <div class="modal-footer py-1">
+        <button class="mb-2 mx-2 btn btn-outline-danger" (click)="c()">{{'button.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="popupForm.invalid" (click)="createDocument()"
+          *ngIf="updateId === 0">{{'button.save' | translate}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="popupForm.invalid" (click)="updateDocument()"
+          *ngIf="updateId !== 0">{{'button.save' | translate}}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!-- modal add new reject reason -->
+<ng-template #rejectReason let-close="close" let-d="dismiss">
+  <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+    <div class="modal-header">
+      <div *ngIf="updateId === 0" class="modal-title">
+        {{'expenses-settings.add_new_reject_reason'| translate }}
+      </div>
+      <div *ngIf="updateId !== 0" class="modal-title">
+        {{'expenses-settings.update_reject_reason'| translate }}
+      </div>
+      <button type="button" aria-label="Close" class="close ACM-modal-header-{{translate.currentLang}}"
+        (click)="close()">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form class="position-relative col-xl-12 px-0 col-md-12" [formGroup]="addRejectReasonForm">
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.code'| translate }}</label>
+            <span class="text-danger">*</span>
+            <input class="form-control" placeholder="code" type="text" formControlName="code" disabled>
+          </div>
+        </div>
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.libel'| translate }}</label>
+            <span class="text-danger">*</span>
+            <input class="form-control" placeholder="Label" type="text" formControlName="libel"
+              (change)="changeCodeReason()">
+          </div>
+        </div>
+        <div class="col-xl-12 col-md-12 px-1">
+          <div class="position-relative form-group">
+            <label>{{'expenses-settings.description'| translate }}</label>
+            <span class="text-danger">*</span>
+            <input class="form-control" placeholder="Description" type="text" formControlName="description">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger" (click)="d()">cancel</button>
+      <button [disabled]="addRejectReasonForm.invalid" class="btn btn-primary" *ngIf="updateId === 0"
+        (click)="addRejectReason()">{{'button.save' | translate}}</button>
+      <button [disabled]="addRejectReasonForm.invalid" class="btn btn-primary" *ngIf="updateId !== 0"
+        (click)="updateRejectReason()">{{'button.save' | translate}}</button>
+    </div>
+  </div>
+</ng-template>

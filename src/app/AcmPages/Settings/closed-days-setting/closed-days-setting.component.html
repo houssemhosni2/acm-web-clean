@@ -1,0 +1,95 @@
+<div class="card">
+    <div class="card-header">
+        {{'setting.closed-days-setting.closed-days-setting'| translate }}
+        <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+            <button class="d-inline-flex align-items-center btn btn-primary" (click)="addClosedDays(modalContent)">
+                <fa-icon [icon]="library.getIconDefinition('fas', 'plus')" style="margin-right: 7px;"></fa-icon>
+                {{'setting.setting_configuration_product.add'| translate }} </button>
+        </div>
+    </div>
+    <div>
+        <div class="table-responsive">
+            <table class="mb-0 t table table-hover">
+                <thead>
+                    <tr>
+                        <th> {{'setting.closed-days-setting.closed-days-names'| translate }} </th>
+                        <th> {{'setting.closed-days-setting.branch'| translate }} </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        *ngFor="let closedDays of closedDaysList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+                        <td>{{closedDays.closedDays}}</td>
+                        <td>{{closedDays?.branchNames}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning text-white mx-1" (click)="editClosedDays(modalContent,closedDays)">
+                                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                            </button>
+                            <button class="btn btn-sm btn-danger text-white" (click)="disableClosedDays(closedDays)">
+                                <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'trash')"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <ngb-pagination [collectionSize]="closedDaysList?.length" [(page)]="page" [pageSize]="pageSize"
+                    size="sm" [maxSize]="3" [boundaryLinks]="true">
+                </ngb-pagination>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <div class="d-flex justify-content-lg-end">
+                    <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                        <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                        <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                        <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                        <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title"> {{ (action === 'update' ? 'setting.closed-days-setting.update-closed-days-setting' :
+                'setting.closed-days-setting.add-closed-days-setting') | translate }}</h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModale()">&times;</span>
+            </button>
+        </div>
+        <form class="form" [formGroup]="groupForm" (ngSubmit)="onSubmit()" *ngIf="loadForm">
+            <div class="card-body">
+                <div class="position-relative pb-4">
+                    <label>{{ 'setting.closed-days-setting.branch' | translate }}</label>
+                    <p-multiSelect [filter]="false" [options]="branchEntities" [styleClass]="'full-width'"
+                        formControlName="branch" placeholder="{{ 'customer_management.branch_default_select' | translate }}"
+                        optionLabel="description" [required]="displayMultiSelect"></p-multiSelect>
+                </div>
+                <div class="position-relative pb-4" formArrayName="days">
+                    <div *ngFor="let day of days_of_week; let i = index">
+                        <div class="custom-checkbox custom-control m-2">
+                            <label class="custom-control-label m-2">
+                                <input class="custom-control-input m-2" type="checkbox" [formControlName]="i" />
+                                {{ day.header | translate }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModale()">{{'button.cancel'
+                    | translate}}</button>
+                <button class="mb-1 btn btn-primary" type="submit">{{'button.save' | translate}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

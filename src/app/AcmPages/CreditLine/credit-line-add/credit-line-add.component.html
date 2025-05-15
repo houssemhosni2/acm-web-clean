@@ -1,0 +1,178 @@
+<app-page-title [heading]="'credit-line.creditLine'| translate " [icon]="'pe-7s-id'"
+[status]="-1"></app-page-title>
+<ng-container  *transloco="let t" >
+<form [formGroup]="formCreditLine">
+<div class="card-hover-shadow-2x mb-1 card">
+  <div class="card-header d-flex justify-content-between">
+    {{ 'credit-line.creditLine' | translate }}
+  </div>
+  <div *ngIf="formLoaded | async">
+      <div class="card-body">
+        <div class="col-xl-12 col-sm-12 row no-gutters">
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.party' | translate }}</label>
+              <span class="text-danger">*</span>
+              <select class="form-control" formControlName="thirdParty">
+                <option *ngFor="let party of thirdPartyList" [ngValue]="party.id">
+                  {{party.firstName}} {{party.lastName}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.fund-name' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="fundName">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.description' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="text" class="form-control" formControlName="description">
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.topped-up-amount' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="number" class="form-control" formControlName="toppedUpAmount">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.balance' | translate }}</label>
+              <input type="number" class="form-control" formControlName="balance" disabled>
+            </div>
+            <div>
+              <div class="custom-checkbox custom-control">
+                &nbsp;&nbsp;<input class="custom-control-input" type="checkbox" formControlName="controlBalance">
+                &nbsp;&nbsp;<label class="custom-control-label">{{ 'credit-line.control-balance' | translate }}</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.remaining-balance' | translate }}</label>
+              <input type="number" class="form-control" formControlName="remainingBalance" disabled>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ "loan_management.calculators.product" | translate }}</label>
+              <p-multiSelect [filter]="false" [options]="productEntitys" [styleClass]="'full-width'"
+                formControlName="products" [compareWith]="compareProducts"
+                placeholder="{{ 'loan_management.calculators.product_code_default_select' | translate }}"
+                optionLabel="description" [required]="displayMultiSelect"></p-multiSelect>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.priority-of-funds' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="number" class="form-control" formControlName="fundPriority">
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.issue-date' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="date" class="form-control" formControlName="issueDate" (change)="dateChanged()">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="position-relative form-group">
+              <label>{{ 'credit-line.expiry-date' | translate }}</label>
+              <span class="text-danger">*</span>
+              <input type="date" class="form-control" formControlName="expiryDate" (change)="dateChanged()">
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<div class="card-hover-shadow-2x mb-1 card" *ngIf="updateCreditLine?.toppedUpHistories">
+  <div class="card-header d-flex justify-content-between">
+    {{ 'credit-line.topped-up-history' | translate }}
+  </div>
+  <div class="main-card mb-3 card">
+    <div>
+      <div class="table-responsive">
+        <table class="mb-0 table green">
+          <thead>
+            <tr>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'credit-line.topped-up-amount' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'credit-line.issue-date' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'credit-line.updated-by' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+                  {{ 'credit-line.updated-date' | translate }}
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="center-elem text-center">
+
+                </div>
+              </th>
+            </tr>
+          </thead>
+            <tr *ngFor="let toppedUpHistory of updateCreditLine?.toppedUpHistories ;let i = index">
+              <td class="text-center">
+                <div class="center-elem text-center">
+                  {{toppedUpHistory.amount}}
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="center-elem text-center">
+                  {{toppedUpHistory.issueDate | date:'dd/MM/yyyy' }}
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="center-elem text-center">
+                  {{toppedUpHistory.updatedBy }}
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="center-elem text-center">
+                  {{toppedUpHistory.dateLastUpdate | date:'dd/MM/yyyy'}}
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="center-elem text-center">
+                <button class="btn btn-danger" (click)="deleteToppedUpHistory(i)">
+                  <i class="pe-7s-trash btn-icon-wrapper text-white"></i>
+                </button>
+              </div>
+              </td>
+            </tr>
+          <tbody>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+<div class="d-block text-end card-footer p-2">
+  <button class="mx-2 btn btn-outline-danger" type="button" (click)="exit()">{{'button.exit' | translate}}</button>
+  <button class="mx-2 btn btn-success" type="submit" (click)="submit()">{{'button.save'| translate }}
+  </button>
+</div>
+</ng-container>

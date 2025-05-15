@@ -1,0 +1,140 @@
+<div class="accordion mb-1" id="accordionCollapseVersionHistory">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingCollapseVersionHistory"
+         data-target="#collapseVersionHistory" aria-expanded="true" aria-controls="collapseVersionHistory"
+         (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-calendar-full text-secondary pr-2"></i>
+        {{'visit.version_history'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseVersionHistory" [ngClass]="(expanded===true)?'collapse show':'collapse'"
+         aria-labelledby="headingOne">
+      <div>
+        <div class="table-responsive">
+          <table class="mb-0 t table table-hover">
+            <thead>
+            <tr>
+              <th> {{'visit.version'| translate }}</th>
+              <th> {{'visit.insert_by'| translate }}</th>
+              <th>{{'visit.comment'| translate }}</th>
+              <th>{{'visit.planned_visit'| translate }}</th>
+              <th>{{'visit.creation_date'| translate }}</th>
+              <th>{{'visit.action'| translate }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr
+              *ngFor="let reportVisitEntity of reportVisitEntitys.slice().reverse() | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index ">
+              <td> {{'visit.version'| translate }} {{ reportVisitEntitys.length - i }}</td>
+              <td>{{'visit.insert_by'| translate }} {{ reportVisitEntity.insertBy }}</td>
+              <td>{{ reportVisitEntity.comment }}</td>
+              <td>{{reportVisitEntity.plannedVisit | date: 'dd/MM/yyyy'}}</td>
+              <td>{{ reportVisitEntity.dateInsertion | date: 'dd/MM/yyyy'}}</td>
+              <div *ngIf="i === 0">
+                <td>
+                  <button class="btn btn-success" (click)="edit(reportVisitEntity)">
+                    <i class="pe-7s-pen btn-icon-wrapper"></i>
+                  </button>
+                </td>
+              </div>
+              <div *ngIf="i > 0">
+                <td>
+                  <button class="btn btn-warning" (click)="view(reportVisitEntity)">
+                    <i class="pe-7s-look btn-icon-wrapper text-white"></i>
+                  </button>
+                </td>
+              </div>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer pb-0">
+        <div class="row no-gutters w-100">
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <ngb-pagination [collectionSize]="reportVisitEntitys.length" [(page)]="page" [pageSize]="pageSize" size="sm"
+                            [maxSize]="3" [boundaryLinks]="true">
+            </ngb-pagination>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <div class="d-flex justify-content-lg-end">
+              <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="pageSize">
+                <option [ngValue]="5">{{'pagination.5_item'| translate }}</option>
+                <option [ngValue]="10">{{'pagination.10_item'| translate }}</option>
+                <option [ngValue]="20">{{'pagination.20_item'| translate }}</option>
+                <option [ngValue]="50">{{'pagination.50_item'| translate }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accordion mb-1" id="accordionExample">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between" id="headingOne" data-target="#collapseVisitReport"
+         aria-expanded="true" aria-controls="collapseVisitReport" (click)="toggleCollapse()">
+      <div>
+        <i class="lnr-file-empty text-secondary" [ngClass]="{'pl-2': translate.currentLang === 'ar', 'pr-2': translate.currentLang !== 'ar'}"></i>
+        {{'visit.visit_report'| translate }}
+      </div>
+      <div>
+        <i [ngClass]="(expanded===true)?'lnr-chevron-up text-secondary':'lnr-chevron-down text-secondary'"></i>
+      </div>
+    </div>
+    <div id="collapseVisitReport" [ngClass]="(expanded===true)?'collapse show':'collapse'" aria-labelledby="headingOne">
+      <div class="card-body">
+        <ngx-loading [show]="loading"
+                     [config]="{animationType: ngxLoadingAnimationTypes.circle, primaryColour: primaryColour, tertiaryColour: primaryColour, backdropBorderRadius: '3px'}"></ngx-loading>
+        <form class="form" (change)="onChange(true)" [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+          <div class="col-xl-12 row no-gutters">
+            <div class="position-relative form-group col-xl-4"  [ngClass]="{'pl-4': translate.currentLang === 'ar', 'pr-4': translate.currentLang !== 'ar'}">
+              <label class = "widget-heading">{{'visit.planned_visit_date'| translate }}</label>
+              <div class="input-group">
+                <input type="date" class="form-control" formControlName="plannedVisit"
+                       [attr.disabled]="block ? '' : null">
+              </div>
+            </div>
+            <div class="position-relative col-xl-4">
+              <label class = "widget-heading" >{{'visit.visit_by'| translate }}</label>
+              <ng-multiselect-dropdown  [data]="users"
+                                       [settings]="dropdownSettings"
+                                       formControlName="visitBy" (onDropDownClose)="onDropDownClose()"
+                                       (onSelect)="onItemSelect($event)"
+                                       (onSelectAll)="onSelectAll($event)" (onDeSelect)="onItemDeSelect($event)"
+                                       (onDeSelectAll)="onDeSelectAll($event)"
+                                       (onDeSelect)="onChange(true)"
+                                       class="form-control">
+              </ng-multiselect-dropdown>
+            </div>
+          </div>
+          <div class="position-relative form-group col-xl-12">
+            <label class = "widget-heading"> {{'visit.visit_report'| translate }}</label>
+
+            <angular-editor [(ngModel)]="htmlContent" [config]="configEditor" class="form-control wysiwyg-edito"
+                             formControlName="report" (ngModelChange)="editorChange($event)">
+            </angular-editor>
+
+          </div>
+          <div class="position-relative form-group col-xl-12">
+            <label class = "widget-heading"> {{'visit.comment'| translate }}</label>
+            <textarea class="form-control" formControlName="comment"
+                      (change)='onChange(true)'
+                      [attr.disabled]="block ? '' : null"></textarea>
+          </div>
+          <div class="d-block text-end pt-3 mx-2">
+            <button class="mb-2 mx-2 btn btn-outline-danger" type="reset"
+                    (click)="reset()">{{'button.cancel' | translate}}</button>
+            <button class="mb-2 btn btn-primary" type="submit" [disabled]="block">{{'button.save' | translate}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

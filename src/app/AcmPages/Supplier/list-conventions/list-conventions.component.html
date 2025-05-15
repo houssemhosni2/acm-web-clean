@@ -1,0 +1,64 @@
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [lazy]="false" [lazyLoadOnInit]="true" sortMode="multiple" [value]="conventions"
+      [rowsPerPageOptions]="[5,10,20,50,100]" [paginator]="true" [pageLinks]="5" [rows]="10" [columns]="selectedColumns"
+      [showCurrentPageReport]="true" [(selection)]="supplier" selectionMode="single">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center">
+              {{col.header | translate}}
+              <p-sortIcon [field]="col.field" class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+        <tr>
+          <th class="ACM_Customer_Search_void_Col" *ngIf="search">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'discountRate'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'refund'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'ca'" class="form-control placeholder" type="text"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'startDateConvention'" class="form-control" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'endDateConvention'" class="form-control" type="date"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'objectiveTurnoverVolume'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+            <input *ngSwitchCase="'objectiveFileNumber'" class="form-control" type="number"
+              (input)="dt.filter($event.target.value, col.field, 'contains')">
+          </th>
+          <th style='width: 40px;'></th>
+          <th style='width: 40px;'></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-asset let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td  *ngIf="search">
+            <p-tableCheckbox  [value]="rowData"></p-tableCheckbox>
+          </td>
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+
+            <div *ngSwitchCase="'discountRate'">{{rowData[col.field]}} %</div>
+            <div *ngSwitchCase="'rebate'">{{rowData[col.field]}}</div>
+            <div class="text-left" *ngSwitchCase="'ca'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'startDateConvention'">{{rowData[col.field] | date : 'dd/MM/yyyy'}}</div>
+            <div *ngSwitchCase="'endDateConvention'">{{rowData[col.field] | date : 'dd/MM/yyyy'}}</div>
+            <div *ngSwitchCase="'objectiveTurnoverVolume'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'objectiveFileNumber'">{{rowData[col.field]}}</div>
+        </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+<div *ngIf="search" class="card-footer py-2 d-flex justify-content-end">
+  <button class="mb-1 mx-2 btn btn-outline-danger" (click)="closeModale()">{{'button.cancel' | translate}}</button>
+  <button class="mb-1 btn btn-primary" (click)='addAsset(asset)'>{{'button.add' | translate}}</button>
+</div>

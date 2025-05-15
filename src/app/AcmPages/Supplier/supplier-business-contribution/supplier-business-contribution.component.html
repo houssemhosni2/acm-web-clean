@@ -1,0 +1,69 @@
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <p-table #dt [responsive]="true" [autoLayout]=true [lazy]="true" [lazyLoadOnInit]="false" sortMode="multiple"
+      [rowsPerPageOptions]="[5,10,20,50,100]" [value]="loans" [paginator]="true" [pageLinks]="5" [rows]="10"
+      [totalRecords]="totalRecords" (onLazyLoad)="reloadLoansList($event)" [columns]="selectedColumns"
+      [showCurrentPageReport]="true">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" class="text-center">
+            <div class="center-elem text-center"> {{col.header | translate}} <p-sortIcon [field]="col.field"
+                class="pl-1"></p-sortIcon>
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <th class="ACM_Customer_Search_void_Col" *ngIf="search">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'accountNumber'" class="form-control placeholder" type="text"
+              (input)="updateFilter('accountNumber', $event.target.value)">
+            <select *ngSwitchCase="'productCode'" class="form-control"
+              (change)="updateFilter('productCode', $event.target.value)">
+              <option value="">{{'category_loan.all' | translate}}</option>
+              <option *ngFor="let product of products" value="{{product.value}}">{{product.label}}</option>
+            </select>
+            <input *ngSwitchCase="'customerNameNoPipe'" class="form-control placeholder" type="text"
+              (input)="updateFilter('customerNameNoPipe', $event.target.value)">
+            <select *ngSwitchCase="'branchName'" class="form-control"
+              (change)="updateFilter('branchName', $event.target.value)">
+              <option value="">{{'category_loan.all' | translate}}</option>
+              <option *ngFor="let branch of branches" value="{{branch.value}}">{{branch.label}}</option>
+            </select>
+            <input *ngSwitchCase="'applyAmountTotal'" class="form-control" type="number"
+              (input)="updateFilter('applyAmountTotal', $event.target.value)">
+            <input *ngSwitchCase="'quantitySupplier'" class="form-control" type="number"
+              (input)="updateFilter('quantitySupplier', $event.target.value)">
+            <input *ngSwitchCase="'balanceSupplier'" class="form-control" type="number"
+              (input)="updateFilter('balanceSupplier', $event.target.value)">
+            <select *ngSwitchCase="'customerDTO.supplierRecommandation'" class="form-control"
+              (change)="updateFilter('customerDTO.supplierRecommandation', $event.target.value)">
+              <option value=""> {{ 'category_loan.all' | translate }}</option>
+              <option value="Yes"> {{'button.yes' | translate}}</option>
+              <option value="No"> {{ 'button.no' | translate }}</option>
+            </select>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-asset let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngIf="search">
+            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+          </td>
+          <td *ngFor="let col of columns" [ngSwitch]="col.field" class="text-center">
+            <div *ngSwitchCase="'accountNumber'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'productCode'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'customerNameNoPipe'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'branchName'">{{rowData[col.field]}}</div>
+            <div *ngSwitchCase="'applyAmountTotal'">{{rowData[col.field] }}</div>
+            <div *ngSwitchCase="'quantitySupplier'">{{rowData[col.field] }}</div>
+            <div *ngSwitchCase="'balanceSupplier'">{{rowData[col.field] }}</div>
+            <div *ngSwitchCase="'customerDTO.supplierRecommandation'"> {{ rowData.customerDTO.supplierRecommandation ===
+              supplier.id ? ('button.yes' | translate) : ('button.no' | translate) }}</div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

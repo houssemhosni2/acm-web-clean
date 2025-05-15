@@ -1,0 +1,107 @@
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <div>
+        {{ "setting.setting-blacklist" | translate }}
+      </div>
+      <div class="btn-actions-pane-right ACM-header-right-{{translate.currentLang}}">
+        <button class="d-inline-flex align-items-center btn btn-primary" (click)="addPartyType(modalContent)">
+          <fa-icon class="mx-2" [icon]="library.getIconDefinition('fas', 'plus')"></fa-icon>
+          {{ "setting.blacklist-party-type.add-party-type" | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div>
+        <div class="table-responsive">
+          <table class="mb-0 t table table-hover">
+            <thead>
+              <tr>
+                <th>{{ "setting.blacklist-party-type.party-code" | translate }}</th>
+                <th>{{ "setting.blacklist-party-type.party-type" | translate }}</th>
+                <th>{{ "setting.blacklist-party-type.modification-group" | translate }}</th>
+                <th>{{ "setting.blacklist-party-type.notification-group" | translate }}</th>
+                <th>Enabled</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let item of blacklistTypeList;
+                  let i = index
+                "
+              >
+                <td> {{ item.code }} </td>
+                <td> {{ item.label }} </td>
+                <td> {{ item.modificationGroupLibelle }} </td>
+                <td> {{ item.notificationGroupLibelle }} </td>
+                <td>
+                  <bSwitch
+                    [(ngModel)]="item.enabled"
+                    [switch-size]="'mini'"
+                    [switch-animate]="true"
+                    [switch-off-color]="'danger'"
+                    [switch-handle-width]="40"
+                    class="px-2 mb-0"
+                    (click)="enableDisable(item)"
+                  >
+                  </bSwitch>
+                </td>
+                <td>
+                    <button class="btn btn-warning text-white" (click)="editPartType(modalContent, item)">
+                        <fa-icon [icon]="library.getIconDefinition('fas', 'pencil-alt')"></fa-icon>
+                    </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+
+
+<ng-template #modalContent let-close="close">
+    <div dir="{{getDirection()}}" [ngClass]="{'text-end': translate.currentLang === 'ar'}">
+        <div class="modal-header py-2">
+            <h5 class="modal-title" *ngIf="!updatePartyType">
+                {{ "setting.blacklist-party-type.add-party-type" | translate }}
+            </h5>
+            <h5 class="modal-title" *ngIf="updatePartyType">
+                {{ "setting.blacklist-party-type.update-party-type" | translate }}
+            </h5>
+            <button type="button" class="close ACM-modal-header-{{translate.currentLang}}">
+                <span aria-hidden="true" (click)="closeModal()">&times;</span>
+            </button>
+        </div>
+    </div>
+    <form class="form" [formGroup]='partyTypeForm'>
+        <div class="card-body">
+            <div class="position-relative form-group">
+                <label>{{ "setting.blacklist-party-type.party-code" | translate }}</label>
+                <input type="text" class="form-control" formControlName="code"
+                [disabled]="updatePartyType">
+            </div>
+            <div class="position-relative form-group">
+                <label>{{ "setting.blacklist-party-type.party-type" | translate }}</label>
+                <input type="text" class="form-control" formControlName="label">
+            </div>
+            <div class="position-relative form-group">
+                <label>{{ "setting.blacklist-party-type.modification-group" | translate }}</label>
+                <p-multiSelect [filter]="false" [options]="groupEntities" [styleClass]="'full-width'"
+                    formControlName="modificationGroup"
+                    optionLabel="libelle" [required]="displayMultiSelect"></p-multiSelect>
+            </div>
+            <div class="position-relative form-group">
+                <label>{{ "setting.blacklist-party-type.notification-group" | translate }}</label>
+                <p-multiSelect [filter]="false" [options]="groupEntities" [styleClass]="'full-width'"
+                    formControlName="notificationGroup"
+                    optionLabel="libelle" [required]="displayMultiSelect"></p-multiSelect>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="mb-1 mx-2 btn btn-outline-danger" type="reset" (click)="closeModal()">{{'button.cancel'
+                | translate}}</button>
+            <button class="mb-1 btn btn-primary" type="submit" (click)="savePartyType()">{{'button.save' | translate}}</button>
+        </div>
+    </form>
+</ng-template>

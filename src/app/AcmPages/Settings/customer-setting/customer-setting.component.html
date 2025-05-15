@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="card-header">
+    {{ 'setting.customer-setting' | translate }}  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="mb-0 t table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "category_loan.category_loan" | translate }}</th>
+            <th>{{ "expenses.expenses_status" | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let customerSettingEntity of customerSettingEntitys;
+              let i = index
+            "
+          >
+            <td>{{ customerSettingEntity.type }}</td>
+            <td>
+              <bSwitch
+                [(ngModel)]="customerSettingEntity.enabled"
+                [switch-size]="'mini'"
+                [switch-animate]="true"
+                [switch-off-color]="'danger'"
+                [switch-handle-width]="40"
+                class="px-2 mb-0"
+                (click)="endableDisable(customerSettingEntity)"
+              >
+              </bSwitch>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
