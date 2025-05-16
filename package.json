@@ -8,7 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "sonar-scanner": "sonar-scanner"
+    "sonar-scanner": "sonar-scanner",
+    "build-ignore-errors": "tsc --noEmitOnError false"
   },
   "private": true,
   "dependencies": {
